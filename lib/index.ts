@@ -1,21 +1,18 @@
 import { MongoClient } from "mongodb";
 
 async function connect() {
-    if (!process.env.MONGODB_URI) throw new Error("Process.env undefined");
+  if (!process.env.MONGODB_URI) throw new Error("Process.env undefined");
 
-    const URI: string = process.env.MONGODB_URI;
-    const client = new MongoClient(URI);
+  const URI: string = process.env.MONGODB_URI;
+  const client = new MongoClient(URI);
 
   try {
-    await client.connect()
+    await client.connect();
     console.log("Connected!");
-    return client
-
+    return client;
   } catch (e) {
-    console.log("index.ts", e);
-
+    throw new Error("Connection failed")
   }
 }
 
-
-export default connect
+export default connect;
