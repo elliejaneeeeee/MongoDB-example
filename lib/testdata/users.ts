@@ -1,12 +1,17 @@
-interface Users {
+
+interface Lesson {
+  [key: `lesson${number}`]: boolean
+}
+
+interface users {
   full_name: string;
   email: string;
   password: string;
   bookmarks: number;
-  progress: any;
+  progress: Lesson[];
 }
 
-export const usersData: Users[] = [
+export const usersData: users[] = [
   {
     full_name: "Alex Johnson",
     email: "alex.johnson@example.com",

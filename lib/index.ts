@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 
 async function connect() {
-  if (!process.env.MONGODB_URI) throw new Error("Process.env undefined");
+  if (!process.env.MONGODB_URI) throw new Error("Process.env is not defined! Add it into a .env file");
 
   const URI: string = process.env.MONGODB_URI;
   const client = new MongoClient(URI);
