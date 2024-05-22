@@ -109,7 +109,7 @@ describe("/api/users/:_id", () => {
   });
 });
 
-describe.only("/api/articles", () => {
+describe("/api/articles", () => {
   test("should return array of all articles", async () => {
     const req = {} as NextRequest;
     const res = (await getAllArticles(req)) as NextResponse;
