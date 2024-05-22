@@ -1,42 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import connect from "../../../../lib/index";
-import { ObjectId } from "mongodb";
+import { fetchUserById } from "../../../../models/users.models";
 
-export async function GET(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+    const { id } = params;
+
     try {
-        const { id } = params;
-
-        if (!ObjectId.isValid(id)) {
-            return NextResponse.json(
-                { msg: "Invalid ID format" },
-                { status: 400 }
-            );
+        const user: any = await fetchUserById(id)
+        
+        if (user.error) {
+            return NextResponse.json({ error: user.error } , {status: user.status })
         }
-
-
-        const userId = new ObjectId(id);
-
-        const client = await connect();
-        const db = client.db("test");
-
-        const result = await db.collection("users").findOne({ _id: userId });
-
-        if (!result) {
-            return NextResponse.json(
-                { msg: "User not found" },
-                { status: 404 }
-            );
-        }
-
-        return NextResponse.json({ msg: result }, { status: 200 });
+        
+        return NextResponse.json({ user }, {status: 200})
     } catch (error) {
-        console.error("Error: ", error);
-        return NextResponse.json(
-            { msg: (error as Error).message },
-            { status: 500 }
-        );
+        return NextResponse.json({ error })
     }
 }

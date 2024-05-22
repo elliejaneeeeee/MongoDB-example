@@ -8,7 +8,6 @@ async function connect() {
 
   try {
     await client.connect();
-    console.log("Connected!");
     return client;
   } catch (e) {
     throw new Error("Connection failed")
