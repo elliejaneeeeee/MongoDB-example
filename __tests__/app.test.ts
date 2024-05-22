@@ -8,8 +8,11 @@ import connect from "../lib/index";
 import * as mongoDB from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
+import {GET as getAllForums} from "../app/api/forums/route";
 import { GET as getAllUsers } from "../app/api/users/route";
 import { GET as getUserById } from "../app/api/users/[id]/route";
+import {GET as getFlashcards} from '../app/api/flashcards/[id]/route'
+import exp from "constants";
 
 let client: mongoDB.MongoClient;
 let db: mongoDB.Db;
@@ -107,3 +110,52 @@ describe("/api/users/:_id", () => {
     expect(user.error).toBe("400 Error: Invalid ID Syntax");
   });
 });
+
+describe("GET /api/forums", () => {
+  test("should return array of forum posts as objects", async () => {
+    const req = {} as NextRequest;
+    const res = await getAllForums(req) as NextResponse;
+    const data = await res.json();
+    expect(res.status).toBe(200);
+    expect(Array.isArray(data.forums)).toBe(true);
+   data.forums.forEach((forum: any) => {
+    expect(forum).toHaveProperty('title')
+    expect(forum).toHaveProperty('body')
+    expect(forum).toHaveProperty('comments')
+    expect(forum).toHaveProperty('votes')
+    expect(forum).toHaveProperty('date')
+    expect(forum).toHaveProperty('author')
+    })
+  })
+  });
+ 
+describe('GET /api/flashcards/id', () => {
+    test('returns only flashcards with correct unit number', async () => {
+      const req = {} as NextRequest
+      const params = {params: {id: '4'}}
+      const res = await getFlashcards(req, params) as NextResponse;
+      const flashcards = await res.json()
+      expect(res.status).toBe(200);
+      flashcards.flashcards.forEach((flashcard: any) =>{
+        expect(flashcard.unit).toBe(4)
+    })})
+    test('returns 400 error for incorrect unit id', async () => {
+      const req = {} as NextRequest
+      const params = {params: {id: '5bool'}}
+      const res = await getFlashcards(req, params) as NextResponse;
+      const errorData = await res.json()
+      expect(res.status).toBe(400);
+      expect(res.ok).toBe(false);
+      expect(errorData.msg).toBe('Bad Request')
+    })
+    test('Returns 404 error for non-existant unit id', async () => {
+      const req = {} as NextRequest
+      const params = {params: {id: '200'}}
+      const res = await getFlashcards(req, params) as NextResponse;
+      const errorData = await res.json()
+      expect(res.status).toBe(404);
+      expect(res.ok).toBe(false);
+      expect(errorData.msg).toBe('Not Found')
+    })
+  })
+      

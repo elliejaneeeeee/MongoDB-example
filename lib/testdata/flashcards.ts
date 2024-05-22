@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 
 interface flashcards {
     _id: ObjectId;
+    unit: number;
     section: string;
     title: string;
     body: string[];
@@ -17,6 +18,7 @@ const flashcardid_5: ObjectId = new ObjectId("664db20c509cc0afb30cc372");
 export const flashcardsData: flashcards[] = [
     {
         _id: flashcardid_1,
+        unit: 1,
         section: "0-2 months",
         title: "Positive Reinforcement",
         body: [
@@ -29,6 +31,7 @@ export const flashcardsData: flashcards[] = [
     },
     {
         _id: flashcardid_2,
+        unit: 2,
         section: "2-4 months",
         title: "Setting Boundaries",
         body: [
@@ -41,6 +44,7 @@ export const flashcardsData: flashcards[] = [
     },
     {
         _id: flashcardid_3,
+        unit: 3,
         section: "4-6 months",
         title: "Active Listening",
         body: [
@@ -53,6 +57,7 @@ export const flashcardsData: flashcards[] = [
     },
     {
         _id: flashcardid_4,
+        unit: 4,
         section: "6-8 months",
         title: "Encouraging Independence",
         body: [
@@ -65,6 +70,7 @@ export const flashcardsData: flashcards[] = [
     },
     {
         _id: flashcardid_5,
+        unit: 5,
         section: "8-10 months",
         title: "Healthy Routines",
         body: [
