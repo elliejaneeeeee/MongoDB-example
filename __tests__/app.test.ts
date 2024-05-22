@@ -64,5 +64,30 @@ describe("seed", () => {
         });
     });
 
-    
+    describe.only("/api/users/:_id", () => {
+        test("Should return data associated with specified id", async () => {
+            const response = await request(local).get(
+                "/api/users/664db5ae509cc0afb30cc382"
+            );
+
+            expect(response.status).toBe(200);
+            expect(response.body.msg.full_name).toBe("Alex Johnson");
+        });
+        test("Should return a 404 error for non-existent id", async () => {
+            const response = await request(local).get(
+                "/api/users/664d9e9f509cc0afb30cc369"
+            );
+
+            expect(response.status).toBe(404);
+            expect(response.body.msg).toBe("User not found");
+        });
+        test("Should return a 400 error for an invalid id Type", async () => {
+            const response = await request(local).get(
+                "/api/users/non-valid-id-string"
+            );
+
+            expect(response.status).toBe(400);
+            expect(response.body.msg).toBe("Invalid ID format");
+        });
+    });
 });
