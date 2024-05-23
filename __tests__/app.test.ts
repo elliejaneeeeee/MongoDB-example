@@ -7,15 +7,14 @@ import connect from "../lib/index";
 import * as mongoDB from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
-
 import { GET as getAllForums } from "../app/api/forums/route";
 import { POST as postToForums } from "../app/api/forums/route";
 import { GET as getAllUsers } from "../app/api/users/route";
 import { GET as getUserById } from "../app/api/users/[id]/route";
 import { GET as getFlashcards } from "../app/api/flashcards/[id]/route";
-import {GET as getForumPost} from "../app/api/forums/[id]/route"
-import {POST as postForumComment} from '../app/api/forums/[id]/comments/route'
-import {PATCH as patchCommentVotes} from '../app/api/forums/[id]/comments/[commId]/route'
+import { GET as getForumPost } from "../app/api/forums/[id]/route";
+import { POST as postForumComment } from "../app/api/forums/[id]/comments/route";
+import { PATCH as patchCommentVotes, DELETE as deleteComment, GET as getCommentByID } from "../app/api/forums/[id]/comments/[commId]/route";
 
 
 let client: mongoDB.MongoClient;
@@ -187,7 +186,7 @@ describe("POST /api/forums", () => {
     expect(postData).toHaveProperty("comments");
     expect(postData).toHaveProperty("date");
   });
-  test('returns 400 error for missing properties', async () => {
+  test("returns 400 error for missing properties", async () => {
     const post: {} = {
       body: "hello everyone",
       author: "joeanne",
@@ -197,11 +196,11 @@ describe("POST /api/forums", () => {
       body: JSON.stringify(post),
     });
     const res = (await postToForums(request)) as NextResponse;
-    expect(res.status).toBe(400)
-  })
-  test('returns 400 error for incorrect properties type', async () => {
+    expect(res.status).toBe(400);
+  });
+  test("returns 400 error for incorrect properties type", async () => {
     const post: {} = {
-      title: 'hello',
+      title: "hello",
       body: "hello everyone",
       author: 5,
     };
@@ -210,39 +209,39 @@ describe("POST /api/forums", () => {
       body: JSON.stringify(post),
     });
     const res = (await postToForums(request)) as NextResponse;
-    expect(res.status).toBe(400)
-  })
+    expect(res.status).toBe(400);
+  });
 });
-describe('GET /api/forums/id', () => {
-  test('responds with 200 and forum post object for correct id', async () => {
+describe("GET /api/forums/id", () => {
+  test("responds with 200 and forum post object for correct id", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664db460509cc0afb30cc376" } };
     const res = (await getForumPost(req, params)) as NextResponse;
-    const {post} = await res.json();
+    const { post } = await res.json();
     expect(res.status).toBe(200);
     expect(post).toHaveProperty("title");
-      expect(post).toHaveProperty("body");
-      expect(post).toHaveProperty("comments");
-      expect(post).toHaveProperty("votes");
-      expect(post).toHaveProperty("date");
-      expect(post).toHaveProperty("author");
-  })
-  test('400 error for invalid id type', async () => {
+    expect(post).toHaveProperty("body");
+    expect(post).toHaveProperty("comments");
+    expect(post).toHaveProperty("votes");
+    expect(post).toHaveProperty("date");
+    expect(post).toHaveProperty("author");
+  });
+  test("400 error for invalid id type", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "non-valid-idstring" } };
     const res = (await getForumPost(req, params)) as NextResponse;
     expect(res.status).toBe(400);
-  })
-  test('404 error for non-existent id', async () => {
+  });
+  test("404 error for non-existent id", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664db45a509cc0afb30cc777" } };
     const res = (await getForumPost(req, params)) as NextResponse;
     expect(res.status).toBe(404);
-  })
-})
-describe('POST api/forums/:id/comments', () => {
-  test('returns status 201 and comment object with correct properties', async () => {
-    const params = { params: { id: "664db460509cc0afb30cc376" } }
+  });
+});
+describe("POST api/forums/:id/comments", () => {
+  test("returns status 201 and comment object with correct properties", async () => {
+    const params = { params: { id: "664db460509cc0afb30cc376" } };
     const post: {} = {
       body: "hello everyone",
       author: "joeanne",
@@ -255,12 +254,12 @@ describe('POST api/forums/:id/comments', () => {
 
     const { comment } = await res.json();
     expect(res.status).toBe(201);
-    expect(comment).toHaveProperty('author')
-    expect(comment).toHaveProperty('body')
-    expect(comment).toHaveProperty('date')
-    expect(comment).toHaveProperty('votes')
-  })
-  test('400 error for invalid id type', async () => {
+    expect(comment).toHaveProperty("author");
+    expect(comment).toHaveProperty("body");
+    expect(comment).toHaveProperty("date");
+    expect(comment).toHaveProperty("votes");
+  });
+  test("400 error for invalid id type", async () => {
     const params = { params: { id: "non-valid-id//" } };
     const post: {} = {
       body: "hello everyone",
@@ -272,8 +271,8 @@ describe('POST api/forums/:id/comments', () => {
     });
     const res = (await postForumComment(request, params)) as NextResponse;
     expect(res.status).toBe(400);
-  })
-  test('404 error for non-existent id', async () => {
+  });
+  test("404 error for non-existent id", async () => {
     const params = { params: { id: "664db45a509cc0afb30cc555" } };
     const post: {} = {
       body: "hello everyone",
@@ -285,8 +284,8 @@ describe('POST api/forums/:id/comments', () => {
     });
     const res = (await postForumComment(request, params)) as NextResponse;
     expect(res.status).toBe(404);
-  })
-  test('400 error for invalid req body', async () => {
+  });
+  test("400 error for invalid req body", async () => {
     const params = { params: { id: "non-valid-id//" } };
     const post: {} = {
       bod: "hello everyone",
@@ -298,13 +297,18 @@ describe('POST api/forums/:id/comments', () => {
     });
     const res = (await postForumComment(request, params)) as NextResponse;
     expect(res.status).toBe(400);
-  })
-})
-describe('PATCH /api/forums/:id/comments/:id', () => {
-  test('returns a 201 status and new votes object', async () => {
-    const params = { params: { id: "664db45a509cc0afb30cc373", commId: '664db4cf509cc0afb30cc378' } }
+  });
+});
+describe("PATCH /api/forums/:id/comments/:id", () => {
+  test("returns a 201 status and new votes object", async () => {
+    const params = {
+      params: {
+        id: "664db45a509cc0afb30cc373",
+        commId: "664db4cf509cc0afb30cc378",
+      },
+    };
     const post: {} = {
-     inc_votes: -1,
+      inc_votes: -1,
     };
     const request = new Request("http://localhost:3001/api/forums", {
       method: "PATCH",
@@ -312,34 +316,93 @@ describe('PATCH /api/forums/:id/comments/:id', () => {
     });
     const res = (await patchCommentVotes(request, params)) as NextResponse;
     const { response } = await res.json();
+    expect(res.status).toBe(200);
+    expect(response.votes).toBe(9);
+  });
+  test("400 error for invalid comment id type", async () => {
+    const params = {
+      params: { id: "664db45a509cc0afb30cc373", commId: "664jsjso" },
+    };
+    const post: {} = {
+      inc_votes: 1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchCommentVotes(request, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
+  test("404 error for non-existent comment id on specific article", async () => {
+    const params = {
+      params: {
+        id: "664db45a509cc0afb30cc373",
+        commId: "664db4d6509cc0afb30cc37f",
+      },
+    };
+    const post: {} = {
+      inc_votes: 1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchCommentVotes(request, params)) as NextResponse;
+    expect(res.status).toBe(404);
+  });
+});
+describe('DELETE /api/forums/:id/comments/:id', () => {
+  test('returns 200 for deleted comment and deletes from database', async ()=> {
+    const req = {} as NextRequest;
+    const params = { params: { id: "664db460509cc0afb30cc376", commId: '664db4d5509cc0afb30cc37e'} }
+    const queryResponse = await getCommentByID(req, params)
+    expect(queryResponse.status).toBe(200)
+    const res = await deleteComment(req, params) as NextResponse
     expect(res.status).toBe(200)
-    expect(response.votes).toBe(9)
+    const queryResponse2 = await getCommentByID(req, params)
+    expect(queryResponse2.status).toBe(404)
+  })
+  test('returns 404 for valid comment id on wrong article id', async () => {
+    const req ={} as NextRequest
+    const params = {
+      params: {
+        id: "664db45a509cc0afb30cc373",
+        commId: "664db4d7509cc0afb30cc381",
+      },
+    };
+    const res = await deleteComment(req, params) as NextResponse
+    expect(res.status).toBe(404)
+  })
+  test('returns 400 for invalid comment ID string', async () => {
+    const req ={} as NextRequest
+    const params = {
+      params: {
+        id: "664db45a509cc0afb30cc373",
+        commId: "664db4d7509cc0a-s",
+      },
+    };
+    const res = await deleteComment(req, params) as NextResponse
+    expect(res.status).toBe(400)
+  })
+  test.only('only deletes one comment', async () => {
+    const req = {} as NextRequest;
+    const param ={params: { id: "664db460509cc0afb30cc376"}}
+    const params = { params: { id: "664db460509cc0afb30cc376", commId: '664db4d6509cc0afb30cc37f'} }
+    const forumQuery = await getForumPost(req, param)
+    const forumData = await forumQuery.json()
+    const res = await deleteComment(req, params) as NextResponse
+    
+    expect(res.status).toBe(200)
+    const nextForumQuery = await getForumPost(req, param)
+    const updateForumData = await nextForumQuery.json()
+    
+    expect(updateForumData.post.comments[1]).toBe(null)
+    expect(forumData.post.comments.some((item: any) => item === null)).toBe(false)
+    expect(updateForumData.post.comments[0]).toMatchObject({ 
+        "author": "earlyeducator",
+        "body": "Simple toys like stacking blocks and shape sorters are great for motor skills.",
+        "date": "2024-05-05T11:00:00.000Z",
+        "votes": 14,
+  })
+  })
 })
-test('400 error for invalid comment id type', async () => {
-  const params = { params: { id: "664db45a509cc0afb30cc373", commId: '664jsjso' } };
-  const post: {} = {
-    inc_votes: 1
-  };
-  const request = new Request("http://localhost:3001/api/forums", {
-    method: "PATCH",
-    body: JSON.stringify(post),
-  });
-  const res = (await patchCommentVotes(request, params)) as NextResponse;
-  expect(res.status).toBe(400);
-})
-test('404 error for non-existent comment id on specific article', async () => {
-  const params = { params: { id: "664db45a509cc0afb30cc373", commId: '664db4d6509cc0afb30cc37f'} };
-  const post: {} = {
-    inc_votes: 1
-  };
-  const request = new Request("http://localhost:3001/api/forums", {
-    method: "PATCH",
-    body: JSON.stringify(post),
-  });
-  const res = (await patchCommentVotes(request, params)) as NextResponse;
-  expect(res.status).toBe(404);
-})
-
-})
-
-

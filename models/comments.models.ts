@@ -65,8 +65,9 @@ export async function getCommentById(id: string, commId: string) {
     ])
     .toArray(); // returns comment array by forum and comment id
   if (commentData[0].comments.length === 0) {
-    return Promise.reject({ status: 404, msg: "Not Found" }); // if comment id format valid but not found in database throw 404
+    return Promise.reject({ status: 404 , msg: "Not Found" }); // if comment id format valid but not found in database throw 404
   }
+
   return commentData[0].comments[0]; // returns individual comment object matching the comment ID
 }
 export async function patchComment(
@@ -90,3 +91,16 @@ export async function patchComment(
     return Promise.reject({status: 400, msg: 'Bad Request'})  //if database throws error it is converted to 400 as all issues with req bodies are 400 errors
   }
 }
+export async function deleteComment(id: string, commId: string) {
+  
+  const client = await connect();
+  const db = client.db("test");
+  const postID = new ObjectId(id);
+  const commentID = new ObjectId(commId);
+      const result = await db.collection('forums').updateOne({_id: postID, 'comments._id': commentID},{ $unset: {'comments.$': ''}})
+
+     if (result.modifiedCount === 0) {             //would be server/syntax error as commentID and postID already checked by controller
+    return Promise.reject({status: 500, msg: 'Server Error'})
+      }
+
+      return result}
