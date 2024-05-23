@@ -15,6 +15,7 @@ import { GET as getUserById } from "../app/api/users/[id]/route";
 import { GET as getFlashcards } from "../app/api/flashcards/[id]/route";
 import {GET as getForumPost} from "../app/api/forums/[id]/route"
 import {POST as postForumComment} from '../app/api/forums/[id]/comments/route'
+import {PATCH as patchCommentVotes} from '../app/api/forums/[id]/comments/[commId]/route'
 
 
 let client: mongoDB.MongoClient;
@@ -299,4 +300,46 @@ describe('POST api/forums/:id/comments', () => {
     expect(res.status).toBe(400);
   })
 })
+describe('PATCH /api/forums/:id/comments/:id', () => {
+  test('returns a 201 status and new votes object', async () => {
+    const params = { params: { id: "664db45a509cc0afb30cc373", commId: '664db4cf509cc0afb30cc378' } }
+    const post: {} = {
+     inc_votes: -1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchCommentVotes(request, params)) as NextResponse;
+    const { response } = await res.json();
+    expect(res.status).toBe(200)
+    expect(response.votes).toBe(9)
+})
+test('400 error for invalid comment id type', async () => {
+  const params = { params: { id: "664db45a509cc0afb30cc373", commId: '664jsjso' } };
+  const post: {} = {
+    inc_votes: 1
+  };
+  const request = new Request("http://localhost:3001/api/forums", {
+    method: "PATCH",
+    body: JSON.stringify(post),
+  });
+  const res = (await patchCommentVotes(request, params)) as NextResponse;
+  expect(res.status).toBe(400);
+})
+test('404 error for non-existent comment id on specific article', async () => {
+  const params = { params: { id: "664db45a509cc0afb30cc373", commId: '664db4d6509cc0afb30cc37f'} };
+  const post: {} = {
+    inc_votes: 1
+  };
+  const request = new Request("http://localhost:3001/api/forums", {
+    method: "PATCH",
+    body: JSON.stringify(post),
+  });
+  const res = (await patchCommentVotes(request, params)) as NextResponse;
+  expect(res.status).toBe(404);
+})
+
+})
+
 

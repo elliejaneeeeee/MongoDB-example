@@ -1,7 +1,6 @@
 
 import connect from "../lib/index";
 import { ObjectId } from "mongodb";
-import { error } from "console";
 
 export async function fetchAllForums() {
   const client = await connect();
@@ -9,6 +8,7 @@ export async function fetchAllForums() {
   const forums = await db.collection("forums").find({}).toArray();
   return forums;
 }
+
 export async function getForumPostById(id: string) {
   if (id.length !== 24 || !/^[a-zA-Z0-9]+$/.test(id)) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
@@ -22,6 +22,7 @@ export async function getForumPostById(id: string) {
   }
   return postWithId;
 }
+
 export async function postToForum(post: string) {
   try {
     const client = await connect();
@@ -42,34 +43,4 @@ export async function postToForum(post: string) {
     throw error;
   }
 }
-export async function postComment(id: string, commentReq: string) {
-  const commentObj = JSON.parse(commentReq);
-  const client = await connect();
-  const db = client.db("test");
-  const postId = new ObjectId(id);
-  try {
-    if (
-      !commentObj.hasOwnProperty("author") ||
-      !commentObj.hasOwnProperty("body")
-    ) {
-      throw error;
-    } else if (Object.values(commentObj).includes("")) {
-      throw error;
-    }
-    commentObj.date = new Date();
-    commentObj.votes = 0;
-    commentObj._id = new ObjectId()
-    
-    await db
-      .collection("forums")
-      .updateOne({ _id: postId }, { $push: { comments: commentObj } });
-      const newCommentSearch = await db.collection('forums').aggregate([{$match: {_id: postId}}, {$project: {comments: {$filter: {input: '$comments', as: 'comment',  cond: { $eq: ["$$comment._id", commentObj._id] }}}}}]).toArray()
-     const newComment = newCommentSearch[0].comments[0]
-    if (!newComment) {
-      throw error;
-    }
-    return newComment
-  } catch (error) {
-    return Promise.reject({ status: 400, msg: "Bad Request" });
-  }
-}
+
