@@ -10,7 +10,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { GET as getAllUsers } from "../app/api/users/route";
 import { GET as getUserById } from "../app/api/users/[id]/route";
+
 import { GET as getCatchAll } from "../app/api/[...slug]/route";
+
+import { GET as getAllArticles } from "../app/api/articles/route";
+
 
 let client: mongoDB.MongoClient;
 let db: mongoDB.Db;
@@ -119,4 +123,25 @@ describe("/api/users/:_id", () => {
         expect(res.status).toBe(400);
         expect(user.error).toBe("400 Error: Invalid ID Syntax");
     });
+});
+
+describe("/api/articles", () => {
+  test("should return array of all articles", async () => {
+    const req = {} as NextRequest;
+    const res = (await getAllArticles(req)) as NextResponse;
+
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(data.articles)).toBe(true);
+
+    data.articles.forEach((article: any) => {
+      expect(article).toHaveProperty("_id");
+      expect(article).toHaveProperty("title");
+      expect(article).toHaveProperty("link");
+      expect(article).toHaveProperty("img_url");
+      expect(article).toHaveProperty("body");
+      expect(article).toHaveProperty("source");
+    });
+  });
 });
