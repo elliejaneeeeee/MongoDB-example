@@ -63,7 +63,7 @@ export const forumsData: forums[] = [
     {
         _id: forumid_2,
         title: "When to Start Solid Foods?",
-        body: "I’m unsure when to start introducing solid foods to my baby. Any advice?",
+        body: "I'm unsure when to start introducing solid foods to my baby. Any advice?",
         author: "firsttimemom",
         votes: 20,
         date: new Date("2024-04-28T09:00:00Z"),
