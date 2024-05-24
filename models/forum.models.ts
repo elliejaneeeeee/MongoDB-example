@@ -9,22 +9,18 @@ export async function fetchAllForums() {
 }
 
 export async function getForumPostById(id: string) {
-   
-        if (id.length !== 24 || !/^[a-zA-Z0-9]+$/.test(id)) {
-            return Promise.reject({ status: 400, msg: "Bad Request" });
-          }
-          const client = await connect();
-          const db = client.db("test");
-          const postId = new ObjectId(id);
-          
-          const postWithId = await db.collection("forums").findOne({ _id: postId })
-          if (!postWithId) {
-            return Promise.reject({ status: 404, msg: "Not Found" });
-          }
-          return postWithId;
-   
+  if (id.length !== 24 || !/^[a-zA-Z0-9]+$/.test(id)) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+  const client = await connect();
+  const db = client.db("test");
+  const postId = new ObjectId(id);
 
-  
+  const postWithId = await db.collection("forums").findOne({ _id: postId });
+  if (!postWithId) {
+    return Promise.reject({ status: 404, msg: "Not Found" });
+  }
+  return postWithId;
 }
 
 export async function postToForum(post: string) {
@@ -37,7 +33,9 @@ export async function postToForum(post: string) {
 
     const db = client.db("test");
 
-    const dataFromInsert = await db.collection("forums").insertOne(newForumPost);
+    const dataFromInsert = await db
+      .collection("forums")
+      .insertOne(newForumPost);
     const newPostFromDatabase = await db
       .collection("forums")
       .findOne({ _id: dataFromInsert.insertedId });
@@ -47,4 +45,3 @@ export async function postToForum(post: string) {
     throw error;
   }
 }
-
