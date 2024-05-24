@@ -1,5 +1,6 @@
 import connect from "../index";
 
+
 export async function seed(usersData: any, flashcardsData:any, forumsData: any, articlesData: any) {
   const client = await connect();
   const db = client.db("test");

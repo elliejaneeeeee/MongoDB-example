@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getForumPostById } from "../../../../models/forum.models";
 
+
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
