@@ -23,6 +23,7 @@ let db: mongoDB.Db;
 beforeAll(async () => {
   client = await connect();
   db = client.db("test");
+  console.log('connected')
 });
 
 beforeEach(async () => {
@@ -212,7 +213,7 @@ describe("POST /api/forums", () => {
     expect(res.status).toBe(400);
   });
 });
-describe("GET /api/forums/id", () => {
+describe.only("GET /api/forums/id", () => {
   test("responds with 200 and forum post object for correct id", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664db460509cc0afb30cc376" } };
@@ -350,6 +351,20 @@ describe("PATCH /api/forums/:id/comments/:id", () => {
     const res = (await patchCommentVotes(request, params)) as NextResponse;
     expect(res.status).toBe(404);
   });
+  test("400 error for invalid body", async () => {
+    const params = {
+      params: { id: "664db45a509cc0afb30cc373", commId: "664jsjso" },
+    };
+    const post: {} = {
+      inc_votes: 'ff',
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchCommentVotes(request, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
 });
 describe('DELETE /api/forums/:id/comments/:id', () => {
   test('returns 200 for deleted comment and deletes from database', async ()=> {
@@ -406,7 +421,7 @@ describe('DELETE /api/forums/:id/comments/:id', () => {
   })
   })
 })
-describe.only('DELETE /api/forums/:id', () => {
+describe('DELETE /api/forums/:id', () => {
   test('returns 200 status for deleted post', async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664db460509cc0afb30cc376" } };

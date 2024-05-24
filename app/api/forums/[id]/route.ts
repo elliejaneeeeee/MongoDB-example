@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getForumPostById, deleteForumPost } from "../../../../models/forum.models";
-import { error } from "console";
-
+import {
+  getForumPostById,
+  deleteForumPost,
+} from "../../../../models/forum.models";
+import { forums } from "../../../../__tests__/types";
 
 export async function GET(
   req: NextRequest,
@@ -9,20 +11,22 @@ export async function GET(
 ) {
   const { id } = params;
   try {
-    const post = await getForumPostById(id);
+    const post: {} = await getForumPostById(id);
     return NextResponse.json({ post }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ msg: error.msg }, { status: error.status });
   }
 }
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }){
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const { id } = params;
   try {
     await getForumPostById(id);
-    const isDeleted: boolean = await deleteForumPost(id)
-    return isDeleted ? NextResponse.json({ status: 200 }) : Promise.reject({status: 500, msg: 'Server Error'})
+    await deleteForumPost(id);
+    return NextResponse.json({ status: 200 });
   } catch (error: any) {
     return NextResponse.json({ msg: error.msg }, { status: error.status });
   }
 }
-

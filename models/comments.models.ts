@@ -70,27 +70,7 @@ export async function getCommentById(id: string, commId: string) {
 
   return commentData[0].comments[0]; // returns individual comment object matching the comment ID
 }
-export async function patchComment(
-  id: string,
-  commId: string,
-  parsedVotes: number
-) {
-  const client = await connect();
-  const db = client.db("test");
-  const post = new ObjectId(id);
-  const comment = new ObjectId(commId);
 
-  try {
-  await db
-      .collection("forums")                
-      .updateOne(
-        { _id: post, "comments._id": comment },       //if request object is not exactly correct database will throw error 
-        { $inc: { "comments.$.votes": parsedVotes } } // as database cannot increment by anything other than integer, so no need to check req obj 
-        );
-} catch (error) {
-    return Promise.reject({status: 400, msg: 'Bad Request'})  //if database throws error it is converted to 400 as all issues with req bodies are 400 errors
-  }
-}
 export async function deleteComment(id: string, commId: string) {
   
   const client = await connect();
@@ -100,3 +80,22 @@ export async function deleteComment(id: string, commId: string) {
       const result = await db.collection('forums').updateOne({_id: postID, 'comments._id': commentID},{ $unset: {'comments.$': ''}})// refactor server error
       return (result.modifiedCount === 1)
 }
+export async function patchComment(
+  id: string,
+  commId: string,
+  parsedVotes: number
+) {
+  const client = await connect();
+  const db = client.db("test");
+  const post = new ObjectId(id);
+  const comment = new ObjectId(commId);
+  const {acknowledged, modifiedCount}: {
+      acknowledged: boolean;
+      matchedCount: number;
+      modifiedCount: number;
+    } = await db.collection("forums").updateOne(
+      { _id: post, "comments._id": comment }, 
+      { $inc: { "comments.$.votes": parsedVotes } } 
+    );
+    return acknowledged && modifiedCount === 1 ? acknowledged : Promise.reject({status: 500, msg: 'Server Error'})
+  } 

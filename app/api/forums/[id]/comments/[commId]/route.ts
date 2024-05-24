@@ -5,6 +5,7 @@ import {
   patchComment,
   getCommentById,
 } from "../../../../../../models/comments.models";
+import {comments} from "./types";
 
 export async function GET(req: NextRequest, {params}:{params: { id: string; commId: string }}) {
   const { id, commId } = params;
@@ -20,17 +21,18 @@ export async function PATCH(
   { params }: { params: { id: string; commId: string } }
 ) {
   const { id, commId } = params;
-  const commentReq = await req.json();
-  const parsedVotes = typeof commentReq === 'string' ? JSON.parse(commentReq).inc_votes : commentReq.inc_votes
-
-  try {
-    await getForumPostById(id); //checking to see if exists, throws error if not
-    await getCommentById(id, commId); //checking to see if exists, throws error if not
-    await patchComment(id, commId, parsedVotes); // does not return anything, just patches in database
-    const updatedComment = await getCommentById(id, commId); // retrieves comment object to get new vote score
+  const patchBody = await req.json();
   
-        return NextResponse.json({response: {votes: updatedComment.votes}}, { status: 200 }); // returns response obj with key of new vote score
-   
+  try {
+    
+    const parsedBody = patchBody === 'string' ? await JSON.parse(patchBody) : patchBody
+    const parsedVotes = parsedBody.inc_votes
+    await getForumPostById(id); 
+    await getCommentById(id, commId); 
+    await patchComment(id, commId, parsedVotes); 
+    const updatedComment: comments = await getCommentById(id, commId);  
+    return NextResponse.json({response: {votes: updatedComment.votes}}, { status: 200 }) 
+    
   } catch (error: any) {
     return NextResponse.json({ msg: error.msg }, { status: error.status });
   }
