@@ -1,17 +1,5 @@
 import { ObjectId } from "mongodb";
-
-interface Lesson {
-    [key: `lesson${number}`]: boolean;
-}
-
-interface users {
-    _id: ObjectId;
-    full_name: string;
-    email: string;
-    password: string;
-    bookmarks: number;
-    progress: Lesson[];
-}
+import { users } from "../../types";
 
 const userid_1: ObjectId = new ObjectId("664db5ae509cc0afb30cc382");
 const userid_2: ObjectId = new ObjectId("664db5af509cc0afb30cc383");
@@ -22,6 +10,7 @@ const userid_5: ObjectId = new ObjectId("664db5b1509cc0afb30cc386");
 export const usersData: users[] = [
     {
         _id: userid_1,
+        username: 'parentpro',
         full_name: "Alex Johnson",
         email: "alex.johnson@example.com",
         password: "P@ssw0rd123",
@@ -35,6 +24,7 @@ export const usersData: users[] = [
     },
     {
         _id: userid_2,
+        username: 'sleepguru',
         full_name: "Maria Rodriguez",
         email: "maria.rodriguez@example.com",
         password: "M4ri@R0d!",
@@ -48,6 +38,7 @@ export const usersData: users[] = [
     },
     {
         _id: userid_3,
+        username: 'dadoftwins',
         full_name: "David Lee",
         email: "david.lee@example.com",
         password: "Dav1dL33$",
@@ -61,6 +52,7 @@ export const usersData: users[] = [
     },
     {
         _id: userid_4,
+        username: 'nutritionistmom',
         full_name: "Sophie Brown",
         email: "sophie.brown@example.com",
         password: "S0ph!3Br0wn",
@@ -74,6 +66,7 @@ export const usersData: users[] = [
     },
     {
         _id: userid_5,
+        username: 'newdad123',
         full_name: "Liam Smith",
         email: "liam.smith@example.com",
         password: "L1@msm!th",

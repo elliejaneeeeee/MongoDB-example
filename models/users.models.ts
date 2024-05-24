@@ -33,3 +33,35 @@ export async function fetchUserById(id: string) {
     return {error: "400 Error: Invalid ID Syntax", status: 400}
   }
 }
+
+export async function insertUser(username: string, full_name: string, email: string, password: string) {
+  try {
+    
+    const client = await connect();
+    const db = client.db("test");
+
+    const isAlreadyExisting = await db.collection("users").findOne({ username: username })
+
+    if (isAlreadyExisting) {
+      return {error: "400 Error: Username Already Exists!", status: 400}
+    }
+    
+    const newUser = {
+      _id: new ObjectId(),
+      username,
+      full_name,
+      email,
+      password,
+      bookmarks: 0,
+      progress: []
+    }
+
+    const status = await db.collection("users").insertOne(newUser)
+    const userPosted = await db.collection("users").findOne({ _id: status.insertedId });
+    const post = {...status, ...userPosted}
+
+    return post
+  } catch (error) {
+    return {error}
+  }
+}
