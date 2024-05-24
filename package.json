@@ -10,6 +10,7 @@
     "test": "jest --setupFiles dotenv/config"
   },
   "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "bcryptjs": "^2.4.3",
     "mongodb": "^6.6.2",
     "mongoose": "^8.4.0",
