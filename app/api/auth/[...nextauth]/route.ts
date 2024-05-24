@@ -1,6 +1,13 @@
 import NextAuth from "next-auth/next";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import connect from "../../../../lib";
+import bcrypt from "bcryptjs";
+
+interface Credentials {
+    email: string;
+    password: string;
+}
 
 const authOptions: NextAuthOptions = {
     providers: [
@@ -8,9 +15,31 @@ const authOptions: NextAuthOptions = {
             name: "credentials",
             credentials: {},
 
-            authorize(credentials, req) {
-                const user = { id: "1" };
-                return null;
+            async authorize(credentials): Promise<any> {
+                const { email, password } = credentials as Credentials;
+                try {
+                    const client = await connect();
+                    const db = client.db("test");
+
+                    const user = await db
+                        .collection("users")
+                        .findOne({ email: email });
+                    if (!user) {
+                        return null;
+                    }
+                    const passwordsMatch = await bcrypt.compare(
+                        password,
+                        user.password
+                    );
+
+                    if (!passwordsMatch) {
+                        return null;
+                    }
+                    return user;
+                } catch (error) {
+                    console.log(error);
+                    return null;
+                }
             },
         }),
     ],
