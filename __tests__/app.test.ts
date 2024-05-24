@@ -17,7 +17,6 @@ import { POST as postForumComment } from "../app/api/forums/[id]/comments/route"
 import { PATCH as patchCommentVotes, DELETE as deleteComment, GET as getCommentByID } from "../app/api/forums/[id]/comments/[commId]/route";
 
 
-
 let client: mongoDB.MongoClient;
 let db: mongoDB.Db;
 
@@ -309,9 +308,9 @@ describe("PATCH /api/forums/:id/comments/:id", () => {
       body: JSON.stringify(post),
     });
     const res = (await patchCommentVotes(request, params)) as NextResponse;
-    const { response } = await res.json();
+    const { comment } = await res.json();
     expect(res.status).toBe(200);
-    expect(response.votes).toBe(9);
+    expect(comment.votes).toBe(9);
   });
   test("400 error for invalid comment id type", async () => {
     const params = {

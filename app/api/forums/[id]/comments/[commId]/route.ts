@@ -6,7 +6,6 @@ import {
   getCommentById,
 } from "../../../../../../models/comments.models";
 
-
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string; commId: string } }
@@ -29,12 +28,12 @@ export async function PATCH(
   try {
     const parsedBody =
       reqBody === "string" ? await JSON.parse(reqBody) : reqBody;
-    const parsedVotes = parsedBody.inc_votes;
+    const votesToAdd: number = parsedBody.inc_votes;
     await getCommentById(id, commId);
-    await patchComment(id, commId, parsedVotes);
+    await patchComment(id, commId, votesToAdd);
     const updatedComment = await getCommentById(id, commId);
     return NextResponse.json(
-      { response: { votes: updatedComment.votes } },
+      { comment: { votes: updatedComment.votes } }, //returns {comment: {votes: num}}
       { status: 200 }
     );
   } catch (error: any) {
@@ -48,10 +47,9 @@ export async function DELETE(
   const { id, commId } = params;
   try {
     await getCommentById(id, commId);
-    const isDeleted: boolean = await deleteComment(id, commId);
-    return isDeleted
-      ? NextResponse.json({ status: 200 })
-      : Promise.reject({ status: 500, msg: "Server Error" });
+    await deleteComment(id, commId);
+      return NextResponse.json({ status: 200 })  
+      
   } catch (error: any) {
     return NextResponse.json({ msg: error.msg }, { status: error.status });
   }
