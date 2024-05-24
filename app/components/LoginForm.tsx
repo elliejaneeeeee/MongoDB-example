@@ -21,6 +21,11 @@ const LoginForm = () => {
                 redirect: false,
             });
 
+            if (!res) {
+                setError("Unexpected error");
+                return;
+            }
+
             if (res.error) {
                 setError("Invalid Credentials");
                 return;
