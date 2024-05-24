@@ -10,10 +10,11 @@ const userid_5: ObjectId = new ObjectId("664db5b1509cc0afb30cc386");
 export const usersData: users[] = [
     {
         _id: userid_1,
-        username: 'parentpro',
+        username: "parentpro",
         full_name: "Alex Johnson",
         email: "alex.johnson@example.com",
-        password: "P@ssw0rd123",
+        password:
+            "$2a$10$6bqGx0BuW2KMWOXp7SLxy.Zz/uXxdxmZE0rOkSiyw8fDZ4q3/azly",
         bookmarks: 12,
         progress: [
             { lesson1: true },
@@ -24,10 +25,11 @@ export const usersData: users[] = [
     },
     {
         _id: userid_2,
-        username: 'sleepguru',
+        username: "sleepguru",
         full_name: "Maria Rodriguez",
         email: "maria.rodriguez@example.com",
-        password: "M4ri@R0d!",
+        password:
+            "$2a$10$nVSY1oIMt4lfvWCRR9CzXesCIBecqFdA6dmjCetgzTZGF1tvAE8u6",
         bookmarks: 8,
         progress: [
             { lesson1: true },
@@ -38,10 +40,11 @@ export const usersData: users[] = [
     },
     {
         _id: userid_3,
-        username: 'dadoftwins',
+        username: "dadoftwins",
         full_name: "David Lee",
         email: "david.lee@example.com",
-        password: "Dav1dL33$",
+        password:
+            "$2a$10$1clpr2YlvFE4NP4jziNL9eR22MdzkD.XFUfhdI5DoCwDju9fZv.UW",
         bookmarks: 15,
         progress: [
             { lesson1: false },
@@ -52,10 +55,11 @@ export const usersData: users[] = [
     },
     {
         _id: userid_4,
-        username: 'nutritionistmom',
+        username: "nutritionistmom",
         full_name: "Sophie Brown",
         email: "sophie.brown@example.com",
-        password: "S0ph!3Br0wn",
+        password:
+            "$2a$10$H9BI.esDl6rqWhNQVeppZe./VJVTzFLqJWD88e7Zi5KiqawmMbdrC",
         bookmarks: 10,
         progress: [
             { lesson1: true },
@@ -66,10 +70,11 @@ export const usersData: users[] = [
     },
     {
         _id: userid_5,
-        username: 'newdad123',
+        username: "newdad123",
         full_name: "Liam Smith",
         email: "liam.smith@example.com",
-        password: "L1@msm!th",
+        password:
+            "$2a$10$cjdw4rQpZi45//eXiRkdJuwZjqGjQbsQxPrJES2jylH9HPFSfbTzy",
         bookmarks: 20,
         progress: [
             { lesson1: true },
