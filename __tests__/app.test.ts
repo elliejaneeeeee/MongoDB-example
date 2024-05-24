@@ -213,7 +213,7 @@ describe("POST /api/forums", () => {
     expect(res.status).toBe(400);
   });
 });
-describe.only("GET /api/forums/id", () => {
+describe("GET /api/forums/id", () => {
   test("responds with 200 and forum post object for correct id", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664db460509cc0afb30cc376" } };
@@ -322,7 +322,7 @@ describe("PATCH /api/forums/:id/comments/:id", () => {
   });
   test("400 error for invalid comment id type", async () => {
     const params = {
-      params: { id: "664db45a509cc0afb30cc373", commId: "664jsjso" },
+      params: { id: "664db45a509cc0afb30cc777", commId: "664db4cf509cc0afb30c" },
     };
     const post: {} = {
       inc_votes: 1,

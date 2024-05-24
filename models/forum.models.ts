@@ -1,6 +1,6 @@
 import connect from "../lib/index";
 import { ObjectId } from "mongodb";
-import { forums } from "../__tests__/types";
+
 export async function fetchAllForums() {
   const client = await connect();
   const db = client.db("test");
@@ -20,14 +20,14 @@ export async function getForumPostById(id: string) {
   if (!postWithId) {
     return Promise.reject({ status: 404, msg: "Not Found" });
   }
-
   return postWithId;
 }
 
 export async function postToForum(post: string) {
-  try {
+
     const client = await connect();
     const newForumPost = await JSON.parse(post);
+    
     newForumPost.votes = 0;
     newForumPost.comments = [];
     newForumPost.date = new Date();
@@ -40,21 +40,18 @@ export async function postToForum(post: string) {
     const newPostFromDatabase = await db
       .collection("forums")
       .findOne({ _id: dataFromInsert.insertedId });
-
+        
     return newPostFromDatabase;
-  } catch (error: any) {
-    throw error;
-  }
-}
 
+}
+//refactor
 export async function deleteForumPost(id: string) {
   const client = await connect();
   const db = client.db("test");
   const postID = new ObjectId(id);
-  const deleteResult: { acknowledged: boolean } = await db
-    .collection("forums")
-    .deleteOne({ _id: postID });
-  return deleteResult.acknowledged
-    ? deleteResult
-    : Promise.reject({ status: 500, msg: "Server Error" });
+  const {acknowledged, deletedCount}: {acknowledged: boolean, deletedCount: number } = await db
+  .collection("forums")
+  .deleteOne({ _id: postID });
+  return acknowledged && deletedCount === 1 ? acknowledged : Promise.reject({status: 500, msg: 'Server Error'})
+ 
 }

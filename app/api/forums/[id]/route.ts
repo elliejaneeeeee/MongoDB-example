@@ -3,7 +3,7 @@ import {
   getForumPostById,
   deleteForumPost,
 } from "../../../../models/forum.models";
-import { forums } from "../../../../__tests__/types";
+
 
 export async function GET(
   req: NextRequest,
@@ -11,8 +11,8 @@ export async function GET(
 ) {
   const { id } = params;
   try {
-    const post: {} = await getForumPostById(id);
-    return NextResponse.json({ post }, { status: 200 });
+    const post = await getForumPostById(id);
+    return NextResponse.json({ post } , { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ msg: error.msg }, { status: error.status });
   }
