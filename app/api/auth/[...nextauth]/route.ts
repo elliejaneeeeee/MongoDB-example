@@ -3,6 +3,7 @@ import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import connect from "../../../../lib";
 import bcrypt from "bcryptjs";
+import { NextApiHandler } from "next";
 
 interface Credentials {
     email: string;
@@ -54,6 +55,6 @@ export const authOptions: NextAuthOptions = {
         signIn: "/login",
     },
 };
-const handler = NextAuth(authOptions);
+const handler: NextApiHandler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
