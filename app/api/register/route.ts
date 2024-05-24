@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
+import { insertUser } from "../../../models/users.models";
+import bcrypt from "bcryptjs";
 
 export async function POST(req) {
     try {
         const { name, username, email, password } = await req.json();
-        console.log("Name:", name);
-        console.log("Username:", username);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        insertUser(username, name, email, hashedPassword);
 
         return NextResponse.json({ msg: "User registered" }, { status: 201 });
     } catch (error) {
