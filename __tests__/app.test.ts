@@ -16,7 +16,6 @@ import { GET as getFlashcards } from "../app/api/flashcards/[id]/route";
 import { GET as getForumPost } from "../app/api/forums/[id]/route";
 import { POST as postForumComment } from "../app/api/forums/[id]/comments/route";
 import { PATCH as patchCommentVotes, DELETE as deleteComment, GET as getCommentByID } from "../app/api/forums/[id]/comments/[commId]/route";
-import {PATCH as patchCommentVotes} from '../app/api/forums/[id]/comments/[commId]/route
 import { GET as getCatchAll } from "../app/api/[...slug]/route";
 
 import { GET as getAllArticles } from "../app/api/articles/route";
@@ -520,7 +519,7 @@ describe('DELETE /api/forums/:id/comments/:id', () => {
     const res = await deleteComment(req, params) as NextResponse
     expect(res.status).toBe(400)
   })
-  test.only('only deletes one comment', async () => {
+  test('only deletes one comment', async () => {
     const req = {} as NextRequest;
     const param = {params: { id: "664db460509cc0afb30cc376"}}
     const params = { params: { id: "664db460509cc0afb30cc376", commId: '664db4d6509cc0afb30cc37f'} }
@@ -540,7 +539,5 @@ describe('DELETE /api/forums/:id/comments/:id', () => {
         "date": "2024-05-05T11:00:00.000Z",
         "votes": 14,
   })
-  const res = (await patchCommentVotes(request, params)) as NextResponse;
-  expect(res.status).toBe(404);
   })
 })
