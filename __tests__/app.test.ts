@@ -24,8 +24,8 @@ import {
   GET as getCommentByID,
 } from "../app/api/forums/[id]/comments/[commId]/route";
 import { GET as getCatchAll } from "../app/api/[...slug]/route";
-
 import { GET as getAllArticles } from "../app/api/articles/route";
+import { PATCH as patchUser } from "../app/api/users/[id]/route";
 
 let client: mongoDB.MongoClient;
 let db: mongoDB.Db;
@@ -173,7 +173,7 @@ describe("/api/users", () => {
       } as unknown as NextRequest;
 
       const res = (await postUser(req)) as NextResponse;
-      
+
       const data = await res.json();
 
       expect(res.status).toBe(400);
@@ -194,7 +194,7 @@ describe("/api/users", () => {
       } as unknown as NextRequest;
 
       const res = (await postUser(req)) as NextResponse;
-      
+
       const data = await res.json();
 
       expect(res.status).toBe(400);
@@ -233,6 +233,97 @@ describe("/api/users/:_id", () => {
 
     expect(res.status).toBe(400);
     expect(user.error).toBe("400 Error: Invalid ID Syntax");
+  });
+  describe("PATCH", () => {
+    test("200: Should return a 200 status with the updated key if successful", async () => {
+      const mockJson = jest.fn().mockResolvedValue({
+        body: {
+          password: "alexjohn123",
+        },
+      });
+
+      const params = {
+        params: { _id: "664db5ae509cc0afb30cc382" },
+      };
+
+      const req = {
+        json: mockJson,
+      } as unknown as NextRequest;
+
+      const res = (await patchUser(req, params)) as unknown as NextResponse;
+
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.password).toEqual("alexjohn123");
+    });
+    test("200: Should ignore additional fields", async () => {
+      const mockJson = jest.fn().mockResolvedValue({
+        body: {
+          password: "passwordWithAgeKey",
+          age: 42,
+        },
+      });
+
+      const params = {
+        params: { _id: "664db5ae509cc0afb30cc382" },
+      };
+
+      const req = {
+        json: mockJson,
+      } as unknown as NextRequest;
+
+      const res = (await patchUser(req, params)) as unknown as NextResponse;
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.password).toEqual("passwordWithAgeKey");
+      expect(data).not.toHaveProperty("age");
+    });
+    test("400: Should return a 400 status if the request body fields are missing/malformed", async () => {
+      const mockJson = jest.fn().mockResolvedValue({
+        body: {
+          password: 123345,
+        },
+      });
+
+      const params = {
+        params: { _id: "664db5ae509cc0afb30cc382" },
+      };
+
+      const req = {
+        json: mockJson,
+      } as unknown as NextRequest;
+
+      const res = (await patchUser(req, params)) as unknown as NextResponse;
+
+      const data = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(data.error).toEqual("400 Bad Request");
+    });
+    test("404: Should return with a 404 error if id is not found", async () => {
+      const mockJson = jest.fn().mockResolvedValue({
+        body: {
+          password: 'notAUser',
+        },
+      });
+
+      const params = {
+        params: { _id: "notAUser" },
+      };
+
+      const req = {
+        json: mockJson,
+      } as unknown as NextRequest;
+
+      const res = (await patchUser(req, params)) as unknown as NextResponse;
+
+      const data = await res.json();
+
+      expect(res.status).toBe(404);
+      expect(data.error).toEqual("404 Not Found");
+    })
   });
 });
 
