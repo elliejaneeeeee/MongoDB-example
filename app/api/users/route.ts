@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchAllUsers, insertUser } from "../../../models/users.models";
+import { MongoServerError } from "mongodb";
 
 async function GET(req: NextRequest) {
   const users = await fetchAllUsers();
@@ -8,27 +9,18 @@ async function GET(req: NextRequest) {
 
 async function POST(req: Request) {
   const parsedRequest = await req.json();
-  const { username, full_name, email, password } = parsedRequest.body;
+  try {
+    const { username, full_name, email, password } = parsedRequest.body;
 
-  if (!username || !full_name || !email || !password) {
+    const res: any = await insertUser(username, full_name, email, password)!;
+
+    return NextResponse.json(res, { status: 201 });
+  } catch (error: any) {
     return NextResponse.json(
-      { msg: "400 Error: Missing/Malformed fields" },
+      { error: "400 Error: Bad Request!" },
       { status: 400 }
     );
   }
-
-  const res: any = await insertUser(
-    username,
-    full_name,
-    email,
-    password
-  )!;
-
-  if (res.error) {
-    return NextResponse.json({msg: res.error}, { status: res.status });
-  }
-
-  return NextResponse.json(res, { status: 201 });
 }
 
 export { GET, POST };
