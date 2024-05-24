@@ -41,8 +41,8 @@ export async function DELETE(req: any,
         try{
            await getForumPostById(id)
            await getCommentById(id, commId)
-           await deleteComment(id, commId)
-           return NextResponse.json({status: 200})
+           const isDeleted: boolean = await deleteComment(id, commId)
+           return isDeleted ? NextResponse.json({status: 200}) : Promise.reject({status: 500, msg: 'Server Error'})
         }catch(error: any){
         return NextResponse.json({ msg: error.msg }, { status: error.status })
         }

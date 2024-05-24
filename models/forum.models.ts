@@ -23,9 +23,6 @@ export async function getForumPostById(id: string) {
             return Promise.reject({ status: 404, msg: "Not Found" });
           }
           return postWithId;
-   
-
-  
 }
 
 export async function postToForum(post: string) {
@@ -49,6 +46,10 @@ export async function postToForum(post: string) {
   }
 }
 
-export async function deleteComment(){
-    
+export async function deleteForumPost(id: string){
+    const client = await connect();
+  const db = client.db("test");
+  const postID = new ObjectId(id);
+  const deleteResult = await db.collection('forums').deleteOne({_id: postID})
+  return deleteResult.acknowledged
 }

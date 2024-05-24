@@ -12,7 +12,7 @@ import { POST as postToForums } from "../app/api/forums/route";
 import { GET as getAllUsers } from "../app/api/users/route";
 import { GET as getUserById } from "../app/api/users/[id]/route";
 import { GET as getFlashcards } from "../app/api/flashcards/[id]/route";
-import { GET as getForumPost } from "../app/api/forums/[id]/route";
+import { GET as getForumPost, DELETE as deleteForumPost } from "../app/api/forums/[id]/route";
 import { POST as postForumComment } from "../app/api/forums/[id]/comments/route";
 import { PATCH as patchCommentVotes, DELETE as deleteComment, GET as getCommentByID } from "../app/api/forums/[id]/comments/[commId]/route";
 
@@ -162,7 +162,7 @@ describe("GET /api/flashcards/id", () => {
     expect(errorData.msg).toBe("Not Found");
   });
 });
-describe.only("POST /api/forums", () => {
+describe("POST /api/forums", () => {
   test("returns status 201 with objectID and acknolegement of post", async () => {
     const post: {} = {
       title: "When to start sports?",
@@ -405,4 +405,24 @@ describe('DELETE /api/forums/:id/comments/:id', () => {
         "votes": 14,
   })
   })
+})
+describe.only('DELETE /api/forums/:id', () => {
+  test('returns 200 status for deleted post', async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "664db460509cc0afb30cc376" } };
+    const res = (await deleteForumPost(req, params)) as NextResponse;
+    expect(res.status).toBe(200)
+  })
+  test("400 error for invalid id type", async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "non-valid-idstrajao" } };
+    const res = (await getForumPost(req, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
+  test("404 error for non-existent id", async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "664db45a509cc0afb30cc999" } };
+    const res = (await getForumPost(req, params)) as NextResponse;
+    expect(res.status).toBe(404);
+  });
 })

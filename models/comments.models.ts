@@ -97,10 +97,6 @@ export async function deleteComment(id: string, commId: string) {
   const db = client.db("test");
   const postID = new ObjectId(id);
   const commentID = new ObjectId(commId);
-      const result = await db.collection('forums').updateOne({_id: postID, 'comments._id': commentID},{ $unset: {'comments.$': ''}})
-
-     if (result.modifiedCount === 0) {             //would be server/syntax error as commentID and postID already checked by controller
-    return Promise.reject({status: 500, msg: 'Server Error'})
-      }
-
-      return result}
+      const result = await db.collection('forums').updateOne({_id: postID, 'comments._id': commentID},{ $unset: {'comments.$': ''}})// refactor server error
+      return (result.modifiedCount === 1)
+}
