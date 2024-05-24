@@ -14,4 +14,13 @@ export async function GET(
     return NextResponse.json({ msg: error.msg }, { status: error.status });
   }
 }
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }){
+  const { id } = params;
+  try {
+    const post = await getForumPostById(id);
+    return NextResponse.json({ post }, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ msg: error.msg }, { status: error.status });
+  }
+}
 

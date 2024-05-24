@@ -49,3 +49,6 @@ export async function postToForum(post: string) {
   }
 }
 
+export async function deleteComment(){
+    
+}

@@ -162,7 +162,7 @@ describe("GET /api/flashcards/id", () => {
     expect(errorData.msg).toBe("Not Found");
   });
 });
-describe("POST /api/forums", () => {
+describe.only("POST /api/forums", () => {
   test("returns status 201 with objectID and acknolegement of post", async () => {
     const post: {} = {
       title: "When to start sports?",
@@ -384,7 +384,7 @@ describe('DELETE /api/forums/:id/comments/:id', () => {
     const res = await deleteComment(req, params) as NextResponse
     expect(res.status).toBe(400)
   })
-  test.only('only deletes one comment', async () => {
+  test('only deletes one comment', async () => {
     const req = {} as NextRequest;
     const param ={params: { id: "664db460509cc0afb30cc376"}}
     const params = { params: { id: "664db460509cc0afb30cc376", commId: '664db4d6509cc0afb30cc37f'} }
