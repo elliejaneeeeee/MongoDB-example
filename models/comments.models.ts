@@ -38,11 +38,11 @@ export async function postComment(id: string, commentReq: string) {
   }
   
 }
-
+//refactor so can check forum post id && comment id
 export async function getCommentById(id: string, commId: string) {
   const client = await connect();
   const db = client.db("test");
-  if (commId.length !== 24 || !/^[a-zA-Z0-9]+$/.test(commId)) { //if id is not hexadecimal 24 character string it is invalid (ObjectId format)
+  if(!ObjectId.isValid(commId) || !ObjectId.isValid(id)){
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
   const postID = new ObjectId(id);
@@ -64,11 +64,22 @@ export async function getCommentById(id: string, commId: string) {
       },
     ])
     .toArray(); // returns comment array by forum and comment id
-  if (commentData[0].comments.length === 0) {
+
+  if (commentData.length === 0 || commentData[0].comments.length === 0) { 
     return Promise.reject({ status: 404 , msg: "Not Found" }); // if comment id format valid but not found in database throw 404
   }
 
   return commentData[0].comments[0]; // returns individual comment object matching the comment ID
+}
+//refactor to throw error here
+export async function deleteComment(id: string, commId: string) {
+  
+  const client = await connect();
+  const db = client.db("test");
+  const postID = new ObjectId(id);
+  const commentID = new ObjectId(commId);
+      const {acknowledged, modifiedCount}: {acknowledged: boolean, modifiedCount: number } = await db.collection('forums').updateOne({_id: postID, 'comments._id': commentID},{ $unset: {'comments.$': ''}})// refactor server error
+      return acknowledged && modifiedCount === 1 ? acknowledged : Promise.reject({status: 500, msg: 'Server Error'})
 }
 export async function patchComment(
   id: string,
@@ -79,28 +90,13 @@ export async function patchComment(
   const db = client.db("test");
   const post = new ObjectId(id);
   const comment = new ObjectId(commId);
-
-  try {
-  await db
-      .collection("forums")                
-      .updateOne(
-        { _id: post, "comments._id": comment },       //if request object is not exactly correct database will throw error 
-        { $inc: { "comments.$.votes": parsedVotes } } // as database cannot increment by anything other than integer, so no need to check req obj 
-        );
-} catch (error) {
-    return Promise.reject({status: 400, msg: 'Bad Request'})  //if database throws error it is converted to 400 as all issues with req bodies are 400 errors
-  }
-}
-export async function deleteComment(id: string, commId: string) {
-  
-  const client = await connect();
-  const db = client.db("test");
-  const postID = new ObjectId(id);
-  const commentID = new ObjectId(commId);
-      const result = await db.collection('forums').updateOne({_id: postID, 'comments._id': commentID},{ $unset: {'comments.$': ''}})
-
-     if (result.modifiedCount === 0) {             //would be server/syntax error as commentID and postID already checked by controller
-    return Promise.reject({status: 500, msg: 'Server Error'})
-      }
-
-      return result}
+  const {acknowledged, modifiedCount}: {
+      acknowledged: boolean;
+      matchedCount: number;
+      modifiedCount: number;
+    } = await db.collection("forums").updateOne(
+      { _id: post, "comments._id": comment }, 
+      { $inc: { "comments.$.votes": parsedVotes } } 
+    );
+    return acknowledged && modifiedCount === 1 ? acknowledged : Promise.reject({status: 500, msg: 'Server Error'})
+  } 

@@ -9,7 +9,7 @@ export async function fetchAllForums() {
 }
 
 export async function getForumPostById(id: string) {
-  if (id.length !== 24 || !/^[a-zA-Z0-9]+$/.test(id)) {
+  if (!ObjectId.isValid(id)) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
   const client = await connect();
@@ -24,9 +24,10 @@ export async function getForumPostById(id: string) {
 }
 
 export async function postToForum(post: string) {
-  try {
+
     const client = await connect();
     const newForumPost = await JSON.parse(post);
+    
     newForumPost.votes = 0;
     newForumPost.comments = [];
     newForumPost.date = new Date();
@@ -39,9 +40,20 @@ export async function postToForum(post: string) {
     const newPostFromDatabase = await db
       .collection("forums")
       .findOne({ _id: dataFromInsert.insertedId });
-
+        
     return newPostFromDatabase;
+}
+//refactor
+export async function deleteForumPost(id: string) {
+  try {
+    const client = await connect();
+    const db = client.db("test");
+    const postID = new ObjectId(id);
+    const {acknowledged, deletedCount}: {acknowledged: boolean, deletedCount: number } = await db
+    .collection("forums")
+    .deleteOne({ _id: postID });
+    return acknowledged && deletedCount === 1 ? acknowledged : Promise.reject({status: 500, msg: 'Server Error'})
   } catch (error: any) {
-    throw error;
+    throw error
   }
 }
