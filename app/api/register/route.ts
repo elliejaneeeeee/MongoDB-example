@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { insertUser } from "../../../models/users.models";
 import bcrypt from "bcryptjs";
 
-export async function POST(req) {
+export async function POST(req: NextRequest) {
     try {
         const { name, username, email, password } = await req.json();
         const hashedPassword = await bcrypt.hash(password, 10);

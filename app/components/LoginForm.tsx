@@ -11,7 +11,7 @@ const LoginForm = () => {
 
     const router = useRouter();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
@@ -38,7 +38,7 @@ const LoginForm = () => {
 
     return (
         <div className="grid place-items-center h-screen">
-            <div className="shadow-lg p-5 rounded-lgshadow-lg p-5 rounded-lg border-t-4 border-green-400">
+            <div className="shadow-lg p-5 rounded-lgshadow-lg rounded-lg border-t-4 border-green-400">
                 <h1 className="text-xl font-bold my-4">Log in:</h1>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                     <input

@@ -15,7 +15,7 @@ export const authOptions: NextAuthOptions = {
             name: "credentials",
             credentials: {},
 
-            async authorize(credentials): Promise<any> {
+            async authorize(credentials): Promise<User | null> {
                 const { email, password } = credentials as Credentials;
                 try {
                     const client = await connect();
