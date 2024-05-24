@@ -26,13 +26,12 @@ export default function Home() {
             />
           </Box>
         </Center>
-        <Heading noOfLines={1}>welcome </Heading>
-        <Text>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Facere,
-          necessitatibus ipsa odit excepturi magni, dolor fugit deserunt eius in
-          mollitia, possimus modi incidunt? Quisquam omnis quam adipisci
-          voluptatum repellat atque.
-        </Text>
+        <Center>
+          <Heading noOfLines={1}>Welcome to Parentify</Heading>
+        </Center>
+        <Center>
+          <Button>Sign in</Button>
+        </Center>
       </Container>
     </>
   );
