@@ -7,13 +7,45 @@ const Register = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, Error] = useState("");
+    const [error, setError] = useState("");
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!name || !username || !email || !password) {
+            setError("All fields are required.");
+            return;
+        }
+
+        try {
+            const res = await fetch("api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name,
+                    username,
+                    email,
+                    password,
+                }),
+            });
+            if (res.ok) {
+                const form = e.target;
+                form.reset();
+            } else {
+                console.log("User registration failed");
+            }
+        } catch (error) {
+            console.log("Error during registration");
+        }
+    };
 
     return (
         <div className="grid place-items-center h-screen">
             <div className="shadow-lg p-5 rounded-lgshadow-lg p-5 rounded-lg border-t-4 border-green-400">
                 <h1 className="text-xl font-bold my-4">Register an account:</h1>
-                <form className="flex flex-col gap-3">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                     <input
                         onChange={(e) => setName(e.target.value)}
                         type="text"
