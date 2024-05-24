@@ -476,9 +476,5 @@ test('404 error for non-existent comment id on specific article', async () => {
   });
   const res = (await patchCommentVotes(request, params)) as NextResponse;
   expect(res.status).toBe(404);
+  })
 })
-
-})
-
-  });
-});
