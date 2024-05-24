@@ -10,7 +10,7 @@ const authOptions: NextAuthOptions = {
 
             authorize(credentials, req) {
                 const user = { id: "1" };
-                return user ? Promise.resolve(user) : Promise.resolve(null);
+                return null;
             },
         }),
     ],
