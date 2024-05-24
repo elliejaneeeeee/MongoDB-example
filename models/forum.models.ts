@@ -45,14 +45,15 @@ export async function postToForum(post: string) {
 }
 //refactor
 export async function deleteForumPost(id: string) {
-  const client = await connect();
-  const db = client.db("test");
-  const postID = new ObjectId(id);
-  const {acknowledged, deletedCount}: {acknowledged: boolean, deletedCount: number } = await db
-  .collection("forums")
-  .deleteOne({ _id: postID });
-  return acknowledged && deletedCount === 1 ? acknowledged : Promise.reject({status: 500, msg: 'Server Error'})
+  try {
+    const client = await connect();
+    const db = client.db("test");
+    const postID = new ObjectId(id);
+    const {acknowledged, deletedCount}: {acknowledged: boolean, deletedCount: number } = await db
+    .collection("forums")
+    .deleteOne({ _id: postID });
+    return acknowledged && deletedCount === 1 ? acknowledged : Promise.reject({status: 500, msg: 'Server Error'})
   } catch (error: any) {
-    throw error;
+    throw error
   }
 }
