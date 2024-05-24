@@ -41,17 +41,13 @@ export async function PATCH(
     return NextResponse.json({ msg: error.msg }, { status: error.status });
   }
 }
-export async function DELETE(
-  req: any,
-  { params }: { params: { id: string; commId: string } }
-) {
+export async function DELETE( req: any, { params }: { params: { id: string; commId: string } }) {
   const { id, commId } = params;
   try {
     await getCommentById(id, commId);
-    const isDeleted: boolean = await deleteComment(id, commId);
-    return isDeleted
-      ? NextResponse.json({ status: 200 })
-      : Promise.reject({ status: 500, msg: "Server Error" });
+    const updatedPost: any = await deleteComment(id, commId);
+    
+    return NextResponse.json(updatedPost, { status: 200 })
   } catch (error: any) {
     return NextResponse.json({ msg: error.msg }, { status: error.status });
   }
