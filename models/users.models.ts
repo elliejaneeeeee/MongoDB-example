@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connect from "../lib/index";
-import { ObjectId } from "mongodb";
+import { BSON, BSONType, ObjectId } from "mongodb";
+import { CustomError, updateFields } from "../types";
 
 export async function fetchAllUsers() {
   try {
@@ -69,5 +70,27 @@ export async function insertUser(
     return post;
   } catch (error: any) {
     throw new Error(error);
+  }
+}
+
+export async function updateUser(id: string, fields: updateFields) {
+  
+  const client = await connect()
+  const db = client.db("test")
+  try {
+    const userId = new ObjectId(id)
+    const updatedUser = await db.collection("users").findOneAndUpdate(
+      { _id: userId },
+      { $set: fields  },
+      { returnDocument: 'after' }
+  );
+    return updatedUser
+  }catch (error: any) {
+    
+    if (error.errorResponse.code === 121) {
+      throw new CustomError("400 Bad Request", 400)
+    }
+    
+    throw new CustomError("Resource not found", 404)
   }
 }
