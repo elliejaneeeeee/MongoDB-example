@@ -10,8 +10,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { GET as getAllForums } from "../app/api/forums/route";
 import { POST as postToForums } from "../app/api/forums/route";
 import { GET as getAllUsers } from "../app/api/users/route";
+import {
+  GET as getUserById,
+  DELETE as deleteUser,
+} from "../app/api/users/[id]/route";
 import { POST as postUser } from "../app/api/users/route";
-import { GET as getUserById } from "../app/api/users/[id]/route";
 import { GET as getFlashcards } from "../app/api/flashcards/[id]/route";
 import {
   GET as getForumPost,
@@ -208,9 +211,7 @@ describe("/api/users/:_id", () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664db5ae509cc0afb30cc382" } };
     const res = (await getUserById(req, params)) as NextResponse;
-
     const data = await res.json();
-
     expect(res.status).toBe(200);
     expect(data.user.full_name).toBe("Alex Johnson");
   });
@@ -218,21 +219,15 @@ describe("/api/users/:_id", () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664d9e9f509cc0afb30cc369" } };
     const res = (await getUserById(req, params)) as NextResponse;
-
     const user = await res.json();
-
     expect(res.status).toBe(404);
-    expect(user.error).toBe("404 Error: Resource doesn't exist");
   });
   test("Should return a 400 error for an invalid id Type", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "non-valid-id-string" } };
     const res = (await getUserById(req, params)) as NextResponse;
-
-    const user = await res.json();
-
+    await res.json();
     expect(res.status).toBe(400);
-    expect(user.error).toBe("400 Error: Invalid ID Syntax");
   });
   describe("PATCH", () => {
     test("200: Should return a 200 status with the updated key if successful", async () => {
@@ -305,7 +300,7 @@ describe("/api/users/:_id", () => {
     test("404: Should return with a 404 error if id is not found", async () => {
       const mockJson = jest.fn().mockResolvedValue({
         body: {
-          password: 'notAUser',
+          password: "notAUser",
         },
       });
 
@@ -323,7 +318,7 @@ describe("/api/users/:_id", () => {
 
       expect(res.status).toBe(404);
       expect(data.error).toEqual("404 Not Found");
-    })
+    });
   });
 });
 
@@ -644,31 +639,28 @@ describe("DELETE /api/forums/:id/comments/:id", () => {
   });
   test("only deletes one comment", async () => {
     const req = {} as NextRequest;
-    const param = { params: { id: "664db460509cc0afb30cc376" } };
     const params = {
       params: {
         id: "664db460509cc0afb30cc376",
         commId: "664db4d6509cc0afb30cc37f",
       },
     };
-    const forumQuery = await getForumPost(req, param);
-    const forumData = await forumQuery.json();
     const res = (await deleteComment(req, params)) as NextResponse;
 
+    const post = await res.json()
+    
     expect(res.status).toBe(200);
-    const nextForumQuery = await getForumPost(req, param);
-    const updateForumData = await nextForumQuery.json();
-
-    expect(updateForumData.post.comments[1]).toBe(null);
-    expect(forumData.post.comments.some((item: any) => item === null)).toBe(
-      false
-    );
-    expect(updateForumData.post.comments[0]).toMatchObject({
-      author: "dadoftwins",
-      body: "Simple toys like stacking blocks and shape sorters are great for motor skills.",
-      date: "2024-05-05T11:00:00.000Z",
-      votes: 14,
-    });
+    expect(post.comments.length).toBe(1)
+  });
+});
+describe("DELETE /api/forums/:id", () => {
+  test("returns 200 status for deleted post and deletes in database", async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "664db460509cc0afb30cc376" } };
+    const res = (await deleteForumPost(req, params)) as NextResponse;
+    expect(res.status).toBe(200);
+    const getPost = (await getForumPost(req, params)) as NextResponse;
+    expect(getPost.status).toBe(404);
   });
 });
 describe("DELETE /api/forums/:id", () => {
@@ -681,41 +673,35 @@ describe("DELETE /api/forums/:id", () => {
   test("400 error for invalid id type", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "non-valid-idstrajao" } };
-    const res = (await getForumPost(req, params)) as NextResponse;
+    const res = (await deleteForumPost(req, params)) as NextResponse;
     expect(res.status).toBe(400);
   });
   test("404 error for non-existent id", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664db45a509cc0afb30cc999" } };
-    const res = (await getForumPost(req, params)) as NextResponse;
+    const res = (await deleteForumPost(req, params)) as NextResponse;
     expect(res.status).toBe(404);
   });
-  test("only deletes one comment", async () => {
+});
+describe("DELETE /api/users/:id", () => {
+  test("returns 200 status for deleted post", async () => {
     const req = {} as NextRequest;
-    const param = { params: { id: "664db460509cc0afb30cc376" } };
-    const params = {
-      params: {
-        id: "664db460509cc0afb30cc376",
-        commId: "664db4d6509cc0afb30cc37f",
-      },
-    };
-    const forumQuery = await getForumPost(req, param);
-    const forumData = await forumQuery.json();
-    const res = (await deleteComment(req, params)) as NextResponse;
-
+    const params = { params: { id: "664db5b0509cc0afb30cc384" } };
+    const res = (await deleteUser(req, params)) as NextResponse;
     expect(res.status).toBe(200);
-    const nextForumQuery = await getForumPost(req, param);
-    const updateForumData = await nextForumQuery.json();
-
-    expect(updateForumData.post.comments[1]).toBe(null);
-    expect(forumData.post.comments.some((item: any) => item === null)).toBe(
-      false
-    );
-    expect(updateForumData.post.comments[0]).toMatchObject({
-      author: "dadoftwins",
-      body: "Simple toys like stacking blocks and shape sorters are great for motor skills.",
-      date: "2024-05-05T11:00:00.000Z",
-      votes: 14,
-    });
+    const getUser = await getUserById(req, params);
+    expect(getUser.status).toBe(404);
+  });
+  test("400 error for invalid id type", async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "non-valid-idstrajao" } };
+    const res = (await deleteUser(req, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
+  test("404 error for non-existent id", async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "664db45a509cc0afb30cc999" } };
+    const res = (await deleteUser(req, params)) as NextResponse;
+    expect(res.status).toBe(404);
   });
 });

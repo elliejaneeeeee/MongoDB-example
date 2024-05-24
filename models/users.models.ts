@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import connect from "../lib/index";
-import { BSON, BSONType, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { CustomError, updateFields } from "../types";
 
 export async function fetchAllUsers() {

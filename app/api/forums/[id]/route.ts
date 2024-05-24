@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  getForumPostById,
-  deleteForumPost,
-} from "../../../../models/forum.models";
+import { deleteItem, fetchById } from "../../../../models/utils";
 
 
 export async function GET(
@@ -11,7 +8,7 @@ export async function GET(
 ) {
   const { id } = params;
   try {
-    const post = await getForumPostById(id);
+    const post = await fetchById(id, {coll: "forums"});
     return NextResponse.json({ post } , { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ msg: error.msg }, { status: error.status });
@@ -23,8 +20,8 @@ export async function DELETE(
 ) {
   const { id } = params;
   try {
-    await getForumPostById(id);
-    await deleteForumPost(id);
+    await fetchById(id, {coll: "forums"})
+    await deleteItem(id, {coll: "forums"} );
     return NextResponse.json({ status: 200 });
   } catch (error: any) {
     return NextResponse.json({ msg: error.msg }, { status: error.status });
