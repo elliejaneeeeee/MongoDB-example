@@ -1,0 +1,155 @@
+{
+  "GET /api": {
+    "description": "serves up a json representation of all the available endpoints of the api"
+  },
+
+  "GET /api/articles": {
+    "description": "serves an array of all articles",
+    "exampleResponse": {
+      "_id": "664d9e9f509cc0afb30cc369",
+      "title": "The Importance of Tummy Time",
+      "link": "https://safetosleep.nichd.nih.gov/reduce-risk/tummy-time",
+      "img_url": "https://images.pexels.com/photos/3875132/pexels-photo-3875132.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "body": "Tummy time is essential for your baby's development. It helps strengthen neck, shoulder, and arm muscles, and prevents the back of their head from becoming flat. Aim for several short sessions each day, gradually increasing the time as your baby gets stronger. Always supervise tummy time and make it fun by engaging with toys or laying down face-to-face with your baby.",
+      "source": "US Dpt. Health & Human Services"
+    }
+  },
+
+  "Get /api/users": {
+    "description": "serves an array of all users",
+    "exampleResponse": {
+      "_id": "664db5ae509cc0afb30cc382",
+      "full_name": "Alex Johnson",
+      "email": "alex.johnson@example.com",
+      "password": "P@ssw0rd123",
+      "bookmarks": 12,
+      "progress": [
+        { "lesson1": true },
+        { "lesson2": false },
+        { "lesson3": true },
+        { "lesson4": false }
+      ]
+    }
+  },
+
+  "GET /api/users/:_id": {
+    "description": "serves an array of a user by id",
+    "exampleResponse": {
+      "_id": "664db5af509cc0afb30cc383",
+      "full_name": "Maria Rodriguez",
+      "email": "maria.rodriguez@example.com",
+      "password": "M4ri@R0d!",
+      "bookmarks": 8,
+      "progress": [
+        { "lesson1": true },
+        { "lesson2": true },
+        { "lesson3": false },
+        { "lesson4": false }
+      ]
+    }
+  },
+
+  "GET /api/forums": {
+    "description": "serves an array of forums posts and there comments",
+    "exampleResponse": {
+      "_id": "664db45a509cc0afb30cc373",
+      "title": "Tips for Getting Baby to Sleep Through the Night",
+      "body": "My 6-month-old is having trouble sleeping through the night. Any tips or strategies that have worked for you?",
+      "author": "newmom123",
+      "votes": 15,
+      "date": "2024-05-01T10:00:00.000Z",
+      "comments": [
+        {
+          "_id": "664db4cf509cc0afb30cc378",
+          "author": "parentpro",
+          "body": "Try establishing a bedtime routine. Consistency is key!",
+          "votes": 21,
+          "date": "2024-05-01T11:00:00.000Z"
+        },
+        {
+          "_id": "664db4d0509cc0afb30cc379",
+          "author": "sleepguru",
+          "body": "Make sure the room is dark and cool. White noise can also help.",
+          "votes": 18,
+          "date": "2024-05-01T12:00:00.000Z"
+        }
+      ]
+    }
+  },
+
+  "GET /api/forums/:id": {
+    "description": "serves a forum and comments object by id",
+    "exampleResponse": {
+      "_id": "664db460509cc0afb30cc376",
+      "title": "Best Toys for Baby's Development",
+      "body": "What are some of the best toys for supporting my baby's development?",
+      "author": "toylovingmom",
+      "votes": 22,
+      "date": "2024-05-05T10:00:00.000Z",
+      "comments": [
+        {
+          "_id": "664db4d5509cc0afb30cc37e",
+          "author": "earlyeducator",
+          "body": "Simple toys like stacking blocks and shape sorters are great for motor skills.",
+          "votes": 14,
+          "date": "2024-05-05T11:00:00.000Z"
+        },
+        {
+          "_id": "664db4d6509cc0afb30cc37f",
+          "author": "toyenthusiast",
+          "body": "Soft books with different textures can engage their senses.",
+          "votes": 11,
+          "date": "2024-05-05T12:00:00.000Z"
+        }
+      ]
+    }
+  },
+
+  "GET /api/flashcards/:unit": {
+    "description": "serves an array of a flashcard by id",
+    "exampleResponse": {
+      "_id": "664db20b509cc0afb30cc371",
+      "unit": 4,
+      "section": "6-8 months",
+      "title": "Encouraging Independence",
+      "body": [
+        "Allowing children to make choices and take on responsibilities fosters independence.",
+        "Offer age-appropriate tasks and gradually increase their complexity as your child grows.",
+        "Encourage problem-solving and provide guidance when necessary."
+      ],
+      "img_url": "https://images.pexels.com/photos/1166990/pexels-photo-1166990.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+    }
+  },
+
+  "POST /api/forums": {
+    "description": "creates a new forum",
+    "exampleSend": {
+      "username": "firsttimemom",
+      "title": "When to Start Solid Foods?",
+      "body": "I'm unsure when to start introducing solid foods to my baby. Any advice?"
+    },
+    "exampleResponse": {
+      "_id": "664db45c509cc0afb30cc374",
+      "title": "When to Start Solid Foods?",
+      "body": "I'm unsure when to start introducing solid foods to my baby. Any advice?",
+      "author": "firsttimemom",
+      "votes": 0,
+      "date": "2024-04-28T09:00:00.000Z",
+      "comments": []
+    }
+  },
+
+  "POST api/forums/:id/comments": {
+    "description": "creates a new comment",
+    "exampleSend": {
+      "body": "hello everyone",
+      "author": "joeanne"
+    },
+    "exampleResponse": {
+      "author": "joeanne",
+      "body": "hello everyone",
+      "date": "2024-05-01T10:00:00.000Z",
+      "votes": 0
+    }
+  }
+}
