@@ -42,7 +42,6 @@ export async function postToForum(post: string) {
       .findOne({ _id: dataFromInsert.insertedId });
         
     return newPostFromDatabase;
-
 }
 //refactor
 export async function deleteForumPost(id: string) {
@@ -53,5 +52,7 @@ export async function deleteForumPost(id: string) {
   .collection("forums")
   .deleteOne({ _id: postID });
   return acknowledged && deletedCount === 1 ? acknowledged : Promise.reject({status: 500, msg: 'Server Error'})
- 
+  } catch (error: any) {
+    throw error;
+  }
 }

@@ -1,6 +1,7 @@
-
+import { ObjectId } from "mongodb";
 import connect from "../index";
-
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 export async function seed(usersData: any, flashcardsData:any, forumsData: any, articlesData: any) {
   const client = await connect();
@@ -11,7 +12,6 @@ export async function seed(usersData: any, flashcardsData:any, forumsData: any, 
 
   const articles = db.collection("articles");
   await articles.deleteMany({});
- 
   const forumSchema = {
     bsonType: "object",
     required: ["title", "body", "author", "date", 'comments', 'votes'],
@@ -36,13 +36,15 @@ export async function seed(usersData: any, flashcardsData:any, forumsData: any, 
       }
     }
   };
-  const forums = db.collection('forums')
+
   await db.command({
     collMod: "forums",
     validator: { $jsonSchema: forumSchema },
     validationLevel: "strict",
     validationAction: "error"
-  })
+  });
+  
+  const forums = db.collection('forums')
   await forums.deleteMany({});
 
   const flashcards = db.collection("flashcards");
@@ -54,4 +56,3 @@ export async function seed(usersData: any, flashcardsData:any, forumsData: any, 
   await forums.insertMany(forumsData);
   await articles.insertMany(articlesData);
 }
-
