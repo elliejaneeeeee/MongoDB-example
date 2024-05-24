@@ -1,5 +1,5 @@
 import NextAuth from "next-auth/next";
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import connect from "../../../../lib";
 import bcrypt from "bcryptjs";
@@ -35,7 +35,10 @@ const authOptions: NextAuthOptions = {
                     if (!passwordsMatch) {
                         return null;
                     }
-                    return user;
+                    return {
+                        email: user.email,
+                        name: user.full_name,
+                    } as User;
                 } catch (error) {
                     console.log(error);
                     return null;
