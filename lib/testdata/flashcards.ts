@@ -1,13 +1,6 @@
 import { ObjectId } from "mongodb";
+import { flashcards } from "../../types";
 
-interface flashcards {
-    _id: ObjectId;
-    unit: number;
-    section: string;
-    title: string;
-    body: string[];
-    img_url: string;
-}
 
 const flashcardid_1: ObjectId = new ObjectId("664db207509cc0afb30cc36e");
 const flashcardid_2: ObjectId = new ObjectId("664db209509cc0afb30cc36f");
