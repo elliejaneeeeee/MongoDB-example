@@ -102,7 +102,7 @@ describe("/api/users", () => {
     });
   });
   describe("POST", () => {
-    test("POST 201: Should return a 201 status code with the comment body", async () => {
+    test("POST 201: Should return a 201 status code with the user body", async () => {
       const mockJson = jest.fn().mockResolvedValue({
         body: {
           username: "sofiac",
@@ -169,11 +169,11 @@ describe("/api/users", () => {
       } as unknown as NextRequest;
 
       const res = (await postUser(req)) as NextResponse;
-
+      
       const data = await res.json();
 
       expect(res.status).toBe(400);
-      expect(data.msg).toBe("400 Error: Missing/Malformed fields");
+      expect(data.error).toBe("400 Error: Bad Request!");
     });
     test("POST 400: Should return an error when the username already exists in the database", async () => {
       const mockJson = jest.fn().mockResolvedValue({
@@ -190,11 +190,11 @@ describe("/api/users", () => {
       } as unknown as NextRequest;
 
       const res = (await postUser(req)) as NextResponse;
-
+      
       const data = await res.json();
 
       expect(res.status).toBe(400);
-      expect(data.msg).toBe("400 Error: Username Already Exists!");
+      expect(data.error).toBe("400 Error: Bad Request!");
     });
   });
 });
