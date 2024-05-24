@@ -13,7 +13,10 @@ import { GET as getAllUsers } from "../app/api/users/route";
 import { POST as postUser } from "../app/api/users/route";
 import { GET as getUserById } from "../app/api/users/[id]/route";
 import { GET as getFlashcards } from "../app/api/flashcards/[id]/route";
-import { GET as getForumPost, DELETE as deleteForumPost } from "../app/api/forums/[id]/route";
+import {
+  GET as getForumPost,
+  DELETE as deleteForumPost,
+} from "../app/api/forums/[id]/route";
 import { POST as postForumComment } from "../app/api/forums/[id]/comments/route";
 import {
   PATCH as patchCommentVotes,
@@ -30,7 +33,7 @@ let db: mongoDB.Db;
 beforeAll(async () => {
   client = await connect();
   db = client.db("test");
-  console.log('connected')
+  console.log("connected");
 });
 
 beforeEach(async () => {
@@ -103,7 +106,7 @@ describe("/api/users", () => {
     });
   });
   describe("POST", () => {
-    test("POST 201: Should return a 201 status code with the comment body", async () => {
+    test("POST 201: Should return a 201 status code with the user body", async () => {
       const mockJson = jest.fn().mockResolvedValue({
         body: {
           username: "sofiac",
@@ -174,7 +177,7 @@ describe("/api/users", () => {
       const data = await res.json();
 
       expect(res.status).toBe(400);
-      expect(data.msg).toBe("400 Error: Missing/Malformed fields");
+      expect(data.error).toBe("400 Error: Bad Request!");
     });
     test("POST 400: Should return an error when the username already exists in the database", async () => {
       const mockJson = jest.fn().mockResolvedValue({
@@ -195,7 +198,7 @@ describe("/api/users", () => {
       const data = await res.json();
 
       expect(res.status).toBe(400);
-      expect(data.msg).toBe("400 Error: Username Already Exists!");
+      expect(data.error).toBe("400 Error: Bad Request!");
     });
   });
 });
@@ -349,7 +352,7 @@ describe("POST /api/forums", () => {
       body: JSON.stringify(post),
     });
     const res = (await postToForums(request)) as NextResponse;
-    
+
     expect(res.status).toBe(400);
   });
 });
@@ -462,7 +465,10 @@ describe("PATCH /api/forums/:id/comments/:id", () => {
   });
   test("400 error for invalid comment id type", async () => {
     const params = {
-      params: { id: "664db45a509cc0afb30cc777", commId: "664db4cf509cc0afb30c" },
+      params: {
+        id: "664db45a509cc0afb30cc777",
+        commId: "664db4cf509cc0afb30c",
+      },
     };
     const post: {} = {
       inc_votes: 1,
@@ -496,7 +502,7 @@ describe("PATCH /api/forums/:id/comments/:id", () => {
       params: { id: "664db45a509cc0afb30cc373", commId: "664jsjso" },
     };
     const post: {} = {
-      inc_votes: 'ff',
+      inc_votes: "ff",
     };
     const request = new Request("http://localhost:3001/api/forums", {
       method: "PATCH",
@@ -541,40 +547,46 @@ describe("DELETE /api/forums/:id/comments/:id", () => {
         commId: "664db4d7509cc0a-s",
       },
     };
-    
+
     const res = (await deleteComment(req, params)) as NextResponse;
     expect(res.status).toBe(400);
   });
-  })
-  test('only deletes one comment', async () => {
+  test("only deletes one comment", async () => {
     const req = {} as NextRequest;
-    const param ={params: { id: "664db460509cc0afb30cc376"}}
-    const params = { params: { id: "664db460509cc0afb30cc376", commId: '664db4d6509cc0afb30cc37f'} }
-    const forumQuery = await getForumPost(req, param)
-    const forumData = await forumQuery.json()
-    const res = await deleteComment(req, params) as NextResponse
-    
-    expect(res.status).toBe(200)
-    const nextForumQuery = await getForumPost(req, param)
-    const updateForumData = await nextForumQuery.json()
-    
-    expect(updateForumData.post.comments[1]).toBe(null)
-    expect(forumData.post.comments.some((item: any) => item === null)).toBe(false)
-    expect(updateForumData.post.comments[0]).toMatchObject({ 
-        "author": "earlyeducator",
-        "body": "Simple toys like stacking blocks and shape sorters are great for motor skills.",
-        "date": "2024-05-05T11:00:00.000Z",
-        "votes": 14,
-  })
-  })
-})
-describe('DELETE /api/forums/:id', () => {
-  test('returns 200 status for deleted post', async () => {
+    const param = { params: { id: "664db460509cc0afb30cc376" } };
+    const params = {
+      params: {
+        id: "664db460509cc0afb30cc376",
+        commId: "664db4d6509cc0afb30cc37f",
+      },
+    };
+    const forumQuery = await getForumPost(req, param);
+    const forumData = await forumQuery.json();
+    const res = (await deleteComment(req, params)) as NextResponse;
+
+    expect(res.status).toBe(200);
+    const nextForumQuery = await getForumPost(req, param);
+    const updateForumData = await nextForumQuery.json();
+
+    expect(updateForumData.post.comments[1]).toBe(null);
+    expect(forumData.post.comments.some((item: any) => item === null)).toBe(
+      false
+    );
+    expect(updateForumData.post.comments[0]).toMatchObject({
+      author: "dadoftwins",
+      body: "Simple toys like stacking blocks and shape sorters are great for motor skills.",
+      date: "2024-05-05T11:00:00.000Z",
+      votes: 14,
+    });
+  });
+});
+describe("DELETE /api/forums/:id", () => {
+  test("returns 200 status for deleted post", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664db460509cc0afb30cc376" } };
     const res = (await deleteForumPost(req, params)) as NextResponse;
-    expect(res.status).toBe(200)
-  })
+    expect(res.status).toBe(200);
+  });
   test("400 error for invalid id type", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "non-valid-idstrajao" } };
@@ -587,7 +599,6 @@ describe('DELETE /api/forums/:id', () => {
     const res = (await getForumPost(req, params)) as NextResponse;
     expect(res.status).toBe(404);
   });
-})
   test("only deletes one comment", async () => {
     const req = {} as NextRequest;
     const param = { params: { id: "664db460509cc0afb30cc376" } };
