@@ -15,7 +15,11 @@ import { GET as getUserById } from "../app/api/users/[id]/route";
 import { GET as getFlashcards } from "../app/api/flashcards/[id]/route";
 import { GET as getForumPost } from "../app/api/forums/[id]/route";
 import { POST as postForumComment } from "../app/api/forums/[id]/comments/route";
-import { PATCH as patchCommentVotes, DELETE as deleteComment, GET as getCommentByID } from "../app/api/forums/[id]/comments/[commId]/route";
+import {
+  PATCH as patchCommentVotes,
+  DELETE as deleteComment,
+  GET as getCommentByID,
+} from "../app/api/forums/[id]/comments/[commId]/route";
 import { GET as getCatchAll } from "../app/api/[...slug]/route";
 
 import { GET as getAllArticles } from "../app/api/articles/route";
@@ -344,6 +348,7 @@ describe("POST /api/forums", () => {
       body: JSON.stringify(post),
     });
     const res = (await postToForums(request)) as NextResponse;
+    
     expect(res.status).toBe(400);
   });
 });
@@ -486,58 +491,70 @@ describe("PATCH /api/forums/:id/comments/:id", () => {
     expect(res.status).toBe(404);
   });
 });
-describe('DELETE /api/forums/:id/comments/:id', () => {
-  test('returns 200 for deleted comment and deletes from database', async ()=> {
+describe("DELETE /api/forums/:id/comments/:id", () => {
+  test("returns 200 for deleted comment and deletes from database", async () => {
     const req = {} as NextRequest;
-    const params = { params: { id: "664db460509cc0afb30cc376", commId: '664db4d5509cc0afb30cc37e'} }
-    const queryResponse = await getCommentByID(req, params)
-    expect(queryResponse.status).toBe(200)
-    const res = await deleteComment(req, params) as NextResponse
-    expect(res.status).toBe(200)
-    const queryResponse2 = await getCommentByID(req, params)
-    expect(queryResponse2.status).toBe(404)
-  })
-  test('returns 404 for valid comment id on wrong article id', async () => {
-    const req ={} as NextRequest
+    const params = {
+      params: {
+        id: "664db460509cc0afb30cc376",
+        commId: "664db4d5509cc0afb30cc37e",
+      },
+    };
+    const queryResponse = await getCommentByID(req, params);
+    expect(queryResponse.status).toBe(200);
+    const res = (await deleteComment(req, params)) as NextResponse;
+    expect(res.status).toBe(200);
+    const queryResponse2 = await getCommentByID(req, params);
+    expect(queryResponse2.status).toBe(404);
+  });
+  test("returns 404 for valid comment id on wrong article id", async () => {
+    const req = {} as NextRequest;
     const params = {
       params: {
         id: "664db45a509cc0afb30cc373",
         commId: "664db4d7509cc0afb30cc381",
       },
     };
-    const res = await deleteComment(req, params) as NextResponse
-    expect(res.status).toBe(404)
-  })
-  test('returns 400 for invalid comment ID string', async () => {
-    const req ={} as NextRequest
+    const res = (await deleteComment(req, params)) as NextResponse;
+    expect(res.status).toBe(404);
+  });
+  test("returns 400 for invalid comment ID string", async () => {
+    const req = {} as NextRequest;
     const params = {
       params: {
         id: "664db45a509cc0afb30cc373",
         commId: "664db4d7509cc0a-s",
       },
     };
-    const res = await deleteComment(req, params) as NextResponse
-    expect(res.status).toBe(400)
-  })
-  test('only deletes one comment', async () => {
+    const res = (await deleteComment(req, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
+  test("only deletes one comment", async () => {
     const req = {} as NextRequest;
-    const param = {params: { id: "664db460509cc0afb30cc376"}}
-    const params = { params: { id: "664db460509cc0afb30cc376", commId: '664db4d6509cc0afb30cc37f'} }
-    const forumQuery = await getForumPost(req, param)
-    const forumData = await forumQuery.json()
-    const res = await deleteComment(req, params) as NextResponse
-    
-    expect(res.status).toBe(200)
-    const nextForumQuery = await getForumPost(req, param)
-    const updateForumData = await nextForumQuery.json()
-    
-    expect(updateForumData.post.comments[1]).toBe(null)
-    expect(forumData.post.comments.some((item: any) => item === null)).toBe(false)
-    expect(updateForumData.post.comments[0]).toMatchObject({ 
-        "author": "earlyeducator",
-        "body": "Simple toys like stacking blocks and shape sorters are great for motor skills.",
-        "date": "2024-05-05T11:00:00.000Z",
-        "votes": 14,
-  })
-  })
-})
+    const param = { params: { id: "664db460509cc0afb30cc376" } };
+    const params = {
+      params: {
+        id: "664db460509cc0afb30cc376",
+        commId: "664db4d6509cc0afb30cc37f",
+      },
+    };
+    const forumQuery = await getForumPost(req, param);
+    const forumData = await forumQuery.json();
+    const res = (await deleteComment(req, params)) as NextResponse;
+
+    expect(res.status).toBe(200);
+    const nextForumQuery = await getForumPost(req, param);
+    const updateForumData = await nextForumQuery.json();
+
+    expect(updateForumData.post.comments[1]).toBe(null);
+    expect(forumData.post.comments.some((item: any) => item === null)).toBe(
+      false
+    );
+    expect(updateForumData.post.comments[0]).toMatchObject({
+      author: "dadoftwins",
+      body: "Simple toys like stacking blocks and shape sorters are great for motor skills.",
+      date: "2024-05-05T11:00:00.000Z",
+      votes: 14,
+    });
+  });
+});
