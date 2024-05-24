@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getForumPostById } from "../../../../../models/forum.models";
 import {
   getCommentById,
   postComment,
 } from "../../../../../models/comments.models";
+import { fetchById } from "../../../../../models/utils";
 
 
 
@@ -11,7 +11,7 @@ export async function POST(req: any, { params }: { params: { id: string } }) {
   const { id } = params;
   try {
     const commentReq = await req.json();
-    await getForumPostById(id);
+    await fetchById(id, {coll: 'forums'});
     const commId = await postComment(
       id,
       typeof commentReq === "string" ? commentReq : JSON.stringify(commentReq)

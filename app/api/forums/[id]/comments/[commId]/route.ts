@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getForumPostById } from "../../../../../../models/forum.models";
+
 import {
   deleteComment,
   patchComment,
