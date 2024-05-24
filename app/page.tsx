@@ -10,16 +10,23 @@ import {
   Container,
   Text,
   Heading,
+  Image,
 } from "@chakra-ui/react";
 import { PhoneIcon, AddIcon, WarningIcon } from "@chakra-ui/icons";
 
 export default function Home() {
   return (
     <>
-      <Container maxWidth={"70%"}>
-        <Heading noOfLines={1}>
-          Heading this line is very long and should be cut off
-        </Heading>
+      <Container maxWidth={"80%"}>
+        <Center>
+          <Box boxSize="sm" maxW="md">
+            <Image
+              src="https://www.pngitem.com/pimgs/m/107-1076650_baby-png-icon-children-icon-transparent-png.png"
+              alt="Dan Abramov"
+            />
+          </Box>
+        </Center>
+        <Heading noOfLines={1}>welcome </Heading>
         <Text>
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Facere,
           necessitatibus ipsa odit excepturi magni, dolor fugit deserunt eius in
