@@ -1,8 +1,8 @@
 import { log } from "console";
 import connect from "../../../lib";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req) {
+export async function POST(req: NextRequest) {
     try {
         const client = await connect();
         const db = client.db("test");
