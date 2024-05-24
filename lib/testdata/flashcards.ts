@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { flashcards } from "@/types";
+import { flashcards } from "../../types";
 
 
 const flashcardid_1: ObjectId = new ObjectId("664db207509cc0afb30cc36e");

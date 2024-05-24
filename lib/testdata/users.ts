@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { users } from "@/types";
+import { users } from "../../types";
 
 const userid_1: ObjectId = new ObjectId("664db5ae509cc0afb30cc382");
 const userid_2: ObjectId = new ObjectId("664db5af509cc0afb30cc383");

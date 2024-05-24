@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchAllUsers, insertUser } from "../../../models/users.models";
-import { error, userResponse } from "@/types";
 
 async function GET(req: NextRequest) {
   const users = await fetchAllUsers();

@@ -51,6 +51,7 @@ export interface users {
 
 export interface flashcards {
   _id: ObjectId;
+  unit: number;
   section: string;
   title: string;
   body: string[];
