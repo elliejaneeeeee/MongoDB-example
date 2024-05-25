@@ -9,6 +9,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return <ChakraProvider>{children}</ChakraProvider>;
 }
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode} ) => {
   return <SessionProvider>{children}</SessionProvider>
 }
