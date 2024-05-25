@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Providers, AuthProvider } from "./providers";
+import { fonts } from "./fonts";
 import "../app/globals.css";
 import React from "react";
-import { AuthProvider } from "./Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,9 +18,9 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" className={fonts.rubik.variable}>
             <body className={inter.className}>
-                <AuthProvider>{children}</AuthProvider>
+              <Providers><AuthProvider>{children}</AuthProvider></Providers>
             </body>
         </html>
     );

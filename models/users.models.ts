@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connect from "../lib/index";
 import { ObjectId } from "mongodb";
+import { CustomError, updateFields } from "../types";
 
 export async function fetchAllUsers() {
   try {
@@ -21,31 +22,35 @@ export async function fetchUserById(id: string) {
     const db = client.db("test");
 
     const user = await db.collection("users").findOne({ _id: userId });
-    
+
     if (!user) {
-      return {error: "404 Error: Resource doesn't exist", status: 404}
+      return { error: "404 Error: Resource doesn't exist", status: 404 };
     }
 
-    return user
-
-  } 
-  catch (error) {
-    return {error: "400 Error: Invalid ID Syntax", status: 400}
+    return user;
+  } catch (error) {
+    return { error: "400 Error: Invalid ID Syntax", status: 400 };
   }
 }
 
-export async function insertUser(username: string, full_name: string, email: string, password: string) {
+export async function insertUser(
+  username: string,
+  full_name: string,
+  email: string,
+  password: string
+) {
   try {
-    
     const client = await connect();
     const db = client.db("test");
 
-    const isAlreadyExisting = await db.collection("users").findOne({ username: username })
+    const isAlreadyExisting = await db
+      .collection("users")
+      .findOne({ username: username });
 
     if (isAlreadyExisting) {
-      return {error: "400 Error: Username Already Exists!", status: 400}
+      throw new Error("Username Already Exists!");
     }
-    
+
     const newUser = {
       _id: new ObjectId(),
       username,
@@ -53,15 +58,39 @@ export async function insertUser(username: string, full_name: string, email: str
       email,
       password,
       bookmarks: 0,
-      progress: []
+      progress: [],
+    };
+
+    const status = await db.collection("users").insertOne(newUser);
+    const userPosted = await db
+      .collection("users")
+      .findOne({ _id: status.insertedId });
+    const post = { ...status, ...userPosted };
+
+    return post;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function updateUser(id: string, fields: updateFields) {
+  
+  const client = await connect()
+  const db = client.db("test")
+  try {
+    const userId = new ObjectId(id)
+    const updatedUser = await db.collection("users").findOneAndUpdate(
+      { _id: userId },
+      { $set: fields  },
+      { returnDocument: 'after' }
+  );
+    return updatedUser
+  }catch (error: any) {
+    
+    if (error.errorResponse.code === 121) {
+      throw new CustomError("400 Bad Request", 400)
     }
-
-    const status = await db.collection("users").insertOne(newUser)
-    const userPosted = await db.collection("users").findOne({ _id: status.insertedId });
-    const post = {...status, ...userPosted}
-
-    return post
-  } catch (error) {
-    return {error}
+    
+    throw new CustomError("Resource not found", 404)
   }
 }

@@ -2,5 +2,6 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  setupFiles: ['./jest.setup.js']
+  setupFiles: ['./jest.setup.js'],
+  maxConcurrency: 1,
 };

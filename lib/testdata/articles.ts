@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { articles } from "@/types";
+import { articles } from "../../types";
 
 const articleid_1: ObjectId = new ObjectId("664d9e9f509cc0afb30cc369");
 const articleid_2: ObjectId = new ObjectId("664daab1509cc0afb30cc36a");
