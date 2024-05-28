@@ -23,13 +23,10 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { _id: string } }
-) {
-  const parsedRequest = await req.json();
-  const { _id } = params;
-  const fields = parsedRequest.body;
+export async function PATCH(req: NextRequest,{ params }: { params: { id: string } }) {
+  const fields = await req.json();
+  const { id } = params;
+  
   const allowedFields: string[] = Object.keys(usersSchema.properties);
 
   for (const key in fields) {
@@ -39,10 +36,10 @@ export async function PATCH(
   }
 
   try {
-    const updatedUser = await updateUser(_id, fields);
+    const updatedUser = await updateUser(id, fields);
+    
     return NextResponse.json(updatedUser, { status: 200 });
   } catch (error: any) {
-
     if( error.status ) {
         return NextResponse.json({ error: error.status.msg }, { status: error.status.code });
     }

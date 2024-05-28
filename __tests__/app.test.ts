@@ -132,13 +132,11 @@ describe("/api/users/:_id", () => {
   describe("PATCH", () => {
     test("200: Should return a 200 status with the updated key if successful", async () => {
       const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          password: "alexjohn123",
-        },
-      });
+          email: "alexjohn123@email.com",
+        });
 
       const params = {
-        params: { _id: "664db5ae509cc0afb30cc382" },
+        params: { id: "664db5ae509cc0afb30cc382" },
       };
 
       const req = {
@@ -150,18 +148,16 @@ describe("/api/users/:_id", () => {
       const data = await res.json();
 
       expect(res.status).toBe(200);
-      expect(data.password).toEqual("alexjohn123");
+      expect(data.email).toEqual("alexjohn123@email.com");
     });
     test("200: Should ignore additional fields", async () => {
       const mockJson = jest.fn().mockResolvedValue({
-        body: {
           email: "email@email.com",
           age: 42,
-        },
       });
 
       const params = {
-        params: { _id: "664db5ae509cc0afb30cc382" },
+        params: { id: "664db5ae509cc0afb30cc382" },
       };
 
       const req = {
@@ -177,13 +173,11 @@ describe("/api/users/:_id", () => {
     });
     test("200: Should be able to update bookmarks", async () => {
       const mockJson = jest.fn().mockResolvedValue({
-        body: {
           bookmarks: ['664d9e9f509cc0afb30cc369'],
-        },
       });
 
       const params = {
-        params: { _id: "664db5ae509cc0afb30cc382" },
+        params: { id: "664db5ae509cc0afb30cc382" },
       };
 
       const req = {
@@ -198,13 +192,11 @@ describe("/api/users/:_id", () => {
     });
     test("400: Should return a 400 status if the request body fields are missing/malformed", async () => {
       const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          password: 123345,
-        },
+          password: 123345
       });
 
       const params = {
-        params: { _id: "664db5ae509cc0afb30cc382" },
+        params: { id: "664db5ae509cc0afb30cc382" },
       };
 
       const req = {
@@ -220,13 +212,11 @@ describe("/api/users/:_id", () => {
     });
     test("404: Should return with a 404 error if id is not found", async () => {
       const mockJson = jest.fn().mockResolvedValue({
-        body: {
           password: "notAUser",
-        },
       });
 
       const params = {
-        params: { _id: "notAUser" },
+        params: { id: "notAUser" },
       };
 
       const req = {

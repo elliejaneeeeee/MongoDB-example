@@ -63,6 +63,7 @@ export async function fetchUserById(id: string) {
 }
 
 export async function updateUser(id: string, fields: updateFields) {
+  
   const client = await connect();
   const db = client.db("test");
   try {
@@ -74,8 +75,10 @@ export async function updateUser(id: string, fields: updateFields) {
         { $set: fields },
         { returnDocument: "after" }
       );
+      
     return updatedUser;
   } catch (error: any) {
+    
     if (error.errorResponse.code === 121) {
       throw new CustomError("400 Bad Request", 400);
     }
