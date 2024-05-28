@@ -40,17 +40,14 @@ export async function PATCH(
     return NextResponse.json({ msg: error.msg }, { status: error.status });
   }
 }
+
 export async function DELETE( req: any, { params }: { params: { id: string; commId: string } }) {
   const { id, commId } = params;
   try {
     const commentObj = await getCommentById(id, commId);
     await deleteComment(id, commId, commentObj);
-      return NextResponse.json({ status: 200 })  
+      return NextResponse.json({ status: 200 }) 
       
-    await getCommentById(id, commId);
-    const updatedPost: any = await deleteComment(id, commId);
-    
-    return NextResponse.json(updatedPost, { status: 200 })
   } catch (error: any) {
     return NextResponse.json({ msg: error.msg }, { status: error.status });
   }
