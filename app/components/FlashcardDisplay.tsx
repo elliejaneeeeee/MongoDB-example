@@ -108,8 +108,8 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
                     borderWidth="1px"
                     borderRadius="2xl"
                     overflow="hidden"
-                    width="300px"
-                    height="360px"
+                    width="360px"
+                    height="380px"
                     position="relative"
                     bg={isCompleteCard ? "teal.50" : "white"}
                 >
