@@ -10,17 +10,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { GET as getAllForums } from "../app/api/forums/route";
 import { POST as postToForums } from "../app/api/forums/route";
 import { GET as getAllUsers } from "../app/api/users/route";
+import {
+  GET as getUserById,
+  DELETE as deleteUser,
+} from "../app/api/users/[id]/route";
 import { POST as postUser } from "../app/api/users/route";
-import { GET as getUserById } from "../app/api/users/[id]/route";
 import { GET as getFlashcards } from "../app/api/flashcards/[id]/route";
-
-import {PATCH as patchCommentVotes} from '../app/api/forums/[id]/comments/[commId]/route'
-import { GET as getForumPost } from "../app/api/forums/[id]/route";
+import {
+  GET as getForumPost,
+  DELETE as deleteForumPost,
+} from "../app/api/forums/[id]/route";
 import { POST as postForumComment } from "../app/api/forums/[id]/comments/route";
+import {
+  PATCH as patchCommentVotes,
+  DELETE as deleteComment,
+  GET as getCommentByID,
+} from "../app/api/forums/[id]/comments/[commId]/route";
 import { GET as getCatchAll } from "../app/api/[...slug]/route";
-
-
 import { GET as getAllArticles } from "../app/api/articles/route";
+import { PATCH as patchUser } from "../app/api/users/[id]/route";
 
 let client: mongoDB.MongoClient;
 let db: mongoDB.Db;
@@ -28,6 +36,7 @@ let db: mongoDB.Db;
 beforeAll(async () => {
   client = await connect();
   db = client.db("test");
+  console.log("connected");
 });
 
 beforeEach(async () => {
@@ -100,7 +109,7 @@ describe("/api/users", () => {
     });
   });
   describe("POST", () => {
-    test("POST 201: Should return a 201 status code with the comment body", async () => {
+    test("POST 201: Should return a 201 status code with the user body", async () => {
       const mockJson = jest.fn().mockResolvedValue({
         body: {
           username: "sofiac",
@@ -171,7 +180,7 @@ describe("/api/users", () => {
       const data = await res.json();
 
       expect(res.status).toBe(400);
-      expect(data.msg).toBe("400 Error: Missing/Malformed fields");
+      expect(data.error).toBe("400 Error: Bad Request!");
     });
     test("POST 400: Should return an error when the username already exists in the database", async () => {
       const mockJson = jest.fn().mockResolvedValue({
@@ -192,7 +201,7 @@ describe("/api/users", () => {
       const data = await res.json();
 
       expect(res.status).toBe(400);
-      expect(data.msg).toBe("400 Error: Username Already Exists!");
+      expect(data.error).toBe("400 Error: Bad Request!");
     });
   });
 });
@@ -202,9 +211,7 @@ describe("/api/users/:_id", () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664db5ae509cc0afb30cc382" } };
     const res = (await getUserById(req, params)) as NextResponse;
-
     const data = await res.json();
-
     expect(res.status).toBe(200);
     expect(data.user.full_name).toBe("Alex Johnson");
   });
@@ -212,21 +219,106 @@ describe("/api/users/:_id", () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664d9e9f509cc0afb30cc369" } };
     const res = (await getUserById(req, params)) as NextResponse;
-
     const user = await res.json();
-
     expect(res.status).toBe(404);
-    expect(user.error).toBe("404 Error: Resource doesn't exist");
   });
   test("Should return a 400 error for an invalid id Type", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "non-valid-id-string" } };
     const res = (await getUserById(req, params)) as NextResponse;
-
-    const user = await res.json();
-
+    await res.json();
     expect(res.status).toBe(400);
-    expect(user.error).toBe("400 Error: Invalid ID Syntax");
+  });
+  describe("PATCH", () => {
+    test("200: Should return a 200 status with the updated key if successful", async () => {
+      const mockJson = jest.fn().mockResolvedValue({
+        body: {
+          password: "alexjohn123",
+        },
+      });
+
+      const params = {
+        params: { _id: "664db5ae509cc0afb30cc382" },
+      };
+
+      const req = {
+        json: mockJson,
+      } as unknown as NextRequest;
+
+      const res = (await patchUser(req, params)) as unknown as NextResponse;
+
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.password).toEqual("alexjohn123");
+    });
+    test("200: Should ignore additional fields", async () => {
+      const mockJson = jest.fn().mockResolvedValue({
+        body: {
+          password: "passwordWithAgeKey",
+          age: 42,
+        },
+      });
+
+      const params = {
+        params: { _id: "664db5ae509cc0afb30cc382" },
+      };
+
+      const req = {
+        json: mockJson,
+      } as unknown as NextRequest;
+
+      const res = (await patchUser(req, params)) as unknown as NextResponse;
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.password).toEqual("passwordWithAgeKey");
+      expect(data).not.toHaveProperty("age");
+    });
+    test("400: Should return a 400 status if the request body fields are missing/malformed", async () => {
+      const mockJson = jest.fn().mockResolvedValue({
+        body: {
+          password: 123345,
+        },
+      });
+
+      const params = {
+        params: { _id: "664db5ae509cc0afb30cc382" },
+      };
+
+      const req = {
+        json: mockJson,
+      } as unknown as NextRequest;
+
+      const res = (await patchUser(req, params)) as unknown as NextResponse;
+
+      const data = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(data.error).toEqual("400 Bad Request");
+    });
+    test("404: Should return with a 404 error if id is not found", async () => {
+      const mockJson = jest.fn().mockResolvedValue({
+        body: {
+          password: "notAUser",
+        },
+      });
+
+      const params = {
+        params: { _id: "notAUser" },
+      };
+
+      const req = {
+        json: mockJson,
+      } as unknown as NextRequest;
+
+      const res = (await patchUser(req, params)) as unknown as NextResponse;
+
+      const data = await res.json();
+
+      expect(res.status).toBe(404);
+      expect(data.error).toEqual("404 Not Found");
+    });
   });
 });
 
@@ -333,8 +425,6 @@ describe("POST /api/forums", () => {
       body: JSON.stringify(post),
     });
     const res = (await postToForums(request)) as NextResponse;
-    console.log(res);
-    
     expect(res.status).toBe(400);
   });
   test("returns 400 error for incorrect properties type", async () => {
@@ -348,6 +438,7 @@ describe("POST /api/forums", () => {
       body: JSON.stringify(post),
     });
     const res = (await postToForums(request)) as NextResponse;
+
     expect(res.status).toBe(400);
   });
 });
@@ -385,7 +476,7 @@ describe("POST api/forums/:id/comments", () => {
       body: "hello everyone",
       author: "joeanne",
     };
-    const request = new Request("http://localhost:3001/api/forums", {
+    const request = new NextRequest("http://localhost:3001/api/forums", {
       method: "POST",
       body: JSON.stringify(post),
     });
@@ -404,7 +495,7 @@ describe("POST api/forums/:id/comments", () => {
       body: "hello everyone",
       author: "joeanne",
     };
-    const request = new Request("http://localhost:3001/api/forums", {
+    const request = new NextRequest("http://localhost:3001/api/forums", {
       method: "POST",
       body: JSON.stringify(post),
     });
@@ -417,7 +508,7 @@ describe("POST api/forums/:id/comments", () => {
       body: "hello everyone",
       author: "joeanne",
     };
-    const request = new Request("http://localhost:3001/api/forums", {
+    const request = new NextRequest("http://localhost:3001/api/forums", {
       method: "POST",
       body: JSON.stringify(post),
     });
@@ -430,19 +521,24 @@ describe("POST api/forums/:id/comments", () => {
       bod: "hello everyone",
       author: "",
     };
-    const request = new Request("http://localhost:3001/api/forums", {
+    const request = new NextRequest("http://localhost:3001/api/forums", {
       method: "POST",
       body: JSON.stringify(post),
     });
     const res = (await postForumComment(request, params)) as NextResponse;
     expect(res.status).toBe(400);
-  })
-})
-describe('PATCH /api/forums/:id/comments/:id', () => {
-  test('returns a 201 status and new votes object', async () => {
-    const params = { params: { id: "664db45a509cc0afb30cc373", commId: '664db4cf509cc0afb30cc378' } }
+  });
+});
+describe("PATCH /api/forums/:id/comments/:id", () => {
+  test("returns a 201 status and new votes object", async () => {
+    const params = {
+      params: {
+        id: "664db45a509cc0afb30cc373",
+        commId: "664db4cf509cc0afb30cc378",
+      },
+    };
     const post: {} = {
-     inc_votes: -1,
+      inc_votes: -1,
     };
     const request = new Request("http://localhost:3001/api/forums", {
       method: "PATCH",
@@ -450,31 +546,162 @@ describe('PATCH /api/forums/:id/comments/:id', () => {
     });
     const res = (await patchCommentVotes(request, params)) as NextResponse;
     const { response } = await res.json();
-    expect(res.status).toBe(200)
-    expect(response.votes).toBe(9)
-})
-test('400 error for invalid comment id type', async () => {
-  const params = { params: { id: "664db45a509cc0afb30cc373", commId: '664jsjso' } };
-  const post: {} = {
-    inc_votes: 1
-  };
-  const request = new Request("http://localhost:3001/api/forums", {
-    method: "PATCH",
-    body: JSON.stringify(post),
+    expect(res.status).toBe(200);
+    expect(response.votes).toBe(9);
   });
-  const res = (await patchCommentVotes(request, params)) as NextResponse;
-  expect(res.status).toBe(400);
-})
-test('404 error for non-existent comment id on specific article', async () => {
-  const params = { params: { id: "664db45a509cc0afb30cc373", commId: '664db4d6509cc0afb30cc37f'} };
-  const post: {} = {
-    inc_votes: 1
-  };
-  const request = new Request("http://localhost:3001/api/forums", {
-    method: "PATCH",
-    body: JSON.stringify(post),
+  test("400 error for invalid comment id type", async () => {
+    const params = {
+      params: {
+        id: "664db45a509cc0afb30cc777",
+        commId: "664db4cf509cc0afb30c",
+      },
+    };
+    const post: {} = {
+      inc_votes: 1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchCommentVotes(request, params)) as NextResponse;
+    expect(res.status).toBe(400);
   });
-  const res = (await patchCommentVotes(request, params)) as NextResponse;
-  expect(res.status).toBe(404);
-  })
-})
+  test("404 error for non-existent comment id on specific article", async () => {
+    const params = {
+      params: {
+        id: "664db45a509cc0afb30cc373",
+        commId: "664db4d6509cc0afb30cc37f",
+      },
+    };
+    const post: {} = {
+      inc_votes: 1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchCommentVotes(request, params)) as NextResponse;
+    expect(res.status).toBe(404);
+  });
+  test("400 error for invalid body", async () => {
+    const params = {
+      params: { id: "664db45a509cc0afb30cc373", commId: "664jsjso" },
+    };
+    const post: {} = {
+      inc_votes: "ff",
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchCommentVotes(request, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
+});
+describe("DELETE /api/forums/:id/comments/:id", () => {
+  test("returns 200 for deleted comment and deletes from database", async () => {
+    const req = {} as NextRequest;
+    const params = {
+      params: {
+        id: "664db460509cc0afb30cc376",
+        commId: "664db4d5509cc0afb30cc37e",
+      },
+    };
+    const queryResponse = await getCommentByID(req, params);
+    expect(queryResponse.status).toBe(200);
+    const res = (await deleteComment(req, params)) as NextResponse;
+    expect(res.status).toBe(200);
+    const queryResponse2 = await getCommentByID(req, params);
+    expect(queryResponse2.status).toBe(404);
+  });
+  test("returns 404 for valid comment id on wrong article id", async () => {
+    const req = {} as NextRequest;
+    const params = {
+      params: {
+        id: "664db45a509cc0afb30cc373",
+        commId: "664db4d7509cc0afb30cc381",
+      },
+    };
+    const res = (await deleteComment(req, params)) as NextResponse;
+    expect(res.status).toBe(404);
+  });
+  test("returns 400 for invalid comment ID string", async () => {
+    const req = {} as NextRequest;
+    const params = {
+      params: {
+        id: "664db45a509cc0afb30cc373",
+        commId: "664db4d7509cc0a-s",
+      },
+    };
+
+    const res = (await deleteComment(req, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
+  test("only deletes one comment", async () => {
+    const req = {} as NextRequest;
+    const params = {
+      params: {
+        id: "664db460509cc0afb30cc376",
+        commId: "664db4d6509cc0afb30cc37f",
+      },
+    };
+    const res = (await deleteComment(req, params)) as NextResponse;
+
+    const post = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(post.comments.length).toBe(1);
+  });
+});
+describe("DELETE /api/forums/:id", () => {
+  test("returns 200 status for deleted post and deletes in database", async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "664db460509cc0afb30cc376" } };
+    const res = (await deleteForumPost(req, params)) as NextResponse;
+    expect(res.status).toBe(200);
+    const getPost = (await getForumPost(req, params)) as NextResponse;
+    expect(getPost.status).toBe(404);
+  });
+});
+describe("DELETE /api/forums/:id", () => {
+  test("returns 200 status for deleted post", async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "664db460509cc0afb30cc376" } };
+    const res = (await deleteForumPost(req, params)) as NextResponse;
+    expect(res.status).toBe(200);
+  });
+  test("400 error for invalid id type", async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "non-valid-idstrajao" } };
+    const res = (await deleteForumPost(req, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
+  test("404 error for non-existent id", async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "664db45a509cc0afb30cc999" } };
+    const res = (await deleteForumPost(req, params)) as NextResponse;
+    expect(res.status).toBe(404);
+  });
+});
+describe("DELETE /api/users/:id", () => {
+  test("returns 200 status for deleted post", async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "664db5b0509cc0afb30cc384" } };
+    const res = (await deleteUser(req, params)) as NextResponse;
+    expect(res.status).toBe(200);
+    const getUser = await getUserById(req, params);
+    expect(getUser.status).toBe(404);
+  });
+  test("400 error for invalid id type", async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "non-valid-idstrajao" } };
+    const res = (await deleteUser(req, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
+  test("404 error for non-existent id", async () => {
+    const req = {} as NextRequest;
+    const params = { params: { id: "664db45a509cc0afb30cc999" } };
+    const res = (await deleteUser(req, params)) as NextResponse;
+    expect(res.status).toBe(404);
+  });
+});

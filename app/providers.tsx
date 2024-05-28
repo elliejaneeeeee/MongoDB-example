@@ -1,8 +1,9 @@
-// app/providers.tsx
 "use client";
+import { SessionProvider } from "next-auth/react";
+import React, { FC, PropsWithChildren } from "react";
 
-import { ChakraProvider } from "@chakra-ui/react";
+type AuthProviderProps = PropsWithChildren;
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  return <ChakraProvider>{children}</ChakraProvider>;
-}
+export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
+    return <SessionProvider>{children}</SessionProvider>;
+};

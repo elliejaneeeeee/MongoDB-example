@@ -1,8 +1,16 @@
 import { ObjectId } from "mongodb";
 
-export interface error {
-  error: string;
-  status: number;
+export class CustomError extends Error {
+  status: errorMsg
+  
+  constructor(msg: string, status: number) {
+    super(msg)
+    this.status = { code: status, msg}
+  }
+}
+export interface errorMsg {
+  code: number,
+  msg: string
 }
 
 export interface userResponse {
@@ -65,4 +73,11 @@ export interface articles {
   img_url: string;
   body: string;
   source: string;
+}
+
+export interface updateFields {
+  username?: string,
+  password?: string,
+  full_name?: string,
+  email?: string,
 }
