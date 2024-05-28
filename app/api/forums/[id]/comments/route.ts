@@ -11,12 +11,9 @@ export async function POST(
 ) {
   const { id } = params;
   try {
-    const commentReq = await req.json();
+    const reqBody = await req.json();
     await fetchById(id, { coll: "forums" });
-    const commId = await postComment(
-      id,
-      typeof reqBody === "string" ? reqBody : JSON.stringify(reqBody)
-    ); //returns comment ID of inserted comment
+    const commId = await postComment(id,typeof reqBody === "string" ? reqBody : JSON.stringify(reqBody)); //returns comment ID of inserted comment
     const comment = await getCommentById(id, commId);
     return NextResponse.json({ comment }, { status: 201 });
   } catch (error: any) {
