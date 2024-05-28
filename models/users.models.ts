@@ -3,17 +3,14 @@ import { error } from "console";
 import { ObjectId } from "mongodb";
 import { CustomError, updateFields } from "../types";
 
-export async function patchUserBookmarks(id: string, reqBody: string) {
-  const parsedObj = JSON.parse(reqBody);
+export async function patchUserBookmarks(id: string, reqBody: any) {
+  const parsedObj = reqBody
   const client = await connect();
   const db = client.db("test");
   const userID = new ObjectId(id);
   try {
-    if (!parsedObj.hasOwnProperty("type") || !parsedObj.hasOwnProperty("_id")) {
-      throw error;
-    } else if (parsedObj.type !== "articles" && parsedObj.type !== "forums") {
-      throw error;
-    } else if (!ObjectId.isValid(parsedObj._id)) {
+  
+     if (!ObjectId.isValid(parsedObj._id)) {
       throw error;
     }
     let successfulUpdate: boolean;
@@ -21,18 +18,18 @@ export async function patchUserBookmarks(id: string, reqBody: string) {
       .collection("users")
       .findOne({
         _id: userID,
-        bookmarks: { $elemMatch: { _id: parsedObj._id } },
+        bookmarks: { $in: [parsedObj._id ]},
       });
-
+    
     if (bookmarkExists) {
       const { acknowledged }: { acknowledged: boolean } = await db
         .collection("users")
-        .updateOne({ _id: userID }, { $pull: { bookmarks: parsedObj } });
+        .updateOne({ _id: userID }, { $pull: { bookmarks: parsedObj._id } });
       successfulUpdate = acknowledged;
     } else {
       const { acknowledged }: { acknowledged: boolean } = await db
         .collection("users")
-        .updateOne({ _id: userID }, { $push: { bookmarks: parsedObj } });
+        .updateOne({ _id: userID }, { $push: { bookmarks: parsedObj._id } });
       successfulUpdate = acknowledged;
     }
 
@@ -62,16 +59,18 @@ export async function fetchUserById(id: string) {
   }
 }
 
-export async function updateUser(id: string, fields: updateFields) {
+export async function updateUser(id: string, reqBody: updateFields) {
   const client = await connect();
   const db = client.db("test");
   try {
+    
     const userId = new ObjectId(id);
+    
     const updatedUser = await db
       .collection("users")
       .findOneAndUpdate(
         { _id: userId },
-        { $set: fields },
+        { $set: reqBody },
         { returnDocument: "after" }
       );
     return updatedUser;

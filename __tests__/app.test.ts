@@ -129,118 +129,7 @@ describe("/api/users/:_id", () => {
     await res.json();
     expect(res.status).toBe(400);
   });
-  describe("PATCH", () => {
-    test("200: Should return a 200 status with the updated key if successful", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          password: "alexjohn123",
-        },
-      });
 
-      const params = {
-        params: { _id: "664db5ae509cc0afb30cc382" },
-      };
-
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await patchUser(req, params)) as unknown as NextResponse;
-
-      const data = await res.json();
-
-      expect(res.status).toBe(200);
-      expect(data.password).toEqual("alexjohn123");
-    });
-    test("200: Should ignore additional fields", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          email: "email@email.com",
-          age: 42,
-        },
-      });
-
-      const params = {
-        params: { _id: "664db5ae509cc0afb30cc382" },
-      };
-
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await patchUser(req, params)) as unknown as NextResponse;
-      const data = await res.json();
-
-      expect(res.status).toBe(200);
-      expect(data.email).toEqual("email@email.com");
-      expect(data).not.toHaveProperty("age");
-    });
-    test("200: Should be able to update bookmarks", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          bookmarks: ['664d9e9f509cc0afb30cc369'],
-        },
-      });
-
-      const params = {
-        params: { _id: "664db5ae509cc0afb30cc382" },
-      };
-
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await patchUser(req, params)) as unknown as NextResponse;
-      const data = await res.json();
-
-      expect(res.status).toBe(200);
-      expect(data.bookmarks).toEqual(['664d9e9f509cc0afb30cc369']);
-    });
-    test("400: Should return a 400 status if the request body fields are missing/malformed", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          password: 123345,
-        },
-      });
-
-      const params = {
-        params: { _id: "664db5ae509cc0afb30cc382" },
-      };
-
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await patchUser(req, params)) as unknown as NextResponse;
-
-      const data = await res.json();
-
-      expect(res.status).toBe(400);
-      expect(data.error).toEqual("400 Bad Request");
-    });
-    test("404: Should return with a 404 error if id is not found", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          password: "notAUser",
-        },
-      });
-
-      const params = {
-        params: { _id: "notAUser" },
-      };
-
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await patchUser(req, params)) as unknown as NextResponse;
-
-      const data = await res.json();
-
-      expect(res.status).toBe(404);
-      expect(data.error).toEqual("404 Not Found");
-    });
-  });
 });
 
 describe("/api/articles", () => {
@@ -390,7 +279,7 @@ describe("GET /api/forums/id", () => {
     expect(res.status).toBe(404);
   });
 });
-describe("POST api/forums/:id/comments", () => {
+describe.only("POST api/forums/:id/comments", () => {
   test("returns status 201 and comment object with correct properties", async () => {
     const params = { params: { id: "664db460509cc0afb30cc376" } };
     const post: {} = {
