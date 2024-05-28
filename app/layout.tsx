@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import {  AuthProvider } from "./providers";
+import { AuthProvider } from "./providers";
 import { fonts } from "./fonts";
 import "../app/globals.css";
 import React from "react";
+import { ChakraProvider } from "@chakra-ui/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,9 @@ export default function RootLayout({
     return (
         <html lang="en" className={fonts.rubik.variable}>
             <body className={inter.className}>
-              <AuthProvider>{children}</AuthProvider>
+                <AuthProvider>
+                    <ChakraProvider>{children}</ChakraProvider>
+                </AuthProvider>
             </body>
         </html>
     );

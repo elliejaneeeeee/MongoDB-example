@@ -2,9 +2,12 @@
 import NavBar from "@/app/components/NavBar";
 import { flashcards as flashcardType, flashcardsResponse } from "@/types";
 import React, { useEffect, useState } from "react";
+import { Box, Image, Text, VStack, Button, Flex } from "@chakra-ui/react";
+import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 
 export default function Flashcard({ params }: { params: { id: string } }) {
     const [flashcard, setFlashcard] = useState<flashcardType | null>(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -28,6 +31,18 @@ export default function Flashcard({ params }: { params: { id: string } }) {
         console.log(flashcard);
     }, [params.id]);
 
+    const handleNext = () => {
+        if (flashcard && currentIndex < flashcard.body.length) {
+            setCurrentIndex(currentIndex + 1);
+        }
+    };
+
+    const handlePrev = () => {
+        if (currentIndex > 0) {
+            setCurrentIndex(currentIndex - 1);
+        }
+    };
+
     if (error) {
         return (
             <>
@@ -46,20 +61,46 @@ export default function Flashcard({ params }: { params: { id: string } }) {
         );
     }
 
+    const isImageCard = currentIndex === 0;
+    const bodyContent = isImageCard ? (
+        <Image src={flashcard.img_url} alt={flashcard.title} />
+    ) : (
+        <Text>{flashcard.body[currentIndex - 1]}</Text>
+    );
+
     return (
         <>
             <NavBar />
-            <div>
-                <h1>{flashcard.title}</h1>
-                <p>Section: {flashcard.section}</p>
-                <p>Unit: {flashcard.unit}</p>
-                <div>
-                    {flashcard.body.map((paragraph, index) => (
-                        <p key={index}>{paragraph}</p>
-                    ))}
-                </div>
-                <img src={flashcard.img_url} alt={flashcard.title} />
-            </div>
+            <Flex justifyContent="center" alignItems="center" height="100vh">
+                <Box
+                    p={5}
+                    borderWidth="1px"
+                    borderRadius="lg"
+                    overflow="hidden"
+                    width="300px"
+                >
+                    <Text fontSize="2xl" mb={4}>
+                        {flashcard.title}
+                    </Text>
+                    {bodyContent}
+                    <Flex mt={4} justifyContent="space-between">
+                        <Button
+                            onClick={handlePrev}
+                            disabled={currentIndex === 0}
+                            leftIcon={<ArrowBackIcon />}
+                        >
+                            Previous
+                        </Button>
+                        <Button
+                            onClick={handleNext}
+                            disabled={currentIndex === flashcard.body.length}
+                            rightIcon={<ArrowForwardIcon />}
+                        >
+                            Next
+                        </Button>
+                    </Flex>
+                </Box>
+            </Flex>
         </>
     );
 }
