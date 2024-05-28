@@ -141,7 +141,7 @@ const RegisterForm = () => {
                     )}
                     <Text mt={8} textAlign="right">
                         Already registered?{" "}
-                        <Link href="/register" color="teal.500">
+                        <Link href="/login" color="teal.500">
                             <Button variant="outline" color="teal.500">
                                 Log in here
                             </Button>
