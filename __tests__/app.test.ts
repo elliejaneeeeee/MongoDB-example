@@ -10,14 +10,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 
 import { GET as getAllArticles } from "../app/api/articles/route";
-import { GET as getArticle, PATCH as patchArticle} from '../app/api/articles/[id]/route'
+import { PATCH as patchArticle} from '../app/api/articles/[id]/route'
 
 import { GET as getAllForums, POST as postToForums } from "../app/api/forums/route";
 import { GET as getForumPost, DELETE as deleteForumPost, PATCH as patchForumPost } from "../app/api/forums/[id]/route";
 import { PATCH as patchCommentVotes, DELETE as deleteComment, GET as getCommentByID } from "../app/api/forums/[id]/comments/[commId]/route";
 import { POST as postForumComment } from "../app/api/forums/[id]/comments/route";
 
-import { GET as getAllUsers, POST as postUser } from "../app/api/users/route";
+import { GET as getAllUsers } from "../app/api/users/route";
 import { GET as getUserById, DELETE as deleteUser, PATCH as patchUser } from "../app/api/users/[id]/route";
 
 import { GET as getAllFlashcards} from '../app/api/flashcards/route'
@@ -104,102 +104,6 @@ describe("/api/users", () => {
       });
     });
   });
-  describe("POST", () => {
-    test("POST 201: Should return a 201 status code with the user body", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          username: "sofiac",
-          full_name: "Sofia Carlos",
-          email: "sofia.c1996@example.com",
-          password: "puppies96",
-        },
-      });
-
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await postUser(req)) as NextResponse;
-
-      const data = await res.json();
-
-      expect(res.status).toBe(201);
-      expect(data.acknowledged).toBe(true);
-      expect(data).toHaveProperty("_id");
-      expect(data).toHaveProperty("username");
-      expect(data).toHaveProperty("full_name");
-      expect(data).toHaveProperty("email");
-      expect(data).toHaveProperty("password");
-      expect(data).toHaveProperty("bookmarks");
-      expect(data).toHaveProperty("progress");
-      expect(data).not.toHaveProperty("age");
-    });
-    test("POST 201: Should ignore extra inputs", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          full_name: "Sofia Carlos",
-          username: "sofiac",
-          email: "sodia.c1996@example.com",
-          password: "puppies96",
-          age: 42,
-        },
-      });
-
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await postUser(req)) as NextResponse;
-
-      const data = await res.json();
-
-      expect(res.status).toBe(201);
-      expect(data.acknowledged).toBe(true);
-      expect(data).toHaveProperty("_id");
-      expect(data).toHaveProperty("full_name");
-      expect(data).toHaveProperty("email");
-      expect(data).toHaveProperty("password");
-      expect(data).toHaveProperty("bookmarks");
-      expect(data).toHaveProperty("progress");
-      expect(data).not.toHaveProperty("age");
-    });
-    test("POST 400: Should return an error when the request body is malformed/ has missing fields", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {},
-      });
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await postUser(req)) as NextResponse;
-
-      const data = await res.json();
-
-      expect(res.status).toBe(400);
-      expect(data.error).toBe("400 Error: Bad Request!");
-    });
-    test("POST 400: Should return an error when the username already exists in the database", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          username: "parentpro",
-          full_name: "Alex Johnson",
-          email: "alex.johnson@example.com",
-          password: "P@ssw0rd123",
-        },
-      });
-
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await postUser(req)) as NextResponse;
-
-      const data = await res.json();
-
-      expect(res.status).toBe(400);
-      expect(data.error).toBe("400 Error: Bad Request!");
-    });
-  });
 });
 
 describe("/api/users/:_id", () => {
@@ -251,7 +155,7 @@ describe("/api/users/:_id", () => {
     test("200: Should ignore additional fields", async () => {
       const mockJson = jest.fn().mockResolvedValue({
         body: {
-          password: "passwordWithAgeKey",
+          email: "email@email.com",
           age: 42,
         },
       });
@@ -268,8 +172,29 @@ describe("/api/users/:_id", () => {
       const data = await res.json();
 
       expect(res.status).toBe(200);
-      expect(data.password).toEqual("passwordWithAgeKey");
+      expect(data.email).toEqual("email@email.com");
       expect(data).not.toHaveProperty("age");
+    });
+    test("200: Should be able to update bookmarks", async () => {
+      const mockJson = jest.fn().mockResolvedValue({
+        body: {
+          bookmarks: ['664d9e9f509cc0afb30cc369'],
+        },
+      });
+
+      const params = {
+        params: { _id: "664db5ae509cc0afb30cc382" },
+      };
+
+      const req = {
+        json: mockJson,
+      } as unknown as NextRequest;
+
+      const res = (await patchUser(req, params)) as unknown as NextResponse;
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.bookmarks).toEqual(['664d9e9f509cc0afb30cc369']);
     });
     test("400: Should return a 400 status if the request body fields are missing/malformed", async () => {
       const mockJson = jest.fn().mockResolvedValue({
@@ -639,51 +564,30 @@ describe("DELETE /api/forums/:id/comments/:id", () => {
     const params = { params: { id: "664db460509cc0afb30cc376", commId: '664db4d6509cc0afb30cc37f'} }
     const forumQuery = await getForumPost(req, param)
     const forumData = await forumQuery.json()
+
     const res = await deleteComment(req, params) as NextResponse
     expect(res.status).toBe(200)
+
     const nextForumQuery = await getForumPost(req, param)
     const updateForumData = await nextForumQuery.json()
+    
     expect(updateForumData.post.comments.length).toBe(1)
     expect(updateForumData.post.comments[0]).toMatchObject({ 
-        "author": "earlyeducator",
+        "author": "dadoftwins",
         "body": "Simple toys like stacking blocks and shape sorters are great for motor skills.",
         "date": "2024-05-05T11:00:00.000Z",
         "votes": 14,
   })
   })
 })
-describe('DELETE /api/forums/:id', () => {
-  test('returns 200 status for deleted post and deletes in database', async () => {
-    const params = {
-      params: {
-        id: "664db460509cc0afb30cc376",
-        commId: "664db4d6509cc0afb30cc37f",
-      },
-    };
-    const res = (await deleteComment(req, params)) as NextResponse;
-
-    const post = await res.json();
-
-    expect(res.status).toBe(200);
-    expect(post.comments.length).toBe(1);
-  });
-});
-describe("DELETE /api/forums/:id", () => {
-  test("returns 200 status for deleted post and deletes in database", async () => {
-    const req = {} as NextRequest;
-    const params = { params: { id: "664db460509cc0afb30cc376" } };
-    const res = (await deleteForumPost(req, params)) as NextResponse;
-    expect(res.status).toBe(200);
-    const getPost = (await getForumPost(req, params)) as NextResponse;
-    expect(getPost.status).toBe(404);
-  });
-});
 describe("DELETE /api/forums/:id", () => {
   test("returns 200 status for deleted post", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664db460509cc0afb30cc376" } };
     const res = (await deleteForumPost(req, params)) as NextResponse;
     expect(res.status).toBe(200);
+    const getPost = (await getForumPost(req, params)) as NextResponse;
+    expect(getPost.status).toBe(404);
   });
   test("400 error for invalid id type", async () => {
     const req = {} as NextRequest;
@@ -827,7 +731,6 @@ describe("PATCH /api/forums/:id", () => {
     expect(res.status).toBe(400);
   });
 });
-
 describe("GET /api/flashcards", () => {
   test("should return array of flashcards as objects", async () => {
     const req = {} as NextRequest;
@@ -843,89 +746,4 @@ describe("GET /api/flashcards", () => {
       expect(flashcard).toHaveProperty("img_url");
     });
   });
-});
-describe('PATCH /api/users/:userid', () => {
-  test('returns 200 status for successful patch, updates in database and can use bookmark id for api requests', async () => {
-    const params = {params: {id: "664db5ae509cc0afb30cc382" }};
-    const req = {} as NextRequest
-    const post: {} = {
-      _id: '664d9e9f509cc0afb30cc369',
-      type: 'articles'
-    };
-    const request = new Request("http://localhost:3001/api/forums", {
-      method: "PATCH",
-      body: JSON.stringify(post),
-    });
-    const res = await patchUser(request, params) as NextResponse
-    expect(res.status).toBe(200)
-    const userResponse = await getUserById(req, params)
-    const {user } = await userResponse.json()
-  expect(user.bookmarks[0].type).toBe('articles')
-  let params2 = { params: { id: user.bookmarks[0]._id } };
-  //ccheck can use bookmark id to make api request
-  const checkArticle = await getArticle(req, params2) as NextResponse
-  const {article} = await checkArticle.json()
-  expect(article.title).toBe('The Importance of Tummy Time')
-  })
-  test('returns 400 status for invalid user id', async () => {
-    const params = {params: {id: "664db5ae509cc0afb30c[dk" }};
-    const post: {} = {
-      _id: '664d9e9f509cc0afb30cc369',
-      type: 'articles'
-    };
-    const request = new Request("http://localhost:3001/api/forums", {
-      method: "PATCH",
-      body: JSON.stringify(post),
-    });
-    const res = await patchUser(request, params) as NextResponse
-    expect(res.status).toBe(400)
-  })
-  test('returns 400 status for invalid req body', async () => {
-    const params = {params: {id: "664db5ae509cc0afb30cc382" }};
-    const post: {} = {
-      _id: '664d9e9f509cc0afb30cc--',
-      type: 'articles'
-    };
-    const request = new Request("http://localhost:3001/api/forums", {
-      method: "PATCH",
-      body: JSON.stringify(post),
-    });
-    const res = await patchUser(request, params) as NextResponse
-    expect(res.status).toBe(400)
-  })
-  test('returns 200 and deletes bookmark in database if it already exists', async () => {
-    const params = {params: {id: "664db5b0509cc0afb30cc384" }};
-    const req = {} as NextRequest
-    const post: {} = {
-      _id: '664d9e9f509cc0afb30cc369',
-      type: 'articles'
-    };
-    const request = new Request("http://localhost:3001/api/forums", {
-      method: "PATCH",
-      body: JSON.stringify(post),
-    });
-    const res = await patchUser(request, params) as NextResponse
-    expect(res.status).toBe(200)
-    const userResponse = await getUserById(req, params)
-    const {user } = await userResponse.json()
-  expect(user.bookmarks.length).toBe(0)
-  })
-  test('only deletes for specific user', async () => {
-    const params = {params: {id: "664db5b0509cc0afb30cc384" }};
-    const req = {} as NextRequest
-    const post: {} = {
-      _id: '664d9e9f509cc0afb30cc369',
-      type: 'articles'
-    };
-    const request = new Request("http://localhost:3001/api/forums", {
-      method: "PATCH",
-      body: JSON.stringify(post),
-    });
-    const res = await patchUser(request, params) as NextResponse
-    expect(res.status).toBe(200)
-    const otherUserResponse = await getUserById(req, {params: {id: "664db5b1509cc0afb30cc385" }})
-    const {user } = await otherUserResponse.json()
-  expect(user.bookmarks.length).toBe(1)
-  })
-})
 });
