@@ -2,7 +2,7 @@
 import NavBar from "@/app/components/NavBar";
 import { flashcards as flashcardType, flashcardsResponse } from "@/types";
 import React, { useEffect, useState } from "react";
-import { Box, Image, Text, VStack, Button, Flex } from "@chakra-ui/react";
+import { Box, Image, Text, Button, Flex } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 
 export default function Flashcard({ params }: { params: { id: string } }) {
@@ -78,6 +78,7 @@ export default function Flashcard({ params }: { params: { id: string } }) {
                     borderRadius="lg"
                     overflow="hidden"
                     width="300px"
+                    height="400px"
                 >
                     <Text fontSize="2xl" mb={4}>
                         {flashcard.title}
@@ -86,18 +87,16 @@ export default function Flashcard({ params }: { params: { id: string } }) {
                     <Flex mt={4} justifyContent="space-between">
                         <Button
                             onClick={handlePrev}
-                            disabled={currentIndex === 0}
+                            isDisabled={currentIndex === 0}
                             leftIcon={<ArrowBackIcon />}
-                        >
-                            Previous
-                        </Button>
+                            aria-label="Previous"
+                        ></Button>
                         <Button
                             onClick={handleNext}
-                            disabled={currentIndex === flashcard.body.length}
+                            isDisabled={currentIndex === flashcard.body.length}
                             rightIcon={<ArrowForwardIcon />}
-                        >
-                            Next
-                        </Button>
+                            aria-label="Next"
+                        ></Button>
                     </Flex>
                 </Box>
             </Flex>
