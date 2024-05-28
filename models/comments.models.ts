@@ -9,7 +9,7 @@ export async function postComment(id: string, reqBody: string) {
   const db = client.db("test");
   const postID = new ObjectId(id);
 
-  try{
+  try {
     if (
         !commentObj.hasOwnProperty("author") ||    
         !commentObj.hasOwnProperty("body")
@@ -36,7 +36,6 @@ export async function postComment(id: string, reqBody: string) {
   }catch(error){
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
-  
 }
 //refactor so can check forum post id && comment id
 export async function getCommentById(id: string, commId: string) {
@@ -101,5 +100,7 @@ export async function patchComment(
       { _id: post, "comments._id": commentID }, 
       { $inc: { "comments.$.votes": votesToAdd } } 
     );
-    return acknowledged && modifiedCount === 1 ? acknowledged : Promise.reject({status: 500, msg: 'Server Error'})
-  } 
+  return acknowledged && modifiedCount === 1
+    ? acknowledged
+    : Promise.reject({ status: 500, msg: "Server Error" });
+}
