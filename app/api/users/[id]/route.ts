@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { deleteItem, fetchById } from "../../../../models/utils";
+import { patchUserBookmarks } from "../../../../models/users.models";
 import { fetchUserById, updateUser } from "../../../../models/users.models";
 import { usersSchema } from "../../../../lib/seed/seed";
 
@@ -48,6 +49,7 @@ export async function PATCH(
     return NextResponse.json({ error: "404 Not Found" }, { status: 404 });
   }
 }
+
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }){
     const { id } = params;
   try {

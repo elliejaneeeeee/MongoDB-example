@@ -1,12 +1,6 @@
 import connect from "../lib/index";
 import { ObjectId } from "mongodb";
 
-export async function fetchAllForums() {
-  const client = await connect();
-  const db = client.db("test");
-  const forums = await db.collection("forums").find({}).toArray();
-  return forums;
-}
 
 export async function postToForum(post: string) {
 
@@ -28,6 +22,7 @@ export async function postToForum(post: string) {
         
     return newPostFromDatabase;
 }
+
 //refactor
 export async function deleteForumPost(id: string) {
   try {

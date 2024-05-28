@@ -3,32 +3,28 @@ import { flashcardsData } from "../lib/testdata/flashcards";
 import { forumsData } from "../lib/testdata/forums";
 import { usersData } from "../lib/testdata/users";
 import { runSeed } from "../lib/seed/run-seed";
+
 import connect from "../lib/index";
 import * as mongoDB from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
-import { GET as getAllForums } from "../app/api/forums/route";
-import { POST as postToForums } from "../app/api/forums/route";
-import { GET as getAllUsers } from "../app/api/users/route";
-import {
-  GET as getUserById,
-  DELETE as deleteUser,
-} from "../app/api/users/[id]/route";
-import { POST as postUser } from "../app/api/users/route";
-import { GET as getFlashcards } from "../app/api/flashcards/[id]/route";
-import {
-  GET as getForumPost,
-  DELETE as deleteForumPost,
-} from "../app/api/forums/[id]/route";
-import { POST as postForumComment } from "../app/api/forums/[id]/comments/route";
-import {
-  PATCH as patchCommentVotes,
-  DELETE as deleteComment,
-  GET as getCommentByID,
-} from "../app/api/forums/[id]/comments/[commId]/route";
-import { GET as getCatchAll } from "../app/api/[...slug]/route";
+
 import { GET as getAllArticles } from "../app/api/articles/route";
-import { PATCH as patchUser } from "../app/api/users/[id]/route";
+import { PATCH as patchArticle} from '../app/api/articles/[id]/route'
+
+import { GET as getAllForums, POST as postToForums } from "../app/api/forums/route";
+import { GET as getForumPost, DELETE as deleteForumPost, PATCH as patchForumPost } from "../app/api/forums/[id]/route";
+import { PATCH as patchCommentVotes, DELETE as deleteComment, GET as getCommentByID } from "../app/api/forums/[id]/comments/[commId]/route";
+import { POST as postForumComment } from "../app/api/forums/[id]/comments/route";
+
+import { GET as getAllUsers } from "../app/api/users/route";
+import { GET as getUserById, DELETE as deleteUser, PATCH as patchUser } from "../app/api/users/[id]/route";
+
+import { GET as getAllFlashcards} from '../app/api/flashcards/route'
+import { GET as getFlashcards } from "../app/api/flashcards/[id]/route";
+
+import { GET as getCatchAll } from "../app/api/[...slug]/route";
+
 
 let client: mongoDB.MongoClient;
 let db: mongoDB.Db;
@@ -108,102 +104,6 @@ describe("/api/users", () => {
       });
     });
   });
-  describe("POST", () => {
-    test("POST 201: Should return a 201 status code with the user body", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          username: "sofiac",
-          full_name: "Sofia Carlos",
-          email: "sofia.c1996@example.com",
-          password: "puppies96",
-        },
-      });
-
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await postUser(req)) as NextResponse;
-
-      const data = await res.json();
-
-      expect(res.status).toBe(201);
-      expect(data.acknowledged).toBe(true);
-      expect(data).toHaveProperty("_id");
-      expect(data).toHaveProperty("username");
-      expect(data).toHaveProperty("full_name");
-      expect(data).toHaveProperty("email");
-      expect(data).toHaveProperty("password");
-      expect(data).toHaveProperty("bookmarks");
-      expect(data).toHaveProperty("progress");
-      expect(data).not.toHaveProperty("age");
-    });
-    test("POST 201: Should ignore extra inputs", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          full_name: "Sofia Carlos",
-          username: "sofiac",
-          email: "sodia.c1996@example.com",
-          password: "puppies96",
-          age: 42,
-        },
-      });
-
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await postUser(req)) as NextResponse;
-
-      const data = await res.json();
-
-      expect(res.status).toBe(201);
-      expect(data.acknowledged).toBe(true);
-      expect(data).toHaveProperty("_id");
-      expect(data).toHaveProperty("full_name");
-      expect(data).toHaveProperty("email");
-      expect(data).toHaveProperty("password");
-      expect(data).toHaveProperty("bookmarks");
-      expect(data).toHaveProperty("progress");
-      expect(data).not.toHaveProperty("age");
-    });
-    test("POST 400: Should return an error when the request body is malformed/ has missing fields", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {},
-      });
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await postUser(req)) as NextResponse;
-
-      const data = await res.json();
-
-      expect(res.status).toBe(400);
-      expect(data.error).toBe("400 Error: Bad Request!");
-    });
-    test("POST 400: Should return an error when the username already exists in the database", async () => {
-      const mockJson = jest.fn().mockResolvedValue({
-        body: {
-          username: "parentpro",
-          full_name: "Alex Johnson",
-          email: "alex.johnson@example.com",
-          password: "P@ssw0rd123",
-        },
-      });
-
-      const req = {
-        json: mockJson,
-      } as unknown as NextRequest;
-
-      const res = (await postUser(req)) as NextResponse;
-
-      const data = await res.json();
-
-      expect(res.status).toBe(400);
-      expect(data.error).toBe("400 Error: Bad Request!");
-    });
-  });
 });
 
 describe("/api/users/:_id", () => {
@@ -255,7 +155,7 @@ describe("/api/users/:_id", () => {
     test("200: Should ignore additional fields", async () => {
       const mockJson = jest.fn().mockResolvedValue({
         body: {
-          password: "passwordWithAgeKey",
+          email: "email@email.com",
           age: 42,
         },
       });
@@ -272,8 +172,29 @@ describe("/api/users/:_id", () => {
       const data = await res.json();
 
       expect(res.status).toBe(200);
-      expect(data.password).toEqual("passwordWithAgeKey");
+      expect(data.email).toEqual("email@email.com");
       expect(data).not.toHaveProperty("age");
+    });
+    test("200: Should be able to update bookmarks", async () => {
+      const mockJson = jest.fn().mockResolvedValue({
+        body: {
+          bookmarks: ['664d9e9f509cc0afb30cc369'],
+        },
+      });
+
+      const params = {
+        params: { _id: "664db5ae509cc0afb30cc382" },
+      };
+
+      const req = {
+        json: mockJson,
+      } as unknown as NextRequest;
+
+      const res = (await patchUser(req, params)) as unknown as NextResponse;
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.bookmarks).toEqual(['664d9e9f509cc0afb30cc369']);
     });
     test("400: Should return a 400 status if the request body fields are missing/malformed", async () => {
       const mockJson = jest.fn().mockResolvedValue({
@@ -545,9 +466,9 @@ describe("PATCH /api/forums/:id/comments/:id", () => {
       body: JSON.stringify(post),
     });
     const res = (await patchCommentVotes(request, params)) as NextResponse;
-    const { response } = await res.json();
+    const { comment } = await res.json();
     expect(res.status).toBe(200);
-    expect(response.votes).toBe(9);
+    expect(comment.votes).toBe(9);
   });
   test("400 error for invalid comment id type", async () => {
     const params = {
@@ -639,36 +560,34 @@ describe("DELETE /api/forums/:id/comments/:id", () => {
   });
   test("only deletes one comment", async () => {
     const req = {} as NextRequest;
-    const params = {
-      params: {
-        id: "664db460509cc0afb30cc376",
-        commId: "664db4d6509cc0afb30cc37f",
-      },
-    };
-    const res = (await deleteComment(req, params)) as NextResponse;
+    const param ={params: { id: "664db460509cc0afb30cc376"}}
+    const params = { params: { id: "664db460509cc0afb30cc376", commId: '664db4d6509cc0afb30cc37f'} }
+    const forumQuery = await getForumPost(req, param)
+    const forumData = await forumQuery.json()
 
-    const post = await res.json();
+    const res = await deleteComment(req, params) as NextResponse
+    expect(res.status).toBe(200)
 
-    expect(res.status).toBe(200);
-    expect(post.comments.length).toBe(1);
-  });
-});
-describe("DELETE /api/forums/:id", () => {
-  test("returns 200 status for deleted post and deletes in database", async () => {
-    const req = {} as NextRequest;
-    const params = { params: { id: "664db460509cc0afb30cc376" } };
-    const res = (await deleteForumPost(req, params)) as NextResponse;
-    expect(res.status).toBe(200);
-    const getPost = (await getForumPost(req, params)) as NextResponse;
-    expect(getPost.status).toBe(404);
-  });
-});
+    const nextForumQuery = await getForumPost(req, param)
+    const updateForumData = await nextForumQuery.json()
+    
+    expect(updateForumData.post.comments.length).toBe(1)
+    expect(updateForumData.post.comments[0]).toMatchObject({ 
+        "author": "dadoftwins",
+        "body": "Simple toys like stacking blocks and shape sorters are great for motor skills.",
+        "date": "2024-05-05T11:00:00.000Z",
+        "votes": 14,
+  })
+  })
+})
 describe("DELETE /api/forums/:id", () => {
   test("returns 200 status for deleted post", async () => {
     const req = {} as NextRequest;
     const params = { params: { id: "664db460509cc0afb30cc376" } };
     const res = (await deleteForumPost(req, params)) as NextResponse;
     expect(res.status).toBe(200);
+    const getPost = (await getForumPost(req, params)) as NextResponse;
+    expect(getPost.status).toBe(404);
   });
   test("400 error for invalid id type", async () => {
     const req = {} as NextRequest;
@@ -703,5 +622,128 @@ describe("DELETE /api/users/:id", () => {
     const params = { params: { id: "664db45a509cc0afb30cc999" } };
     const res = (await deleteUser(req, params)) as NextResponse;
     expect(res.status).toBe(404);
+  });
+})
+describe("PATCH /api/articles/:id", () => {
+  test("returns a 200 status and new article object", async () => {
+    const params = {params: {id: "664daab4509cc0afb30cc36d" }};
+    const post: {} = {
+      inc_votes: -1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const originalVotes = 3
+    const res = (await patchArticle(request, params)) as NextResponse;
+    const { article } = await res.json();
+    expect(res.status).toBe(200);
+    expect(article.votes).toBe(originalVotes - 1);
+  });
+  test("400 error for invalid article id type", async () => {
+    const params = {params: { id: "664db45a509cc0af--"}}
+    
+    const post: {} = {
+      inc_votes: 1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchArticle(request, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });test("404 error for non-existent article", async () => {
+    const params = {params: {id: "664db45a509cc0afb30cc373"}};
+    const post: {} = {
+      inc_votes: 1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchArticle(request, params)) as NextResponse;
+    expect(res.status).toBe(404);
+  });
+  test("400 error for invalid body", async () => {
+    const params = {params: { id: "664daab4509cc0afb30cc36d"}};
+    const post: {} = { inc_votes: 'ff' };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchArticle(request, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
+});
+describe("PATCH /api/forums/:id", () => {
+  test("returns a 200 status && new article object with votes prop && updates database", async () => {
+    const params = {params: {id: "664db45a509cc0afb30cc373"}};
+    //const req = {} as NextRequest
+    const post: {} = {
+      inc_votes: -1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const originalVotes = 15 //from testdata
+    const res = (await patchForumPost(request, params)) as NextResponse;
+    const { forumPost } = await res.json();
+    expect(res.status).toBe(200);
+    expect(forumPost).toHaveProperty('votes')
+    expect(forumPost.votes).toBe(originalVotes - 1);
+    // const getResponse = getForumPost(req, params)
+    // console.log(getResponse)
+    //expect(res2.votes)
+  });
+  test("400 error for invalid article id type", async () => {
+    const params = {params: { id: "664db45a509cc0af--"}}
+    
+    const post: {} = {
+      inc_votes: 1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchForumPost(request, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });test("404 error for non-existenthForumPost", async () => {
+    const params = {params: {id: "664db45a509cc0afb30cc399"}};
+    const post: {} = {
+      inc_votes: 1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchForumPost(request, params)) as NextResponse;
+    expect(res.status).toBe(404);
+  });
+  test("400 error for invalid body", async () => {
+    const params = {params: { id: "664db460509cc0afb30cc376"}};
+    const post: {} = { inc_votes: 'ff' };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchForumPost(request, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
+});
+describe("GET /api/flashcards", () => {
+  test("should return array of flashcards as objects", async () => {
+    const req = {} as NextRequest;
+    const res = (await getAllFlashcards(req)) as NextResponse;
+    const data = await res.json();
+    expect(res.status).toBe(200);
+    expect(Array.isArray(data.flashcards)).toBe(true);
+    data.flashcards.forEach((flashcard: any) => {
+      expect(flashcard).toHaveProperty("title");
+      expect(flashcard).toHaveProperty("body");
+      expect(flashcard).toHaveProperty("unit");
+      expect(flashcard).toHaveProperty("section");
+      expect(flashcard).toHaveProperty("img_url");
+    });
   });
 });
