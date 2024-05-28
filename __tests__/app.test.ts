@@ -476,7 +476,7 @@ describe("POST api/forums/:id/comments", () => {
       body: "hello everyone",
       author: "joeanne",
     };
-    const request = new Request("http://localhost:3001/api/forums", {
+    const request = new NextRequest("http://localhost:3001/api/forums", {
       method: "POST",
       body: JSON.stringify(post),
     });
@@ -495,7 +495,7 @@ describe("POST api/forums/:id/comments", () => {
       body: "hello everyone",
       author: "joeanne",
     };
-    const request = new Request("http://localhost:3001/api/forums", {
+    const request = new NextRequest("http://localhost:3001/api/forums", {
       method: "POST",
       body: JSON.stringify(post),
     });
@@ -508,7 +508,7 @@ describe("POST api/forums/:id/comments", () => {
       body: "hello everyone",
       author: "joeanne",
     };
-    const request = new Request("http://localhost:3001/api/forums", {
+    const request = new NextRequest("http://localhost:3001/api/forums", {
       method: "POST",
       body: JSON.stringify(post),
     });
@@ -521,7 +521,7 @@ describe("POST api/forums/:id/comments", () => {
       bod: "hello everyone",
       author: "",
     };
-    const request = new Request("http://localhost:3001/api/forums", {
+    const request = new NextRequest("http://localhost:3001/api/forums", {
       method: "POST",
       body: JSON.stringify(post),
     });
@@ -647,10 +647,10 @@ describe("DELETE /api/forums/:id/comments/:id", () => {
     };
     const res = (await deleteComment(req, params)) as NextResponse;
 
-    const post = await res.json()
-    
+    const post = await res.json();
+
     expect(res.status).toBe(200);
-    expect(post.comments.length).toBe(1)
+    expect(post.comments.length).toBe(1);
   });
 });
 describe("DELETE /api/forums/:id", () => {
