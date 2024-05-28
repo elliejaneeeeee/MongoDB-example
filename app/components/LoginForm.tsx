@@ -1,5 +1,4 @@
 "use client";
-// import Link from "next/link";
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -49,69 +48,67 @@ const LoginForm = () => {
     };
 
     return (
-        <>
-            <Flex
-                justifyContent="center"
-                alignItems="center"
-                height="100vh"
-                bg="gray.100"
+        <Flex
+            justifyContent="center"
+            alignItems="center"
+            height="100vh"
+            bg="gray.100"
+        >
+            <Box
+                p={5}
+                shadow="md"
+                borderWidth="1px"
+                borderRadius="lg"
+                bg="white"
+                width="360px"
             >
-                <Box
-                    p={5}
-                    shadow="md"
-                    borderWidth="1px"
-                    borderRadius="lg"
-                    bg="white"
-                    width="360px"
-                >
-                    <Text fontSize="2xl" fontWeight="bold" mb={4}>
-                        Log in:
+                <Text fontSize="2xl" fontWeight="bold" mb={4}>
+                    Log in:
+                </Text>
+                <form onSubmit={handleSubmit}>
+                    <FormControl id="email" mb={4}>
+                        <FormLabel>Email</FormLabel>
+                        <Input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
+                        />
+                    </FormControl>
+                    <FormControl id="password" mb={4}>
+                        <FormLabel>Password</FormLabel>
+                        <Input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Password"
+                        />
+                    </FormControl>
+                    <Button
+                        type="submit"
+                        colorScheme="green"
+                        width="full"
+                        mb={4}
+                    >
+                        Login
+                    </Button>
+                    {error && (
+                        <Alert status="error" mb={4}>
+                            <AlertIcon />
+                            {error}
+                        </Alert>
+                    )}
+                    <Text mt={8} textAlign="right">
+                        No account yet?{" "}
+                        <Link href="/register" color="teal.500">
+                            <Button variant="outline" color="teal.500">
+                                Register here
+                            </Button>
+                        </Link>
                     </Text>
-                    <form onSubmit={handleSubmit}>
-                        <FormControl id="email" mb={4}>
-                            <FormLabel>Email</FormLabel>
-                            <Input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="Email"
-                            />
-                        </FormControl>
-                        <FormControl id="password" mb={4}>
-                            <FormLabel>Password</FormLabel>
-                            <Input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Password"
-                            />
-                        </FormControl>
-                        <Button
-                            type="submit"
-                            colorScheme="green"
-                            width="full"
-                            mb={4}
-                        >
-                            Login
-                        </Button>
-                        {error && (
-                            <Alert status="error" mb={4}>
-                                <AlertIcon />
-                                {error}
-                            </Alert>
-                        )}
-                        <Text mt={8} textAlign="right">
-                            No account yet?{" "}
-                            <Link href="/register" color="teal.500">
-                                <Button variant="outline" color="teal.500">
-                                    Register here
-                                </Button>
-                            </Link>
-                        </Text>
-                    </form>
-                </Box>
-            </Flex>
-        </>
+                </form>
+            </Box>
+        </Flex>
     );
 };
 
