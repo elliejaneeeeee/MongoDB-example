@@ -11,8 +11,13 @@ import {
     Icon,
     Progress,
 } from "@chakra-ui/react";
-import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
-import { FiBookmark, FiCheckCircle } from "react-icons/fi";
+import {
+    FiArrowLeft,
+    FiArrowRight,
+    FiBookmark,
+    FiCheckCircle,
+    FiXCircle,
+} from "react-icons/fi";
 
 const FlashcardDisplay = ({ id }: { id: string }) => {
     const [flashcard, setFlashcard] = useState<flashcardType | null>(null);
@@ -88,7 +93,7 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
                 Lesson Complete!
             </Text>
             <Flex justifyContent="center" direction="column" gap={4}>
-                <Button leftIcon={<Icon as={FiBookmark} />} variant="outline">
+                <Button leftIcon={<FiBookmark />} variant="outline">
                     Add to Bookmarks
                 </Button>
                 <Button leftIcon={<FiCheckCircle />} variant="solid">
@@ -113,14 +118,24 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
                     position="relative"
                     bg={isCompleteCard ? "teal.50" : "white"}
                 >
+                    <IconButton
+                        icon={<FiXCircle />}
+                        aria-label="Close"
+                        position="absolute"
+                        top="0"
+                        left="0"
+                        m={2}
+                    />
                     <Progress
                         value={progressPercentage}
+                        width="80%"
+                        left="10"
                         size="sm"
                         colorScheme="teal"
                         borderRadius="2xl"
                         mb={4}
                     />
-                    <Text fontSize="2xl" mb={4}>
+                    <Text fontSize="2xl" mt={8} mb={4}>
                         {flashcard.title}
                     </Text>
                     <Box height="100%" mb={10}>
@@ -129,7 +144,7 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
                     <IconButton
                         onClick={handlePrev}
                         isDisabled={currentIndex === 0}
-                        icon={<ArrowBackIcon />}
+                        icon={<FiArrowLeft />}
                         aria-label="Previous"
                         position="absolute"
                         left="0"
@@ -138,7 +153,7 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
                     <IconButton
                         onClick={handleNext}
                         isDisabled={currentIndex === flashcard.body.length + 1}
-                        icon={<ArrowForwardIcon />}
+                        icon={<FiArrowRight />}
                         aria-label="Next"
                         position="absolute"
                         right="0"
