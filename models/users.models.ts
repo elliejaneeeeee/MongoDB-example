@@ -59,7 +59,9 @@ export async function fetchUserById(id: string) {
   }
 }
 
+
 export async function updateUser(id: string, reqBody: updateFields) {
+
   const client = await connect();
   const db = client.db("test");
   try {
@@ -73,12 +75,54 @@ export async function updateUser(id: string, reqBody: updateFields) {
         { $set: reqBody },
         { returnDocument: "after" }
       );
+      
     return updatedUser;
   } catch (error: any) {
+    
     if (error.errorResponse.code === 121) {
       throw new CustomError("400 Bad Request", 400);
     }
 
     throw new CustomError("Resource not found", 404);
+  }
+}
+
+export async function insertUser(
+  username: string,
+  full_name: string,
+  email: string,
+  password: string
+) {
+  try {
+    const client = await connect();
+    const db = client.db("test");
+
+    const isAlreadyExisting = await db
+      .collection("users")
+      .findOne({ username: username });
+
+    if (isAlreadyExisting) {
+      throw new Error("Username Already Exists!");
+    }
+
+    const newUser = {
+      _id: new ObjectId(),
+      username,
+      full_name,
+      email,
+      password,
+      bookmarks: 0,
+      progress: [],
+    };
+
+    const status = await db.collection("users").insertOne(newUser);
+    const userPosted = await db
+      .collection("users")
+      .findOne({ _id: status.insertedId });
+    const post = { ...status, ...userPosted };
+
+    return post;
+  } catch (error: any) {
+    throw new Error(error);
   }
 }
