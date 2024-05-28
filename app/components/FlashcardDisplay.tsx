@@ -9,6 +9,7 @@ import {
     IconButton,
     Flex,
     Icon,
+    Progress,
 } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import { FiBookmark, FiCheckCircle } from "react-icons/fi";
@@ -67,6 +68,9 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
         );
     }
 
+    const totalSteps = flashcard.body.length + 2;
+    const progressPercentage = (currentIndex / (totalSteps - 1)) * 100;
+
     const isImageCard = currentIndex === 0;
     const isCompleteCard = currentIndex === flashcard.body.length + 1;
     const bodyContent = isImageCard ? (
@@ -74,7 +78,7 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
             src={flashcard.img_url}
             alt={flashcard.title}
             objectFit="cover"
-            height="70%"
+            height="60%"
             width="100%"
             borderRadius="lg"
         />
@@ -107,7 +111,15 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
                     width="300px"
                     height="360px"
                     position="relative"
+                    bg={isCompleteCard ? "teal.50" : "white"}
                 >
+                    <Progress
+                        value={progressPercentage}
+                        size="sm"
+                        colorScheme="teal"
+                        borderRadius="2xl"
+                        mb={4}
+                    />
                     <Text fontSize="2xl" mb={4}>
                         {flashcard.title}
                     </Text>
