@@ -1,12 +1,6 @@
 import connect from "../lib/index";
 import { ObjectId } from "mongodb";
 
-export async function fetchAllForums() {
-  const client = await connect();
-  const db = client.db("test");
-  const forums = await db.collection("forums").find({}).toArray();
-  return forums;
-}
 
 export async function postToForum(post: string) {
 
@@ -28,15 +22,4 @@ export async function postToForum(post: string) {
         
     return newPostFromDatabase;
 
-}
-//refactor
-export async function deleteForumPost(id: string) {
-  const client = await connect();
-  const db = client.db("test");
-  const postID = new ObjectId(id);
-  const {acknowledged, deletedCount}: {acknowledged: boolean, deletedCount: number } = await db
-  .collection("forums")
-  .deleteOne({ _id: postID });
-  return acknowledged && deletedCount === 1 ? acknowledged : Promise.reject({status: 500, msg: 'Server Error'})
- 
 }

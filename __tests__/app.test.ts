@@ -6,15 +6,17 @@ import { runSeed } from "../lib/seed/run-seed";
 import connect from "../lib/index";
 import * as mongoDB from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-
+import {PATCH as patchArticle} from '../app/api/articles/[id]/route' 
 import { GET as getAllForums } from "../app/api/forums/route";
 import { POST as postToForums } from "../app/api/forums/route";
 import { GET as getAllUsers } from "../app/api/users/route";
 import { GET as getUserById, DELETE as deleteUser } from "../app/api/users/[id]/route";
 import { GET as getFlashcards } from "../app/api/flashcards/[id]/route";
-import { GET as getForumPost, DELETE as deleteForumPost } from "../app/api/forums/[id]/route";
+import { GET as getForumPost, DELETE as deleteForumPost, PATCH as patchForumPost } from "../app/api/forums/[id]/route";
 import { POST as postForumComment } from "../app/api/forums/[id]/comments/route";
 import { PATCH as patchCommentVotes, DELETE as deleteComment, GET as getCommentByID } from "../app/api/forums/[id]/comments/[commId]/route";
+import {GET as getAllFlashcards} from '../app/api/flashcards/route'
+
 
 
 let client: mongoDB.MongoClient;
@@ -458,3 +460,127 @@ describe('DELETE /api/users/:id', () => {
     expect(res.status).toBe(404);
   });
 })
+describe("PATCH /api/articles/:id", () => {
+  test("returns a 200 status and new article object", async () => {
+    const params = {params: {id: "664daab4509cc0afb30cc36d" }};
+    const post: {} = {
+      inc_votes: -1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const originalVotes = 3
+    const res = (await patchArticle(request, params)) as NextResponse;
+    const { article } = await res.json();
+    expect(res.status).toBe(200);
+    expect(article.votes).toBe(originalVotes - 1);
+  });
+  test("400 error for invalid article id type", async () => {
+    const params = {params: { id: "664db45a509cc0af--"}}
+    
+    const post: {} = {
+      inc_votes: 1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchArticle(request, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });test("404 error for non-existent article", async () => {
+    const params = {params: {id: "664db45a509cc0afb30cc373"}};
+    const post: {} = {
+      inc_votes: 1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchArticle(request, params)) as NextResponse;
+    expect(res.status).toBe(404);
+  });
+  test("400 error for invalid body", async () => {
+    const params = {params: { id: "664daab4509cc0afb30cc36d"}};
+    const post: {} = { inc_votes: 'ff' };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchArticle(request, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
+});
+describe("PATCH /api/forums/:id", () => {
+  test("returns a 200 status && new article object with votes prop && updates database", async () => {
+    const params = {params: {id: "664db45a509cc0afb30cc373"}};
+    //const req = {} as NextRequest
+    const post: {} = {
+      inc_votes: -1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const originalVotes = 15 //from testdata
+    const res = (await patchForumPost(request, params)) as NextResponse;
+    const { forumPost } = await res.json();
+    expect(res.status).toBe(200);
+    expect(forumPost).toHaveProperty('votes')
+    expect(forumPost.votes).toBe(originalVotes - 1);
+    // const getResponse = getForumPost(req, params)
+    // console.log(getResponse)
+    //expect(res2.votes)
+  });
+  test("400 error for invalid article id type", async () => {
+    const params = {params: { id: "664db45a509cc0af--"}}
+    
+    const post: {} = {
+      inc_votes: 1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchForumPost(request, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });test("404 error for non-existenthForumPost", async () => {
+    const params = {params: {id: "664db45a509cc0afb30cc399"}};
+    const post: {} = {
+      inc_votes: 1,
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchForumPost(request, params)) as NextResponse;
+    expect(res.status).toBe(404);
+  });
+  test("400 error for invalid body", async () => {
+    const params = {params: { id: "664db460509cc0afb30cc376"}};
+    const post: {} = { inc_votes: 'ff' };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = (await patchForumPost(request, params)) as NextResponse;
+    expect(res.status).toBe(400);
+  });
+});
+
+describe("GET /api/flashcards", () => {
+  test("should return array of flashcards as objects", async () => {
+    const req = {} as NextRequest;
+    const res = (await getAllFlashcards(req)) as NextResponse;
+    const data = await res.json();
+    expect(res.status).toBe(200);
+    expect(Array.isArray(data.flashcards)).toBe(true);
+    data.flashcards.forEach((flashcard: any) => {
+      expect(flashcard).toHaveProperty("title");
+      expect(flashcard).toHaveProperty("body");
+      expect(flashcard).toHaveProperty("unit");
+      expect(flashcard).toHaveProperty("section");
+      expect(flashcard).toHaveProperty("img_url");
+    });
+  });
+});

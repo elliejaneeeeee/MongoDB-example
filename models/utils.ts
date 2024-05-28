@@ -1,6 +1,14 @@
 import connect from "../lib/index";
 import { ObjectId } from "mongodb";
 
+export async function fetchAll({coll}: {coll: string}) {
+  const client = await connect();
+  const db = client.db("test");
+  const allItems = await db.collection(coll).find({}).toArray();
+  return allItems;
+}
+
+
 export async function deleteItem(id: string, {coll}: {coll: string}) {
     const client = await connect();
     const db = client.db("test");
@@ -13,10 +21,10 @@ export async function deleteItem(id: string, {coll}: {coll: string}) {
    
   }
   export async function fetchById(id: string, {coll}: {coll: string}) {
+  
     if(!ObjectId.isValid(id)){
       return Promise.reject({ status: 400, msg: "Bad Request" });
     }
-   
       const itemId = new ObjectId(id);
       const client = await connect();
       const db = client.db("test");
@@ -29,3 +37,21 @@ export async function deleteItem(id: string, {coll}: {coll: string}) {
       return item
   
     } //refactor into generic
+    export async function patchItem(id: string, votesToAdd: number, {coll}: {coll: string}) {
+        const itemId = new ObjectId(id)
+        const client = await connect();
+      const db = client.db("test");
+      try{
+        const result: any = await db.collection(coll).findOneAndUpdate(
+            { _id: itemId }, 
+            { $inc: { votes: votesToAdd } },
+            {  returnDocument: "after"}
+          )
+          const updatedItemObj = result
+          return result ? updatedItemObj : Promise.reject({status: 500, msg: 'Server Error'})
+      }
+     catch(error){
+       return Promise.reject({status: 400, msg: 'Bad Request'})
+     }
+
+    } 
