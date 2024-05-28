@@ -1,8 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { flashcards as flashcardType, flashcardsResponse } from "@/types";
-import { Box, Image, Text, IconButton, Flex } from "@chakra-ui/react";
+import {
+    Box,
+    Image,
+    Text,
+    Button,
+    IconButton,
+    Flex,
+    Icon,
+} from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+import { FiBookmark, FiCheckCircle } from "react-icons/fi";
 
 const FlashcardDisplay = ({ id }: { id: string }) => {
     const [flashcard, setFlashcard] = useState<flashcardType | null>(null);
@@ -31,7 +40,7 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
     }, [id]);
 
     const handleNext = () => {
-        if (flashcard && currentIndex < flashcard.body.length) {
+        if (flashcard && currentIndex <= flashcard.body.length) {
             setCurrentIndex(currentIndex + 1);
         }
     };
@@ -59,8 +68,30 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
     }
 
     const isImageCard = currentIndex === 0;
+    const isCompleteCard = currentIndex === flashcard.body.length + 1;
     const bodyContent = isImageCard ? (
-        <Image src={flashcard.img_url} alt={flashcard.title} />
+        <Image
+            src={flashcard.img_url}
+            alt={flashcard.title}
+            objectFit="cover"
+            height="70%"
+            width="100%"
+            borderRadius="lg"
+        />
+    ) : isCompleteCard ? (
+        <Box textAlign="center">
+            <Text fontSize="1xl" mb={4}>
+                Lesson Complete!
+            </Text>
+            <Flex justifyContent="center" direction="column" gap={4}>
+                <Button leftIcon={<Icon as={FiBookmark} />} variant="outline">
+                    Add to Bookmarks
+                </Button>
+                <Button leftIcon={<FiCheckCircle />} variant="solid">
+                    Mark as Complete
+                </Button>
+            </Flex>
+        </Box>
     ) : (
         <Text>{flashcard.body[currentIndex - 1]}</Text>
     );
@@ -80,7 +111,7 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
                     <Text fontSize="2xl" mb={4}>
                         {flashcard.title}
                     </Text>
-                    <Box height="80%" mb={10}>
+                    <Box height="100%" mb={10}>
                         {bodyContent}
                     </Box>
                     <IconButton
@@ -94,7 +125,7 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
                     />
                     <IconButton
                         onClick={handleNext}
-                        isDisabled={currentIndex === flashcard.body.length}
+                        isDisabled={currentIndex === flashcard.body.length + 1}
                         icon={<ArrowForwardIcon />}
                         aria-label="Next"
                         position="absolute"
