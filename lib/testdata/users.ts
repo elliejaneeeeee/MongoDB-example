@@ -3,13 +3,16 @@ import { ObjectId } from "mongodb";
 interface Lesson {
     [key: `lesson${number}`]: boolean;
 }
-
+interface Saves {
+    type: string
+    _id: string
+}
 interface users {
     _id: ObjectId;
     full_name: string;
     email: string;
     password: string;
-    bookmarks: number;
+    bookmarks: Saves[];
     progress: Lesson[];
 }
 
@@ -25,7 +28,7 @@ export const usersData: users[] = [
         full_name: "Alex Johnson",
         email: "alex.johnson@example.com",
         password: "P@ssw0rd123",
-        bookmarks: 12,
+        bookmarks: [],
         progress: [
             { lesson1: true },
             { lesson2: false },
@@ -38,7 +41,7 @@ export const usersData: users[] = [
         full_name: "Maria Rodriguez",
         email: "maria.rodriguez@example.com",
         password: "M4ri@R0d!",
-        bookmarks: 8,
+        bookmarks: [],
         progress: [
             { lesson1: true },
             { lesson2: true },
@@ -51,7 +54,7 @@ export const usersData: users[] = [
         full_name: "David Lee",
         email: "david.lee@example.com",
         password: "Dav1dL33$",
-        bookmarks: 15,
+        bookmarks: [ {_id: '664d9e9f509cc0afb30cc369', type: 'articles' }],
         progress: [
             { lesson1: false },
             { lesson2: true },
@@ -64,7 +67,7 @@ export const usersData: users[] = [
         full_name: "Sophie Brown",
         email: "sophie.brown@example.com",
         password: "S0ph!3Br0wn",
-        bookmarks: 10,
+        bookmarks: [{_id: '664d9e9f509cc0afb30cc369', type: 'articles' }],
         progress: [
             { lesson1: true },
             { lesson2: true },
@@ -77,7 +80,7 @@ export const usersData: users[] = [
         full_name: "Liam Smith",
         email: "liam.smith@example.com",
         password: "L1@msm!th",
-        bookmarks: 20,
+        bookmarks: [],
         progress: [
             { lesson1: true },
             { lesson2: false },

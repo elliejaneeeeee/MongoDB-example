@@ -75,13 +75,13 @@ export async function getCommentById(id: string, commId: string) {
   return postData[0].comments[0]; // returns individual comment object matching the comment ID
 }
 //refactor to throw error here
-export async function deleteComment(id: string, commId: string) {
+export async function deleteComment(id: string, commId: string, commentObj: any) {
   
   const client = await connect();
   const db = client.db("test");
   const postID = new ObjectId(id);
-  const commentID = new ObjectId(commId);
-      const {acknowledged, modifiedCount}: {acknowledged: boolean, modifiedCount: number } = await db.collection('forums').updateOne({_id: postID, 'comments._id': commentID},{ $unset: {'comments.$': ''}})// refactor server error
+  //const commentID = new ObjectId(commId);
+      const {acknowledged, modifiedCount}: {acknowledged: boolean, modifiedCount: number } = await db.collection('forums').updateOne({_id: postID},{ $pull: {comments: commentObj}})// refactor server error
       return acknowledged && modifiedCount === 1 ? acknowledged : Promise.reject({status: 500, msg: 'Server Error'})
 }
 export async function patchComment(

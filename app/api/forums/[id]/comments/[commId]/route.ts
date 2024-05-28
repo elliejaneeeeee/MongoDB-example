@@ -46,8 +46,8 @@ export async function DELETE(
 ) {
   const { id, commId } = params;
   try {
-    await getCommentById(id, commId);
-    await deleteComment(id, commId);
+    const commentObj = await getCommentById(id, commId);
+    await deleteComment(id, commId, commentObj);
       return NextResponse.json({ status: 200 })  
       
   } catch (error: any) {

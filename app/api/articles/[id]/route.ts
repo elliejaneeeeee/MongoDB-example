@@ -24,3 +24,15 @@ export async function PATCH(
       return NextResponse.json({ msg: error.msg }, { status: error.status });
     }
   }
+  export async function GET(
+    req: Request,
+    { params }: { params: { id: string } }
+  ) {
+    const { id } = params;
+    try {
+      const article = await fetchById(id, {coll: 'articles'});
+      return NextResponse.json({ article }, { status: 200 });
+    } catch (error: any) {
+      return NextResponse.json({ msg: error.msg }, { status: error.status }); 
+    }
+  }

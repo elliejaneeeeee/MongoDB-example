@@ -6,11 +6,11 @@ import { runSeed } from "../lib/seed/run-seed";
 import connect from "../lib/index";
 import * as mongoDB from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-import {PATCH as patchArticle} from '../app/api/articles/[id]/route' 
+import {GET as getArticle, PATCH as patchArticle} from '../app/api/articles/[id]/route' 
 import { GET as getAllForums } from "../app/api/forums/route";
 import { POST as postToForums } from "../app/api/forums/route";
 import { GET as getAllUsers } from "../app/api/users/route";
-import { GET as getUserById, DELETE as deleteUser } from "../app/api/users/[id]/route";
+import { GET as getUserById, DELETE as deleteUser, PATCH as patchUser } from "../app/api/users/[id]/route";
 import { GET as getFlashcards } from "../app/api/flashcards/[id]/route";
 import { GET as getForumPost, DELETE as deleteForumPost, PATCH as patchForumPost } from "../app/api/forums/[id]/route";
 import { POST as postForumComment } from "../app/api/forums/[id]/comments/route";
@@ -400,13 +400,10 @@ describe('DELETE /api/forums/:id/comments/:id', () => {
     const forumQuery = await getForumPost(req, param)
     const forumData = await forumQuery.json()
     const res = await deleteComment(req, params) as NextResponse
-    
     expect(res.status).toBe(200)
     const nextForumQuery = await getForumPost(req, param)
     const updateForumData = await nextForumQuery.json()
-    
-    expect(updateForumData.post.comments[1]).toBe(null)
-    expect(forumData.post.comments.some((item: any) => item === null)).toBe(false)
+    expect(updateForumData.post.comments.length).toBe(1)
     expect(updateForumData.post.comments[0]).toMatchObject({ 
         "author": "earlyeducator",
         "body": "Simple toys like stacking blocks and shape sorters are great for motor skills.",
@@ -584,3 +581,87 @@ describe("GET /api/flashcards", () => {
     });
   });
 });
+describe('PATCH /api/users/:userid', () => {
+  test('returns 200 status for successful patch, updates in database and can use bookmark id for api requests', async () => {
+    const params = {params: {id: "664db5ae509cc0afb30cc382" }};
+    const req = {} as NextRequest
+    const post: {} = {
+      _id: '664d9e9f509cc0afb30cc369',
+      type: 'articles'
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = await patchUser(request, params) as NextResponse
+    expect(res.status).toBe(200)
+    const userResponse = await getUserById(req, params)
+    const {user } = await userResponse.json()
+  expect(user.bookmarks[0].type).toBe('articles')
+  let params2 = { params: { id: user.bookmarks[0]._id } };
+  //ccheck can use bookmark id to make api request
+  const checkArticle = await getArticle(req, params2) as NextResponse
+  const {article} = await checkArticle.json()
+  expect(article.title).toBe('The Importance of Tummy Time')
+  })
+  test('returns 400 status for invalid user id', async () => {
+    const params = {params: {id: "664db5ae509cc0afb30c[dk" }};
+    const post: {} = {
+      _id: '664d9e9f509cc0afb30cc369',
+      type: 'articles'
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = await patchUser(request, params) as NextResponse
+    expect(res.status).toBe(400)
+  })
+  test('returns 400 status for invalid req body', async () => {
+    const params = {params: {id: "664db5ae509cc0afb30cc382" }};
+    const post: {} = {
+      _id: '664d9e9f509cc0afb30cc--',
+      type: 'articles'
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = await patchUser(request, params) as NextResponse
+    expect(res.status).toBe(400)
+  })
+  test('returns 200 and deletes bookmark in database if it already exists', async () => {
+    const params = {params: {id: "664db5b0509cc0afb30cc384" }};
+    const req = {} as NextRequest
+    const post: {} = {
+      _id: '664d9e9f509cc0afb30cc369',
+      type: 'articles'
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = await patchUser(request, params) as NextResponse
+    expect(res.status).toBe(200)
+    const userResponse = await getUserById(req, params)
+    const {user } = await userResponse.json()
+  expect(user.bookmarks.length).toBe(0)
+  })
+  test('only deletes for specific user', async () => {
+    const params = {params: {id: "664db5b0509cc0afb30cc384" }};
+    const req = {} as NextRequest
+    const post: {} = {
+      _id: '664d9e9f509cc0afb30cc369',
+      type: 'articles'
+    };
+    const request = new Request("http://localhost:3001/api/forums", {
+      method: "PATCH",
+      body: JSON.stringify(post),
+    });
+    const res = await patchUser(request, params) as NextResponse
+    expect(res.status).toBe(200)
+    const otherUserResponse = await getUserById(req, {params: {id: "664db5b1509cc0afb30cc385" }})
+    const {user } = await otherUserResponse.json()
+  expect(user.bookmarks.length).toBe(1)
+  })
+})
