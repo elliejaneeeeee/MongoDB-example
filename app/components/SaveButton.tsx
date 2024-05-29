@@ -61,7 +61,7 @@ const SaveButton = ({itemId}) => {
           <ModalFooter >
           <Link key='login' href='/login'>
                 <Button variant="link" size='lg'
-              aria-label='login'  > Sign Up</Button>
+              aria-label='login'  > Sign In</Button>
                 </Link>
           </ModalFooter>
         </ModalContent>
