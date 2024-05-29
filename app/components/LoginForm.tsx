@@ -1,8 +1,19 @@
 "use client";
-import Link from "next/link";
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import {
+    Flex,
+    Box,
+    Text,
+    Link,
+    FormControl,
+    FormLabel,
+    Input,
+    Button,
+    Alert,
+    AlertIcon,
+} from "@chakra-ui/react";
 
 const LoginForm = () => {
     const [email, setEmail] = useState("");
@@ -37,38 +48,67 @@ const LoginForm = () => {
     };
 
     return (
-        <div className="grid place-items-center h-screen">
-            <div className="shadow-lg p-5 rounded-lgshadow-lg rounded-lg border-t-4 border-green-400">
-                <h1 className="text-xl font-bold my-4">Log in:</h1>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-                    <input
-                        onChange={(e) => setEmail(e.target.value)}
-                        type="text"
-                        placeholder="Email"
-                    />
-                    <input
-                        onChange={(e) => setPassword(e.target.value)}
-                        type="password"
-                        placeholder="Password"
-                    />
-                    <button className="bg-green-600 text-white font-bold cursor-pointer px-6 py-2">
-                        Login
-                    </button>
-                    {error && (
-                        <div className="bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">
-                            {error}
-                        </div>
-                    )}
-                    <Link
-                        className="text-sm mt-3 text-right"
-                        href={"/register"}
+        <Flex
+            justifyContent="center"
+            alignItems="center"
+            height="100vh"
+            bg="gray.100"
+        >
+            <Box
+                p={5}
+                shadow="md"
+                borderWidth="1px"
+                borderRadius="lg"
+                bg="white"
+                width="360px"
+            >
+                <Text fontSize="2xl" fontWeight="bold" mb={4}>
+                    Log in:
+                </Text>
+                <form onSubmit={handleSubmit}>
+                    <FormControl id="email" mb={4}>
+                        <FormLabel>Email</FormLabel>
+                        <Input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
+                        />
+                    </FormControl>
+                    <FormControl id="password" mb={4}>
+                        <FormLabel>Password</FormLabel>
+                        <Input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Password"
+                        />
+                    </FormControl>
+                    <Button
+                        type="submit"
+                        colorScheme="green"
+                        width="full"
+                        mb={4}
                     >
+                        Login
+                    </Button>
+                    {error && (
+                        <Alert status="error" mb={4}>
+                            <AlertIcon />
+                            {error}
+                        </Alert>
+                    )}
+                    <Text mt={8} textAlign="right">
                         No account yet?{" "}
-                        <span className="underline">Register here</span>
-                    </Link>
+                        <Link href="/register" color="teal.500">
+                            <Button variant="outline" color="teal.500">
+                                Register here
+                            </Button>
+                        </Link>
+                    </Text>
                 </form>
-            </div>
-        </div>
+            </Box>
+        </Flex>
     );
 };
 
