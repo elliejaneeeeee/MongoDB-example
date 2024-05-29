@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { deleteItem, fetchById } from "../../../../models/utils";
-import { fetchUserById, updateUser } from "../../../../models/users.models";
+import { patchUserBookmarks, updateUser } from "../../../../models/users.models";
+import { fetchUserById,  } from "../../../../models/users.models";
 import { usersSchema } from "../../../../lib/seed/seed";
 
 export async function GET(
@@ -24,30 +25,44 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { _id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const parsedRequest = await req.json();
-  const { _id } = params;
-  const fields = parsedRequest.body;
-  const allowedFields: string[] = Object.keys(usersSchema.properties);
+  const reqBody = await req.json();
+  const { id } = params;
+  
 
-  for (const key in fields) {
+
+  const allowedFields: string[] = Object.keys(usersSchema.properties);
+  
+try {
+    await fetchById(id, {coll: 'users'})  //checks to see if bookmark request 
+    if(reqBody._id){
+      await patchUserBookmarks(id, reqBody);
+    }
+    else{
+     for (const key in reqBody) {               //else original update user called
     if (!allowedFields.includes(key)) {
-      delete fields[key];
+      delete reqBody[key];
     }
   }
 
-  try {
-    const updatedUser = await updateUser(_id, fields);
-    return NextResponse.json(updatedUser, { status: 200 });
-  } catch (error: any) {
+      await updateUser(id, reqBody)
 
-    if( error.status ) {
-        return NextResponse.json({ error: error.status.msg }, { status: error.status.code });
+
+
     }
-    return NextResponse.json({ error: "404 Not Found" }, { status: 404 });
+    
+    return NextResponse.json({ status: 200 });
+    
+  } catch (error: any) {
+    return NextResponse.json({ msg: error.msg }, { status: error.status })
+    
+     // return NextResponse.json({ status: error.status }, { message: error.msg});
+    
+   // return NextResponse.json({ error: "404 Not Found" }, { status: 404 });
   }
 }
+
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }){
     const { id } = params;
   try {

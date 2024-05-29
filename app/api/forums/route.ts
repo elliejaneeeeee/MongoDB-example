@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchAllForums, postToForum } from "../../../models/forum.models";
-
+import { postToForum } from "../../../models/forum.models";
+import { fetchAll } from "../../..//models/utils";
 
 export async function GET(req: NextRequest) {
   try {
-    const forums: Array<{}> = await fetchAllForums();
+    const forums: Array<{}> = await fetchAll({coll: 'forums'});
     return NextResponse.json({ forums }, { status: 200 });
   } catch (error) {
     return NextResponse.next();

@@ -6,7 +6,6 @@ import {
   getCommentById,
 } from "../../../../../../models/comments.models";
 
-
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string; commId: string } }
@@ -29,25 +28,26 @@ export async function PATCH(
   try {
     const parsedBody =
       reqBody === "string" ? await JSON.parse(reqBody) : reqBody;
-    const parsedVotes = parsedBody.inc_votes;
+    const votesToAdd: number = parsedBody.inc_votes;
     await getCommentById(id, commId);
-    await patchComment(id, commId, parsedVotes);
+    await patchComment(id, commId, votesToAdd);
     const updatedComment = await getCommentById(id, commId);
     return NextResponse.json(
-      { response: { votes: updatedComment.votes } },
+      { comment: { votes: updatedComment.votes } }, //returns {comment: {votes: num}}
       { status: 200 }
     );
   } catch (error: any) {
     return NextResponse.json({ msg: error.msg }, { status: error.status });
   }
 }
+
 export async function DELETE( req: any, { params }: { params: { id: string; commId: string } }) {
   const { id, commId } = params;
   try {
-    await getCommentById(id, commId);
-    const updatedPost: any = await deleteComment(id, commId);
-    
-    return NextResponse.json(updatedPost, { status: 200 })
+    const commentObj = await getCommentById(id, commId);
+    await deleteComment(id, commId, commentObj);
+      return NextResponse.json({ status: 200 }) 
+      
   } catch (error: any) {
     return NextResponse.json({ msg: error.msg }, { status: error.status });
   }

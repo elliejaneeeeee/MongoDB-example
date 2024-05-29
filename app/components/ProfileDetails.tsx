@@ -2,29 +2,54 @@
 import React from "react";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import { Flex, Box, Text, Button } from "@chakra-ui/react";
+import { FiLogOut } from "react-icons/fi";
 
 const ProfileDetails = () => {
     const { data: session } = useSession();
 
     return (
-        <div className="grid place-items-center h-screen">
-            <div className="shadow-lg p-8 bg-zince-300/10 flex flex-col gap-2 my-6">
-                <div>
+        <Flex justifyContent="center" alignItems="center" height="100vh">
+            <Box
+                p={5}
+                borderWidth="1px"
+                borderRadius="2xl"
+                width="360px"
+                minHeight="300px"
+                position="relative"
+            >
+                <Text align="center" fontSize="2xl" mt={4} mb={4}>
+                    {status === "loading" ? "Loading profile..." : "Profile"}
+                </Text>
+                <Text mb={4}>
                     Name:
-                    <span className="font-bold">{session?.user?.name}</span>
-                </div>
-                <div>
+                    <span className="font-bold ml-3">
+                        {status === "loading" ? "..." : session?.user?.name}
+                    </span>
+                </Text>
+                <Text>
                     Email:
-                    <span className="font-bold">{session?.user?.email}</span>
-                </div>
-                <button
-                    onClick={() => signOut({ callbackUrl: "/login" })}
-                    className="bg-red-500 text-white font-bold px-6 py-2 mt-3"
-                >
-                    Log Out
-                </button>
-            </div>
-        </div>
+                    <span className="font-bold ml-3">
+                        {status === "loading" ? "..." : session?.user?.email}
+                    </span>
+                </Text>
+                <Flex justifyContent="center" alignItems="center">
+                    <Button
+                        onClick={() => signOut({ callbackUrl: "/login" })}
+                        leftIcon={<FiLogOut />}
+                        variant="solid"
+                        backgroundColor="red.500"
+                        color="white"
+                        position="absolute"
+                        bottom="0"
+                        mb={4}
+                        isDisabled={!session}
+                    >
+                        Log out
+                    </Button>
+                </Flex>
+            </Box>
+        </Flex>
     );
 };
 

@@ -1,5 +1,19 @@
 "use client";
-import { Center, Box, Container, Text, Heading, Image } from "@chakra-ui/react";
+
+import { Link as NextLink } from "@chakra-ui/next-js";
+import {
+  Center,
+  Square,
+  Circle,
+  Box,
+  AbsoluteCenter,
+  Button,
+  Container,
+  Text,
+  Heading,
+  Image,
+  Link,
+} from "@chakra-ui/react";
 
 export default function Home() {
   return (
@@ -13,11 +27,20 @@ export default function Home() {
             />
           </Box>
         </Center>
+        <Center>
+          <Heading margin={"1cm"}>Welcome to Parentify</Heading>
+        </Center>
+        <Center>
+          <Link href="/login">
+            <Button>Sign in</Button>
+          </Link>
+        </Center>
         <Heading noOfLines={1}>welcome </Heading>
         <Text>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Facere, necessitatibus ipsa odit excepturi magni,
-          dolor fugit deserunt eius in mollitia, possimus modi incidunt? Quisquam omnis quam adipisci voluptatum
-          repellat atque.
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Facere,
+          necessitatibus ipsa odit excepturi magni, dolor fugit deserunt eius in
+          mollitia, possimus modi incidunt? Quisquam omnis quam adipisci
+          voluptatum repellat atque.
         </Text>
       </Container>
     </>

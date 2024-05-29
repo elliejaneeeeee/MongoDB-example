@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import connect from "../../../../lib";
 import bcrypt from "bcryptjs";
 import { NextApiHandler } from "next";
+import { JWT } from "next-auth/jwt";
 
 interface Credentials {
   email: string;
@@ -28,28 +29,43 @@ export const authOptions: NextAuthOptions = {
           }
           const passwordsMatch = await bcrypt.compare(password, user.password);
 
-          if (!passwordsMatch) {
-            return null;
-          }
-          return {
-            email: user.email,
-            name: user.full_name,
-          } as User;
-        } catch (error) {
-          A;
-          console.log(error);
-          return null;
-        }
-      },
-    }),
-  ],
-  session: {
-    strategy: "jwt",
-  },
-  secret: process.env.NEXTAUTH_SECRET,
-  pages: {
-    signIn: "/login",
-  },
+
+                    if (!passwordsMatch) {
+                        return null;
+                    }
+                    return {
+                       id: user._id.toString(),
+                        email: user.email,
+                        name: user.full_name,
+                    } as User;
+                } catch (error) {
+                    console.log(error);
+                    return null;
+                }
+            },
+        }),
+    ],
+    session: {
+        strategy: "jwt",
+    },
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token) {
+                session.user.id = token.id as string;
+            }
+            return session;
+        },
+    },
+    secret: process.env.NEXTAUTH_SECRET,
+    pages: {
+        signIn: "/login",
+    },
 };
 const handler: NextApiHandler = NextAuth(authOptions);
 

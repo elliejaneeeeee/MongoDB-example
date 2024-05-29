@@ -2,40 +2,38 @@ import connect from "../lib/index";
 import { ObjectId } from "mongodb";
 import { error } from "console";
 
-export async function postComment(id: string, commentReq: string) {
-  const commentObj = JSON.parse(commentReq);
-
+export async function postComment(id: string, reqBody: string) {
+  const commentObj = JSON.parse(reqBody);
+ 
   const client = await connect();
   const db = client.db("test");
   const postID = new ObjectId(id);
 
   try {
     if (
-      !commentObj.hasOwnProperty("author") || //checks req body is correct format
-      !commentObj.hasOwnProperty("body")
-    ) {
-      throw error;
-    } else if (Object.values(commentObj).includes("")) {
-      //checks no fields are empty
-      throw error;
-    }
-    commentObj.date = new Date(); //give object new properties to match others in database
-    commentObj.votes = 0;
-    commentObj._id = new ObjectId(); // saves having to import from client side when only author and body needed for post at first
+        !commentObj.hasOwnProperty("author") ||    
+        !commentObj.hasOwnProperty("body")
+      ) {
+          throw error
+      } else if (Object.values(commentObj).includes("")) { 
+          throw error
+      }
+      commentObj.date = new Date();   
+      commentObj.votes = 0;
+      commentObj._id = new ObjectId();  
+    
+      const commentID = commentObj._id
+      
+      const {acknowledged}:{acknowledged: boolean} = await db
+        .collection("forums")
+        .updateOne({ _id: postID }, { $push: { comments: commentObj } })
 
-    const commentID = commentObj._id;
-
-    const databaseResponse = await db
-      .collection("forums")
-      .updateOne({ _id: postID }, { $push: { comments: commentObj } });
-
-    if (databaseResponse.acknowledged === false) {
-      // check if post is success
-      throw error;
-    }
-    return commentID.toString(); // returns comment ID in string format for use in getCommentById function in route.ts-
-    //no need to check database again here to return comment obj out of request, when reusable function can do it in controller
-  } catch (error) {
+        if (!acknowledged){
+         return Promise.reject({status: 500, msg: 'Server Error'})
+        } 
+          return commentID.toString() 
+                                   
+  }catch(error){
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 }
@@ -43,12 +41,14 @@ export async function postComment(id: string, commentReq: string) {
 export async function getCommentById(id: string, commId: string) {
   const client = await connect();
   const db = client.db("test");
-  if (!ObjectId.isValid(commId) || !ObjectId.isValid(id)) {
+
+  if(!ObjectId.isValid(commId) || !ObjectId.isValid(id)){
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
   const postID = new ObjectId(id);
   const commentID = new ObjectId(commId);
-  const commentData = await db
+
+  const postData = await db
     .collection("forums")
     .aggregate([
       { $match: { _id: postID } },
@@ -65,45 +65,40 @@ export async function getCommentById(id: string, commId: string) {
       },
     ])
     .toArray(); // returns comment array by forum and comment id
-
-  if (commentData.length === 0 || commentData[0].comments.length === 0) {
-    return Promise.reject({ status: 404, msg: "Not Found" }); // if comment id format valid but not found in database throw 404
+   const postNotFound: boolean = postData.length === 0
+   const commentNotFound: boolean = postData[0].comments.length === 0
+  
+  if (postNotFound || commentNotFound) { 
+    return Promise.reject({ status: 404 , msg: "Not Found" }); 
   }
-
-  return commentData[0].comments[0]; // returns individual comment object matching the comment ID
+  return postData[0].comments[0]; // returns individual comment object matching the comment ID
 }
 //refactor to throw error here
-export async function deleteComment(id: string, commId: string) {
+export async function deleteComment(id: string, commId: string, commentObj: any) {
+  
   const client = await connect();
   const db = client.db("test");
   const postID = new ObjectId(id);
-  const commentID = new ObjectId(commId);
-
-  const updatedPost = await db.collection("forums").findOneAndUpdate({_id: postID}, { $pull: { comments: { _id: commentID }, } as any }, { returnDocument: 'after'});
-
-  return updatedPost
+  //const commentID = new ObjectId(commId);
+      const {acknowledged, modifiedCount}: {acknowledged: boolean, modifiedCount: number } = await db.collection('forums').updateOne({_id: postID},{ $pull: {comments: commentObj}})// refactor server error
+      return acknowledged && modifiedCount === 1 ? acknowledged : Promise.reject({status: 500, msg: 'Server Error'})
 }
 export async function patchComment(
   id: string,
   commId: string,
-  parsedVotes: number
+  votesToAdd: number
 ) {
   const client = await connect();
   const db = client.db("test");
   const post = new ObjectId(id);
-  const comment = new ObjectId(commId);
-  const {
-    acknowledged,
-    modifiedCount,
-  }: {
-    acknowledged: boolean;
-    matchedCount: number;
-    modifiedCount: number;
-  } = await db
-    .collection("forums")
-    .updateOne(
-      { _id: post, "comments._id": comment },
-      { $inc: { "comments.$.votes": parsedVotes } }
+  const commentID = new ObjectId(commId);
+
+  const {acknowledged, modifiedCount}: {  //database returns with object with these keys
+      acknowledged: boolean;
+      modifiedCount: number;
+    } = await db.collection("forums").updateOne(
+      { _id: post, "comments._id": commentID }, 
+      { $inc: { "comments.$.votes": votesToAdd } } 
     );
   return acknowledged && modifiedCount === 1
     ? acknowledged

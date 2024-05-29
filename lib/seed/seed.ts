@@ -1,4 +1,4 @@
-import { articles, flashcards, forums, users } from "@/types";
+import { articles, flashcards, forums, users } from "../../types";
 import connect from "../index";
 export const flashcardsSchema = {
   bsonType: "object",
@@ -69,7 +69,7 @@ export const usersSchema = {
       bsonType: "string",
     },
     bookmarks: {
-      bsonType: "number",
+      bsonType: "array",
     },
     progress: {
       bsonType: "array",
@@ -78,7 +78,7 @@ export const usersSchema = {
 };
 export const articlesSchema = {
   bsonType: "object",
-  required: ["title", "link", "img_url", "body", "source"],
+  required: ["title", "link", "img_url", "body", "source", "votes"],
   properties: {
     title: {
       bsonType: "string",
@@ -95,6 +95,9 @@ export const articlesSchema = {
     source: {
       bsonType: "string",
     },
+    votes: {
+      bsonType: "number",
+    }
   },
 };
 
