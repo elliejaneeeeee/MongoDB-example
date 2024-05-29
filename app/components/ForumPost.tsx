@@ -17,7 +17,6 @@ import LikeDislikeButtons from './LikeDislikeButtons';
 import SaveButton from './SaveButton';
 import CommentsSection from './CommentsSection';
 import NavBar from './NavBar';
-import PostComment from './PostComment';
 
 const ForumPost = ({ id }: { id: string }) => {
     const [postData, setPostData] = useState<forumPostType | {}>({})
