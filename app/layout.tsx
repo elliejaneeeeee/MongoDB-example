@@ -5,6 +5,7 @@ import { fonts } from "./fonts";
 import "../app/globals.css";
 import React from "react";
 import { ChakraProvider } from "@chakra-ui/react";
+import NavBar from "./components/NavBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,8 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className={fonts.rubik.variable}>
-            <body className={inter.className}>
+            <body className={`${inter.className} bg-violet-600`}>
+                <NavBar />
                 <AuthProvider>
                     <ChakraProvider>{children}</ChakraProvider>
                 </AuthProvider>

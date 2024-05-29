@@ -105,3 +105,8 @@ export interface Saves {
     type: string;
     _id: string;
 }
+
+export interface ForumCardProps {
+  forum: forums,
+  key: string
+}

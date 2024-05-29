@@ -26,10 +26,10 @@ const navLinks = [
   },
 ] as const;
 
-export default () => {
+export default function NavBar() {
   // const path = usePathname();
   return (
-    <Box px={4} boxShadow="lg" width="100%" py={10} position="fixed" bottom={10}>
+    <Box px={4} boxShadow="lg" width="100%" py={10} position="fixed" bottom={10} >
       <Flex h={16} alignItems="center" justifyContent="space-around">
         {navLinks.map((navLink) => (
           <NextLink key={navLink.name} href={navLink.path}>
