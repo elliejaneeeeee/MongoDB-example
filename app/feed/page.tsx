@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "../components/NavBar";
 import ArticleDisplay from "../components/ArticleDisplay";
-import { articles } from "../../types";
+import { articles, forums } from "../../types";
 import NotFound from "../not-found";
 import { Box, Flex, Icon, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
@@ -12,6 +12,7 @@ import ForumPostsDisplay from "../components/ForumDisplay";
 
 const Feed = () => {
   const [articles, setArticles] = useState<articles[]>([]);
+  const [forums, setForums] = useState<forums[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,10 +33,28 @@ const Feed = () => {
         setLoading(false);
       }
     };
-
     fetchArticles();
   }, []);
 
+  const fetchForums = async () => {
+    try {
+      const response = await fetch("/api/forums");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      if (data?.forums?.length) {
+        setForums(data.forums);
+      }
+    } catch (error) {
+      console.error("Failed to fetch forums:", error);
+      setForums([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchForums();
+}, []);
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -48,6 +67,7 @@ const Feed = () => {
     <Box overflowX="hidden" overflowY="auto" bg="pink.100" minHeight="100vh" display="flex" flexDirection="column">
       <VStack>
         <Flex alignSelf={"start"}>{articles?.length && <ArticleDisplay articles={articles} />}</Flex>
+        {forums?.length && <ForumPostsDisplay forums={forums} />}
         <Box pb={8}>
           <motion.div
             style={{ width: 100, height: 100 }}
