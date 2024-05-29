@@ -1,12 +1,8 @@
 import React from "react";
-import { Box, Flex, Icon, VStack } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import ArticleCard from "./ArticleCard";
 import { articles } from "../../types";
 import Carousel from "./Carousel/Carousel";
-import Image from "next/image";
-import handIcon from "./handIcon";
-import { easeInOut, motion } from "framer-motion";
-// import handIcon from "../handIcon.svg";
 
 interface ArticlesDisplayProps {
   articles: articles[];

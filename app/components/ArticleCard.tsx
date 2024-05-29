@@ -10,14 +10,11 @@ interface ArticleCardProps {
 
 export default function ArticleCard({ article }: ArticleCardProps) {
   const [saved, setSaved] = useState(false);
-  const [isMobile] = useMediaQuery("(max-width: 768px)");
   return (
-    <Container maxW="full" p={{ base: 4 }}>
-      <Center py={6}>
+    <Container minW={350} p={{ base: 4 }}>
+      <Center pt={6}>
         <Box
-          w={isMobile ? "full" : "xs"}
           rounded="md"
-          my={5}
           mx={[0, 5]}
           overflow={"hidden"}
           bg="white"

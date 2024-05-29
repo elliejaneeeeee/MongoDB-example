@@ -5,9 +5,8 @@ import NavBar from "../components/NavBar";
 import ArticleDisplay from "../components/ArticleDisplay";
 import { articles } from "../../types";
 import NotFound from "../not-found";
-import { Box, Icon } from "@chakra-ui/react";
-import Image from "next/image";
-import { easeInOut, motion } from "framer-motion";
+import { Box, Flex, Icon, VStack } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 import handIcon from "../components/handIcon";
 
 const Feed = () => {
@@ -45,22 +44,24 @@ const Feed = () => {
   }
 
   return (
-    <Box bg="pink.100" minHeight="100vh" flexDirection="column">
-      <Box flex="1">
-        {articles?.length && <ArticleDisplay articles={articles} />}{" "}
-        <motion.div
-          style={{ width: 100, height: 100 }}
-          animate={{ x: [0, 60, -60, 0] }}
-          transition={{
-            repeat: Infinity,
-            repeatDelay: 5,
-            duration: 2,
-            ease: "easeInOut",
-          }}
-        >
-          <Icon as={handIcon}></Icon>
-        </motion.div>
-      </Box>
+    <Box overflowX="hidden" overflowY="auto" bg="pink.100" minHeight="100vh" display="flex" flexDirection="column">
+      <VStack>
+        <Flex alignSelf={"start"}>{articles?.length && <ArticleDisplay articles={articles} />}</Flex>
+        <Box pb={8}>
+          <motion.div
+            style={{ width: 100, height: 100 }}
+            animate={{ x: [0, 60, -60, 0] }}
+            transition={{
+              repeat: Infinity,
+              repeatDelay: 3,
+              duration: 2,
+              ease: "easeInOut",
+            }}
+          >
+            <Icon as={handIcon} />
+          </motion.div>
+        </Box>
+      </VStack>
       <NavBar />
     </Box>
   );

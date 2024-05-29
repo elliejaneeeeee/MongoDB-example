@@ -1,5 +1,5 @@
 "use client";
-import { Box, IconButton, Link as NextLink, Flex, Grid } from "@chakra-ui/react";
+import { Box, IconButton, Flex, Grid } from "@chakra-ui/react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { FiBookmark, FiRss, FiUser, FiBookOpen } from "react-icons/fi";
