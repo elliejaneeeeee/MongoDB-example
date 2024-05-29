@@ -79,13 +79,6 @@ export async function updateUser(id: string, reqBody: updateFields) {
       
     return updatedUser;
   } catch (error: any) {
-    
-    if (error.errorResponse.code === 121) {
-      throw new CustomError("400 Bad Request", 400);
-    }
-
-        return updatedUser;
-    } catch (error: any) {
         if (error.errorResponse.code === 121) {
             throw new CustomError("400 Bad Request", 400);
         }
