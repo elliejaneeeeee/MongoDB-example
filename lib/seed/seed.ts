@@ -1,4 +1,4 @@
-import { articles, flashcards, forums, users } from "@/types";
+import { articles, flashcards, forums, users } from "../../types";
 import connect from "../index";
 export const flashcardsSchema = {
   bsonType: "object",

@@ -1,4 +1,4 @@
-import { articles, flashcards, forums, users } from "@/types";
+import { articles, flashcards, forums, users } from "../../types";
 import { seed } from "./seed";
 
 export async function runSeed(

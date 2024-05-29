@@ -90,7 +90,6 @@ export async function updateUser(id: string, fields: updateFields) {
         if (error.errorResponse.code === 121) {
             throw new CustomError("400 Bad Request", 400);
         }
-
         throw new CustomError("Resource not found", 404);
     }
 }
