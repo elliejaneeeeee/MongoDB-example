@@ -1,7 +1,7 @@
 "use client";
-import { Box, IconButton, Link as NextLink, Flex } from "@chakra-ui/react";
-// import { usePathname } from "next/navigation";
-import React from "react";
+import { Box, IconButton, Flex, Grid } from "@chakra-ui/react";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import { FiBookmark, FiRss, FiUser, FiBookOpen } from "react-icons/fi";
 
 const navLinks = [
@@ -9,41 +9,68 @@ const navLinks = [
     name: "Profile",
     path: "/profile",
     icon: <FiUser size={40} />,
-    bgColor: "blue",
+    activeColor: "yellow.100",
   },
   {
     name: "Saves",
     path: "/saves",
     icon: <FiBookmark size={40} />,
-    bgColor: "red",
+    activeColor: "purple.100",
   },
-  { name: "Feed", path: "/feed", icon: <FiRss size={40} />, bgColor: "green" },
+  {
+    name: "Feed",
+    path: "/feed",
+    icon: <FiRss size={40} />,
+    activeColor: "pink.100",
+  },
   {
     name: "Lessons",
     path: "/lessons",
     icon: <FiBookOpen size={40} />,
-    bgColor: "blue",
+    activeColor: "blue.100",
   },
 ] as const;
 
-export default function NavBar() {
-  // const path = usePathname();
+export default function Navbar() {
+  const path = usePathname();
+  const router = useRouter();
+  const [activePath, setActivePath] = useState(path);
+
+  useEffect(() => {
+    setActivePath(path);
+  }, [path]);
+
+  const handleNavClick = (newPath: string) => {
+    setActivePath(newPath);
+    router.push(newPath);
+  };
+
   return (
-    <Box px={5} boxShadow="lg" width="100%" py={15} position="fixed" bottom={0} zIndex={2} bg={"#f5f5f5"}>
-      <Flex h={16} alignItems="center" justifyContent="space-around">
+    <Box boxShadow="lg" width="100%" position="fixed" bottom={0} zIndex={2} bg="white">
+      <Grid templateColumns="repeat(4, 1fr)" height="16" textAlign="center">
         {navLinks.map((navLink) => (
-          <NextLink key={navLink.name} href={navLink.path}>
+          <Box
+            key={navLink.name}
+            as="a"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            bg={navLink.path === path ? navLink.activeColor : "transparent"}
+            transition="background-color 0.3s"
+            height="100%"
+            onClick={() => handleNavClick(navLink.path)}
+          >
             <IconButton
-              variant="link"
+              variant="ghost"
               aria-label={navLink.name}
               icon={navLink.icon}
               size="lg"
               _hover={{ transform: "scale(1.25)" }}
               color={"black"}
             />
-          </NextLink>
+          </Box>
         ))}
-      </Flex>
+      </Grid>
     </Box>
   );
-};
+}
