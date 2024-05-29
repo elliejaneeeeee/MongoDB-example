@@ -34,7 +34,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
                 {article.source}
               </Text>
             </Box>
-            <Heading color={"black"} fontSize={"2xl"} noOfLines={2}>
+            <Heading color={"black"} fontSize={"2xl"} noOfLines={2} h="70px">
               {article.title}
             </Heading>
             <Text color={"gray.500"} noOfLines={2}>
