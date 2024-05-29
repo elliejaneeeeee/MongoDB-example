@@ -1,16 +1,21 @@
 import { ObjectId } from "mongodb";
 import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
 
-
 declare module "next-auth" {
     interface Session {
         user: {
             id: string;
+            username: string;
+            bookmarks: any[];
+            progress: Lesson[];
         } & DefaultSession["user"];
     }
 
     interface User extends DefaultUser {
         id: string;
+        username: string;
+        bookmarks: any[];
+        progress: Lesson[];
     }
 }
 export class CustomError extends Error {
@@ -56,7 +61,7 @@ export interface forums {
     comments: comments[];
 }
 
-interface Lesson {
+export interface Lesson {
     [key: `lesson${number}`]: boolean;
 }
 
@@ -94,11 +99,11 @@ export interface articles {
 }
 
 export interface updateFields {
-  username?: string,
-  password?: string,
-  full_name?: string,
-  email?: string,
-  bookmarks?: string
+    username?: string;
+    password?: string;
+    full_name?: string;
+    email?: string;
+    bookmarks?: string;
 }
 
 export interface Saves {

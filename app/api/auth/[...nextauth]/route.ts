@@ -5,6 +5,7 @@ import connect from "../../../../lib";
 import bcrypt from "bcryptjs";
 import { NextApiHandler } from "next";
 import { JWT } from "next-auth/jwt";
+import { Lesson } from "../../../../types";
 
 interface Credentials {
     email: string;
@@ -38,9 +39,12 @@ export const authOptions: NextAuthOptions = {
                         return null;
                     }
                     return {
-                       id: user._id.toString(),
+                        id: user._id.toString(),
                         email: user.email,
                         name: user.full_name,
+                        username: user.username,
+                        bookmarks: user.bookmarks || [],
+                        progress: user.progress || [],
                     } as User;
                 } catch (error) {
                     console.log(error);
@@ -56,12 +60,18 @@ export const authOptions: NextAuthOptions = {
         async jwt({ token, user }) {
             if (user) {
                 token.id = user.id;
+                token.username = user.username;
+                token.bookmarks = user.bookmarks || [];
+                token.progress = user.progress || [];
             }
             return token;
         },
         async session({ session, token }) {
             if (token) {
                 session.user.id = token.id as string;
+                session.user.username = token.username as string;
+                session.user.bookmarks = token.bookmarks as any[];
+                session.user.progress = token.progress as Lesson[];
             }
             return session;
         },
