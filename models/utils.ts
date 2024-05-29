@@ -32,7 +32,7 @@ export async function fetchById(id: string, { coll }: { coll: string }) {
   const db = client.db("test");
 
   const item = await db.collection(coll).findOne({ _id: itemId });
-
+  
   if (!item) {
     return Promise.reject({ status: 404, msg: "Not Found" });
   }

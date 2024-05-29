@@ -7,7 +7,6 @@ import { FiLogOut } from "react-icons/fi";
 
 const ProfileDetails = () => {
     const { data: session, status } = useSession();
-
     return (
         <Flex justifyContent="center" alignItems="center" height="100vh">
             <Box

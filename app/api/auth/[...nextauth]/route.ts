@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import connect from "../../../../lib";
 import bcrypt from "bcryptjs";
 import { NextApiHandler } from "next";
+import { JWT } from "next-auth/jwt";
 
 interface Credentials {
     email: string;
@@ -37,6 +38,7 @@ export const authOptions: NextAuthOptions = {
                         return null;
                     }
                     return {
+                       id: user._id.toString(),
                         email: user.email,
                         name: user.full_name,
                     } as User;
@@ -49,6 +51,20 @@ export const authOptions: NextAuthOptions = {
     ],
     session: {
         strategy: "jwt",
+    },
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token) {
+                session.user.id = token.id as string;
+            }
+            return session;
+        },
     },
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
