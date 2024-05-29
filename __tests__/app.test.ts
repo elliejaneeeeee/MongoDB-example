@@ -129,7 +129,6 @@ describe("/api/users/:_id", () => {
     await res.json();
     expect(res.status).toBe(400);
   });
-
 });
 
 describe("/api/articles", () => {
