@@ -2,29 +2,69 @@
 import React from "react";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import { Flex, Box, Text, Button, Heading, Divider } from "@chakra-ui/react";
+import { FiLogOut } from "react-icons/fi";
 
 const ProfileDetails = () => {
     const { data: session } = useSession();
-   console.log(session?.user?.name)
+
     return (
-        <div className="grid place-items-center h-screen">
-            <div className="shadow-lg p-8 bg-zince-300/10 flex flex-col gap-2 my-6">
-                <div>
-                    Name:
-                    <span className="font-bold">{session?.user?.name}</span>
-                </div>
-                <div>
-                    Email:
-                    <span className="font-bold">{session?.user?.email}</span>
-                </div>
-                <button
-                    onClick={() => signOut({ callbackUrl: "/login" })}
-                    className="bg-red-500 text-white font-bold px-6 py-2 mt-3"
-                >
-                    Log Out
-                </button>
-            </div>
-        </div>
+        <Flex justifyContent="center" alignItems="center" height="100vh">
+            <Box
+                borderWidth="1px"
+                width="360px"
+                minHeight="300px"
+                position="relative"
+                rounded="md"
+                mx={[0, 5]}
+                bg="white"
+                border={"1px"}
+                borderColor="black"
+                boxShadow={"6px 6px 0 black"}
+            >
+                <Box p={4}>
+                    <Heading color={"black"} fontSize={"2xl"}>
+                        {status === "loading"
+                            ? "Loading profile..."
+                            : "Profile"}
+                    </Heading>
+                </Box>
+                <Divider borderColor="black" mt={2} mb={4} />
+                <Box p={4}>
+                    <Text mb={4}>
+                        Name:
+                        <span className="font-bold ml-3">
+                            {status === "loading" ? "..." : session?.user?.name}
+                        </span>
+                    </Text>
+                    <Text>
+                        Email:
+                        <span className="font-bold ml-3">
+                            {status === "loading"
+                                ? "..."
+                                : session?.user?.email}
+                        </span>
+                    </Text>
+                </Box>
+                <Flex justifyContent="center" alignItems="center">
+                    <Button
+                        onClick={() => signOut({ callbackUrl: "/login" })}
+                        leftIcon={<FiLogOut />}
+                        variant="solid"
+                        backgroundColor="red.500"
+                        color="white"
+                        position="absolute"
+                        bottom="0"
+                        right="0"
+                        mb={4}
+                        mr={4}
+                        isDisabled={!session}
+                    >
+                        Log out
+                    </Button>
+                </Flex>
+            </Box>
+        </Flex>
     );
 };
 

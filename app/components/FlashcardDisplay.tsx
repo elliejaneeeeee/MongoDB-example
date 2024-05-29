@@ -10,6 +10,8 @@ import {
     Flex,
     Icon,
     Progress,
+    Heading,
+    Divider,
 } from "@chakra-ui/react";
 import {
     FiArrowLeft,
@@ -79,14 +81,16 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
     const isImageCard = currentIndex === 0;
     const isCompleteCard = currentIndex === flashcard.body.length + 1;
     const bodyContent = isImageCard ? (
-        <Image
-            src={flashcard.img_url}
-            alt={flashcard.title}
-            objectFit="cover"
-            height="60%"
-            width="100%"
-            borderRadius="lg"
-        />
+        <Box width={"100%"} height={"360px"}>
+            <Image
+                src={flashcard.img_url}
+                alt={flashcard.title}
+                objectFit="cover"
+                height="60%"
+                width="100%"
+                borderRadius="lg"
+            />
+        </Box>
     ) : isCompleteCard ? (
         <Box textAlign="center">
             <Text fontSize="1xl" mb={4}>
@@ -109,56 +113,66 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
         <>
             <Flex justifyContent="center" alignItems="center" height="100vh">
                 <Box
-                    p={5}
-                    borderWidth="1px"
-                    borderRadius="2xl"
-                    overflow="hidden"
                     width="360px"
-                    height="380px"
+                    height="420px"
+                    overflow={"hidden"}
                     position="relative"
                     bg={isCompleteCard ? "teal.50" : "white"}
+                    rounded="md"
+                    mx={[0, 5]}
+                    border={"1px"}
+                    borderColor="black"
+                    boxShadow={"6px 6px 0 black"}
                 >
-                    <IconButton
-                        icon={<FiXCircle />}
-                        aria-label="Close"
-                        position="absolute"
-                        top="0"
-                        left="0"
-                        m={2}
-                    />
-                    <Progress
-                        value={progressPercentage}
-                        width="80%"
-                        left="10"
-                        size="sm"
-                        colorScheme="teal"
-                        borderRadius="2xl"
-                        mb={4}
-                    />
-                    <Text fontSize="2xl" mt={8} mb={4}>
-                        {flashcard.title}
-                    </Text>
-                    <Box height="100%" mb={10}>
-                        {bodyContent}
+                    <Flex direction={"row"}>
+                        <Box p={4}>
+                            <IconButton
+                                icon={<FiXCircle />}
+                                aria-label="Close"
+                                position="absolute"
+                                top="0"
+                                left="0"
+                                m={2}
+                            />
+                        </Box>
+                        <Progress
+                            value={progressPercentage}
+                            m={5}
+                            width="80%"
+                            size="sm"
+                            colorScheme="teal"
+                            borderRadius="2xl"
+                        />
+                    </Flex>
+                    <Divider borderColor="black" mt={4} mb={4} />
+                    <Box p={4}>
+                        <Heading color={"black"} fontSize={"2xl"} mb={4}>
+                            {flashcard.title}
+                        </Heading>
+                        <Box height="100%" mb={10}>
+                            {bodyContent}
+                        </Box>
+                        <IconButton
+                            onClick={handlePrev}
+                            isDisabled={currentIndex === 0}
+                            icon={<FiArrowLeft />}
+                            aria-label="Previous"
+                            position="absolute"
+                            left="0"
+                            bottom="0"
+                        />
+                        <IconButton
+                            onClick={handleNext}
+                            isDisabled={
+                                currentIndex === flashcard.body.length + 1
+                            }
+                            icon={<FiArrowRight />}
+                            aria-label="Next"
+                            position="absolute"
+                            right="0"
+                            bottom="0"
+                        />
                     </Box>
-                    <IconButton
-                        onClick={handlePrev}
-                        isDisabled={currentIndex === 0}
-                        icon={<FiArrowLeft />}
-                        aria-label="Previous"
-                        position="absolute"
-                        left="0"
-                        bottom="0"
-                    />
-                    <IconButton
-                        onClick={handleNext}
-                        isDisabled={currentIndex === flashcard.body.length + 1}
-                        icon={<FiArrowRight />}
-                        aria-label="Next"
-                        position="absolute"
-                        right="0"
-                        bottom="0"
-                    />
                 </Box>
             </Flex>
         </>

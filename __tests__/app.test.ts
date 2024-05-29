@@ -129,7 +129,6 @@ describe("/api/users/:_id", () => {
     await res.json();
     expect(res.status).toBe(400);
   });
-
 });
 
 describe("/api/articles", () => {
@@ -279,7 +278,7 @@ describe("GET /api/forums/id", () => {
     expect(res.status).toBe(404);
   });
 });
-describe.only("POST api/forums/:id/comments", () => {
+describe("POST api/forums/:id/comments", () => {
   test("returns status 201 and comment object with correct properties", async () => {
     const params = { params: { id: "664db460509cc0afb30cc376" } };
     const post: {} = {

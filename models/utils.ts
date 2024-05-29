@@ -27,7 +27,6 @@ export async function fetchById(id: string, { coll }: { coll: string }) {
   if (!ObjectId.isValid(id)) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
-  console.log(coll)
   const itemId = new ObjectId(id);
   const client = await connect();
   const db = client.db("test");
