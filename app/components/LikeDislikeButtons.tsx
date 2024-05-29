@@ -1,3 +1,4 @@
+'use client'
 import { Button, Stack} from '@chakra-ui/react'
 import { AiFillLike, AiFillDislike } from "react-icons/ai";
 import React, { useEffect } from 'react'

@@ -68,7 +68,7 @@ const SaveButton = ({itemId}) => {
       </Modal>
     <Flex flexDirection='row-reverse' alignItems='left'>
     <Button
-    leftIcon={isSaved ?  <CheckIcon/> : <AddIcon/>}
+      leftIcon={isSaved ?  <CheckIcon/> : <AddIcon/>}
       isLoading={isLoading}
       loadingText='Saving'
       colorScheme='teal'

@@ -29,7 +29,7 @@ const navLinks = [
 export default function NavBar() {
   // const path = usePathname();
   return (
-    <Box px={4} boxShadow="lg" width="100%" py={10} position="fixed" bottom={10} >
+    <Box px={5} boxShadow="lg" width="100%" py={15} position="fixed" bottom={0} zIndex={2} bg={"#f5f5f5"}>
       <Flex h={16} alignItems="center" justifyContent="space-around">
         {navLinks.map((navLink) => (
           <NextLink key={navLink.name} href={navLink.path}>
@@ -39,7 +39,7 @@ export default function NavBar() {
               icon={navLink.icon}
               size="lg"
               _hover={{ transform: "scale(1.25)" }}
-              //   bgColor={navLink.path === path ? navLink.bgColor : undefined}
+              color={"black"}
             />
           </NextLink>
         ))}
