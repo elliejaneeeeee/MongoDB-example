@@ -11,9 +11,9 @@ const LikeDislikeButtons = ({itemId, type}) => { //type is either forums or arti
 
   const changeVotes = async(num: number) => {
     const response = await fetch(`/api/${type}/${itemId}`, {method: 'PATCH', body: JSON.stringify({inc_votes: num})})
+
    if(response.ok){
     const {article} = await response.json()
-    console.log(article.votes)
    }
  }
   const handleLike = () => {
@@ -40,10 +40,9 @@ const LikeDislikeButtons = ({itemId, type}) => { //type is either forums or arti
   
   return (
     <Stack direction='row' spacing={4}>
-    <Button onClick={handleLike} isDisabled={session?.user?.name === undefined} leftIcon={<AiFillLike style={{opacity: isLiked ? 1 : 0.4, fontSize: '30px' }}/>}  variant='solid' size='sm'>
+    <Button onClick={handleLike} isDisabled={session?.user?.name === undefined} leftIcon={<AiFillLike style={{opacity: isLiked ? 1 : 0.4, fontSize: '20px' }}/>}  variant='solid' size='sm'>
      </Button>
-    <Button onClick={handleDislike} isDisabled={session?.user?.name === undefined} rightIcon={<AiFillDislike style={{opacity: isDisliked ? 1 : 0.4, fontSize: '30px'}}/>} variant='outline' size='sm'>
-
+    <Button onClick={handleDislike} isDisabled={session?.user?.name === undefined} rightIcon={<AiFillDislike style={{opacity: isDisliked ? 1 : 0.4, fontSize: '20px'}}/>} variant='outline' size='sm'>
     </Button>
   </Stack>
   )
