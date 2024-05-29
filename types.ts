@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
+import { DefaultSession, DefaultUser } from "next-auth";
 
 declare module "next-auth" {
   interface Session {
@@ -55,9 +55,9 @@ export type forums = {
   comments: comments[];
 };
 
-interface Lesson {
+type Lesson = {
   [key: `lesson${number}`]: boolean;
-}
+};
 
 export type users = {
   _id: ObjectId;

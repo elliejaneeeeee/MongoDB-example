@@ -8,6 +8,7 @@ import NotFound from "../not-found";
 import { Box, Flex, Icon, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import handIcon from "../components/handIcon";
+import ForumPostsDisplay from "../components/ForumDisplay";
 
 const Feed = () => {
   const [articles, setArticles] = useState<articles[]>([]);
