@@ -17,7 +17,7 @@ const config: Config = {
         },
         purple: {
           50: "#eae7ff",
-          100: "d7ceff",
+          100: "#d7ceff",
         },
         blue: {
           50: "#ddf2ff",
@@ -25,7 +25,7 @@ const config: Config = {
         },
         yellow: {
           50: "#ffeee2",
-          100: "##ffe0cf",
+          100: "#ffe0cf",
         },
       },
     },
