@@ -7,32 +7,28 @@ import { NextApiHandler } from "next";
 import { JWT } from "next-auth/jwt";
 
 interface Credentials {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 export const authOptions: NextAuthOptions = {
-    providers: [
-        CredentialsProvider({
-            name: "credentials",
-            credentials: {},
+  providers: [
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {},
 
-            async authorize(credentials): Promise<User | null> {
-                const { email, password } = credentials as Credentials;
-                try {
-                    const client = await connect();
-                    const db = client.db("test");
+      async authorize(credentials): Promise<User | null> {
+        const { email, password } = credentials as Credentials;
+        try {
+          const client = await connect();
+          const db = client.db("test");
 
-                    const user = await db
-                        .collection("users")
-                        .findOne({ email: email });
-                    if (!user) {
-                        return null;
-                    }
-                    const passwordsMatch = await bcrypt.compare(
-                        password,
-                        user.password
-                    );
+          const user = await db.collection("users").findOne({ email: email });
+          if (!user) {
+            return null;
+          }
+          const passwordsMatch = await bcrypt.compare(password, user.password);
+
 
                     if (!passwordsMatch) {
                         return null;
