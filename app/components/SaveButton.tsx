@@ -11,7 +11,7 @@ import {AddIcon, CheckIcon} from '@chakra-ui/icons'
 import { useSession } from "next-auth/react";
 
 
-const SaveButton = ({itemId}) => {
+const SaveButton = ({itemId, type}) => {
     const { onClose } = useDisclosure()
     const { data: session } = useSession();
     const [isLoading, setIsLoading] = useState(false)
@@ -23,7 +23,7 @@ const SaveButton = ({itemId}) => {
             const checkBookmark = async () => {
                 const response = await fetch(`/api/users/${session?.user?.id}`)
                 const {user} = await response.json()
-                 setIsSaved(user.bookmarks.find((bookmark: string) => bookmark === itemId)) //check to see original bookmarked state on first render
+                 setIsSaved(user.bookmarks.find((bookmark: {}) => bookmark._id === itemId)) //check to see original bookmarked state on first render
             }
                 checkBookmark()   
         }
@@ -32,7 +32,7 @@ const SaveButton = ({itemId}) => {
     
     const handleClick = () => {
        setIsLoading(true)
-         fetch(`/api/users/${session?.user?.id}`, {method: 'PATCH', body: JSON.stringify({_id: itemId})}).then((response) => {
+         fetch(`/api/users/${session?.user?.id}`, {method: 'PATCH', body: JSON.stringify({_id: itemId, type: type})}).then((response) => {
             if(response.ok){
                 setIsSaved(!isSaved)
                 setIsLoading(false)
@@ -55,9 +55,7 @@ const SaveButton = ({itemId}) => {
           <ModalCloseButton onClick={() =>{setOpenOverlay(false)}}/>
           <ModalBody pb={6}>
             Please sign up to bookmark, rate or comment
-           
           </ModalBody>
-
           <ModalFooter >
           <Link key='login' href='/login'>
                 <Button variant="link" size='lg'

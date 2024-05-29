@@ -66,7 +66,7 @@ const ForumPost = ({ id }: { id: string }) => {
         </Flex>
         <Flex flexDirection='row' mt='4' justifyContent="space-between">
         <LikeDislikeButtons itemId={id} type='forums'/>
-         <SaveButton itemId={id}/>
+         <SaveButton itemId={id} type='forums'/>
         </Flex>
          </Flex>
          <Flex flexDirection='column' gap='4' bg='white' width='100%' p='4' marginBottom='3'>

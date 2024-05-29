@@ -18,18 +18,18 @@ export async function patchUserBookmarks(id: string, reqBody: any) {
       .collection("users")
       .findOne({
         _id: userID,
-        bookmarks: { $in: [parsedObj._id ]},
+        bookmarks: { $elemMatch: parsedObj},
       });
     
     if (bookmarkExists) {
       const { acknowledged }: { acknowledged: boolean } = await db
         .collection("users")
-        .updateOne({ _id: userID }, { $pull: { bookmarks: parsedObj._id } });
+        .updateOne({ _id: userID }, { $pull: { bookmarks: parsedObj } });
       successfulUpdate = acknowledged;
     } else {
       const { acknowledged }: { acknowledged: boolean } = await db
         .collection("users")
-        .updateOne({ _id: userID }, { $push: { bookmarks: parsedObj._id } });
+        .updateOne({ _id: userID }, { $push: { bookmarks: parsedObj } });
       successfulUpdate = acknowledged;
     }
 

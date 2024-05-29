@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { users } from "../../types";
+import { users, bookmarks } from "../../types";
 
 interface Lesson {
     [key: `lesson${number}`]: boolean;
@@ -48,7 +48,7 @@ export const usersData: users[] = [
         full_name: "David Lee",
         email: "david.lee@example.com",
         password: "$2a$10$1clpr2YlvFE4NP4jziNL9eR22MdzkD.XFUfhdI5DoCwDju9fZv.UW",
-        bookmarks: ['664d9e9f509cc0afb30cc369'],
+        bookmarks: [{_id: "664d9e9f509cc0afb30cc369", type: 'articles'},{_id: '664db460509cc0afb30cc377', type: 'forums'}, {_id: "664daab2509cc0afb30cc36b", type: 'articles' }, {_id: "664db45d509cc0afb30cc375", type: 'forums'}],
         progress: [
             { lesson1: false },
             { lesson2: true },
@@ -62,7 +62,7 @@ export const usersData: users[] = [
         full_name: "Sophie Brown",
         email: "sophie.brown@example.com",
         password: "$2a$10$H9BI.esDl6rqWhNQVeppZe./VJVTzFLqJWD88e7Zi5KiqawmMbdrC",
-        bookmarks: ['664d9e9f509cc0afb30cc369'],
+        bookmarks: [],
         progress: [
             { lesson1: true },
             { lesson2: true },
