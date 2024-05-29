@@ -31,6 +31,7 @@ export async function PATCH(
   const { id } = params;
   
 
+
   const allowedFields: string[] = Object.keys(usersSchema.properties);
   
 try {
@@ -44,7 +45,11 @@ try {
       delete reqBody[key];
     }
   }
+
       await updateUser(id, reqBody)
+
+
+
     }
     
     return NextResponse.json({ status: 200 });
