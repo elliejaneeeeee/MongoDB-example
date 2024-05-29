@@ -40,6 +40,7 @@ const LessonsUnit1 = () => {
           <Link href="/flashcards/1">
             <IconButton
               isRound={true}
+              size="lg"
               ml="0%"
               variant="solid"
               onClick={handleLessonOneToggle}
@@ -54,6 +55,7 @@ const LessonsUnit1 = () => {
           <Link href="/flashcards/2">
             <IconButton
               isRound={true}
+              size="lg"
               ml="100%"
               variant="solid"
               onClick={handleLessonTwoToggle}
@@ -67,6 +69,7 @@ const LessonsUnit1 = () => {
           <Link href="/flashcards/3">
             <IconButton
               isRound={true}
+              size="lg"
               ml="200%"
               variant="solid"
               colorScheme={"blue"}
@@ -79,6 +82,7 @@ const LessonsUnit1 = () => {
           <Link href="/flashcards/4">
             <IconButton
               isRound={true}
+              size="lg"
               ml="150%"
               variant="solid"
               colorScheme={"blue"}
@@ -91,6 +95,7 @@ const LessonsUnit1 = () => {
           <Link href="/flashcards/5">
             <IconButton
               isRound={true}
+              size="lg"
               ml="100%"
               variant="solid"
               colorScheme={"blue"}
