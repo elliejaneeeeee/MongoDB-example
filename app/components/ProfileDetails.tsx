@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,7 @@ import { Lesson } from "../../types";
 
 const ProfileDetails = () => {
     const { data: session, status } = useSession();
+    const [isLoading, setIsLoading] = useState(false)
     const avatarUrl = `https://i.pravatar.cc/150?u=${session?.user?.email}`;
     const router = useRouter();
 
@@ -115,9 +116,11 @@ const ProfileDetails = () => {
                         Go to next lesson
                     </Button>
                     <Button
-                        onClick={() => signOut({ callbackUrl: "/login" })}
+                        onClick={() => {setIsLoading(true), signOut({ callbackUrl: "/login" })}}
                         leftIcon={<FiLogOut />}
                         variant="solid"
+                        isLoading={isLoading}
+                        loadingText='Logging out'
                         backgroundColor="red.500"
                         color="white"
                         position="relative"

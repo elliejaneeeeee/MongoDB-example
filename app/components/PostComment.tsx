@@ -27,7 +27,7 @@ const PostComment = ({ itemId, setCommentsList, commentList }) => {
     setIsLoading(true);
     const response = await fetch(`/api/forums/${itemId}/comments`, {
       method: "POST",
-      body: JSON.stringify({ author: session?.user?.name, body: input }),
+      body: JSON.stringify({ author: session?.user?.username, body: input }),
     });
     if (!response.ok) {
       setIsError(true);
