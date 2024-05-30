@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+
 import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
 
 export interface bookmarks {
@@ -23,19 +24,33 @@ declare module "next-auth" {
         bookmarks: any[];
         progress: Lesson[];
     }
+
 }
 export class CustomError extends Error {
-    status: errorMsg;
+  status: errorMsg;
 
-    constructor(msg: string, status: number) {
-        super(msg);
-        this.status = { code: status, msg };
-    }
+  constructor(msg: string, status: number) {
+    super(msg);
+    this.status = { code: status, msg };
+  }
 }
-export interface errorMsg {
-    code: number;
-    msg: string;
-}
+export type errorMsg = {
+  code: number;
+  msg: string;
+};
+
+export type userResponse = {
+  acknowledged: boolean;
+  insertedId: ObjectId;
+  _id: ObjectId;
+  username: string;
+  full_name: string;
+  email: string;
+  password: string;
+  bookmarks: number;
+  progress: Lesson[] | [];
+};
+
 
 export interface userResponse {
     acknowledged: boolean;
@@ -50,23 +65,25 @@ export interface userResponse {
     progress: Lesson[] | [];
 }
 
-export interface comments {
-    _id: ObjectId;
-    author: string;
-    body: string;
-    votes: number;
-    date: Date;
-}
+export type comments = {
+  _id: ObjectId;
+  author: string;
+  body: string;
+  votes: number;
+  date: Date;
+};
 
-export interface forums {
-    _id: ObjectId;
-    title: string;
-    body: string;
-    author: string;
-    votes: number;
-    date: Date;
-    comments: comments[];
-}
+
+export type forums = {
+  _id: ObjectId;
+  title: string;
+  body: string;
+  author: string;
+  votes: number;
+  date: Date;
+  comments: comments[];
+};
+
 
 export interface Lesson {
     [key: `lesson${number}`]: boolean;
@@ -79,32 +96,35 @@ export interface users {
   full_name: string;
   email: string;
   password: string;
+
   bookmarks: bookmarks[];
   progress: Lesson[];
 }
 
-export interface flashcards {
-    _id: ObjectId;
-    unit: number;
-    section: string;
-    title: string;
-    body: string[];
-    img_url: string;
-}
 
-export interface flashcardsResponse {
-    flashcards: flashcards[];
-}
+export type flashcards = {
+  _id: ObjectId;
+  unit: number;
+  section: string;
+  title: string;
+  body: string[];
+  img_url: string;
+};
 
-export interface articles {
-    _id: ObjectId;
-    title: string;
-    link: string;
-    img_url: string;
-    body: string;
-    source: string;
-    votes: number;
-}
+export type flashcardsResponse = {
+  flashcards: flashcards[];
+};
+
+export type articles = {
+  _id: ObjectId;
+  title: string;
+  link: string;
+  img_url: string;
+  body: string;
+  source: string;
+  votes: number;
+};
+
 
 export interface updateFields {
     username?: string;
@@ -128,3 +148,9 @@ export interface PostForumProps {
     allForums: forums[];
     setAllForums: React.Dispatch<React.SetStateAction<forums[]>>
 }
+
+export type Saves = {
+  type: string;
+  _id: string;
+};
+
