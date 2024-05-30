@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import ArticleCard from "./ArticleCard";
 import { articles } from "../../types";
 import Carousel from "./Carousel/Carousel";
@@ -10,10 +10,10 @@ interface ArticlesDisplayProps {
 
 const ArticlesDisplay = ({ articles }: ArticlesDisplayProps) => {
   return (
-    <Flex width="100%">
+    <Flex overflow="hidden">
       <Carousel childWidth={350}>
         {articles?.map((article, index) => (
-          <ArticleCard key={index} article={article} />
+          <ArticleCard article={article} />
         ))}
       </Carousel>
     </Flex>

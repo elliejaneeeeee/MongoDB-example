@@ -1,8 +1,17 @@
 "use client";
 import React, { use } from "react";
 import { useSession } from "next-auth/react";
-import { FormControl, FormLabel, FormErrorMessage, FormHelperText, Button, Input, Flex, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+  Button,
+  Input,
+  Flex,
+  Text,
+} from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 import { FaRegCircleUser } from "react-icons/fa6";
 
 const PostComment = ({ itemId, setCommentsList, commentList }) => {
@@ -62,7 +71,11 @@ const PostComment = ({ itemId, setCommentsList, commentList }) => {
           onBlur={handleBlur}
           onFocus={handleFocus}
         />
-        {!isError ? <FormHelperText></FormHelperText> : <FormErrorMessage>Comment cannot be empty.</FormErrorMessage>}
+        {!isError ? (
+          <FormHelperText></FormHelperText>
+        ) : (
+          <FormErrorMessage>Comment cannot be empty.</FormErrorMessage>
+        )}
 
         <Button
           size="sm"
@@ -76,7 +89,9 @@ const PostComment = ({ itemId, setCommentsList, commentList }) => {
         >
           Submit
         </Button>
-        {isSubmit && <FormHelperText>Comment posted successfully</FormHelperText>}
+        {isSubmit && (
+          <FormHelperText>Comment posted successfully</FormHelperText>
+        )}
       </FormControl>
     </form>
   );

@@ -45,7 +45,6 @@ export default function Navbar() {
         router.push(newPath);
     };
 
-
     return (
         <Box
             boxShadow="lg"
@@ -70,9 +69,7 @@ export default function Navbar() {
                         bg={
                             navLink.path === path ||
                             (navLink.name === "Lessons" &&
-                                path.startsWith("/flashcards")) ||
-                            (navLink.name === "Feed" &&
-                                path.startsWith("/forum"))
+                                path.startsWith("/flashcards"))
                                 ? navLink.activeColor
                                 : "transparent"
                         }
@@ -94,5 +91,4 @@ export default function Navbar() {
             </Grid>
         </Box>
     );
-
 }
