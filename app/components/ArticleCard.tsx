@@ -3,6 +3,7 @@ import React from "react";
 import { Box, Image, Text, Center, Heading, HStack, Flex, Container, Link, useMediaQuery } from "@chakra-ui/react";
 import { articles } from "../../types";
 import { MdBookmark, MdBookmarkBorder } from "react-icons/md";
+import SaveButton from "./SaveButton";
 
 interface ArticleCardProps {
   article: articles;
@@ -60,11 +61,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
               cursor="pointer"
               onClick={() => setSaved(!saved)}
             >
-              {saved ? (
-                <MdBookmark color="#4682b4" fontSize={"25px"} />
-              ) : (
-                <MdBookmarkBorder color="#416787" fontSize={"25px"} />
-              )}
+              <SaveButton/>
             </Flex>
           </HStack>
         </Box>
