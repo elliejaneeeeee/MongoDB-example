@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { comments as commentsType } from "../.../../../types";
@@ -22,8 +22,13 @@ import {
 import LikeDislikeButtons from "./LikeDislikeButtons";
 import PostComment from "./PostComment";
 
-const CommentsSection = ({ comments, ID }) => {
-  const [commentsList, setCommentsList] = useState([]);
+type CommentsSectionProps = {
+  id: string;
+  comments: commentsType[];
+};
+
+const CommentsSection: FC<CommentsSectionProps> = ({ comments, id }) => {
+  const [commentsList, setCommentsList] = useState<commentsType[]>([]);
   const [deleteWarning, setDeleteWarning] = useState(false);
   const [deletedID, setDeletedID] = useState("");
   const [deleteSuccess, setDeleteSuccess] = useState(false);
@@ -36,13 +41,11 @@ const CommentsSection = ({ comments, ID }) => {
 
   const deleteComment = async () => {
     setDeleteWarning(false);
-    const response = await fetch(`/api/forums/${ID}/comments/${deletedID}`, {
+    const response = await fetch(`/api/forums/${id}/comments/${deletedID}`, {
       method: "DELETE",
     });
     if (response.ok) {
-      setCommentsList(
-        commentsList.filter((comment: any) => comment._id !== deletedID)
-      );
+      setCommentsList(commentsList.filter((comment: commentsType) => comment._id.toString() !== deletedID));
 
       setDeleteSuccess(true);
     } else {
@@ -55,11 +58,7 @@ const CommentsSection = ({ comments, ID }) => {
   }, []);
   return (
     <Flex flexDirection="column" gap="3">
-      <PostComment
-        itemId={ID}
-        setCommentsList={setCommentsList}
-        commentList={commentsList}
-      />
+      <PostComment itemId={id} setCommentsList={setCommentsList} commentList={commentsList} />
       {deleteSuccess && (
         <Flex flexDirection="column" alignItems="center">
           <Text>Comment deleted</Text>{" "}
@@ -93,30 +92,12 @@ const CommentsSection = ({ comments, ID }) => {
         {commentsList.map((comment: any) => {
           const currentDate = new Date();
           const commentDate = new Date(comment.date);
-          let timeSincePost
-
-          if(currentDate.getTime() - commentDate.getTime() < 86400000){
-           timeSincePost = (Math.round(((currentDate.getTime() - commentDate.getTime())) / 36000000).toString() + 'h')
-          
-          }
-          else{
-          timeSincePost = (Math.round(((currentDate.getTime() - commentDate.getTime())) / 8.64e7).toString() + 'd')
-         
-          }
-          
-            
-          ;
+          const daysSincePost = Math.floor((currentDate.getTime() - commentDate.getTime()) / 8.64e7);
 
           return (
             <GridItem bg="none">
               <Text fontSize="sm">{comment.body}</Text>
-              <Flex
-                flexDirection="row"
-                justifyContent="space-between"
-                alignItems="center"
-                mt="2"
-                fontSize="sm"
-              >
+              <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mt="2" fontSize="sm">
                 <Stack direction="row">
                   <Text fontStyle="italic" fontWeight="bold">
                     {comment.author}
@@ -138,19 +119,13 @@ const CommentsSection = ({ comments, ID }) => {
                   </Box>
                 )}
 
-                <AlertDialog
-                  isOpen={deleteWarning}
-                  leastDestructiveRef={cancelRef}
-                  onClose={onClose}
-                >
+                <AlertDialog isOpen={deleteWarning} leastDestructiveRef={cancelRef} onClose={onClose}>
                   <AlertDialogOverlay>
                     <AlertDialogContent>
                       <AlertDialogHeader fontSize="lg" fontWeight="bold">
                         Delete Comment
                       </AlertDialogHeader>
-                      <AlertDialogBody>
-                        Are you sure? You can't undo this action afterwards.
-                      </AlertDialogBody>
+                      <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>
                       <AlertDialogFooter>
                         <Button
                           ref={cancelRef}
@@ -160,21 +135,14 @@ const CommentsSection = ({ comments, ID }) => {
                         >
                           Cancel
                         </Button>
-                        <Button
-                          colorScheme="red"
-                          onClick={deleteComment}
-                          ml={3}
-                        >
+                        <Button colorScheme="red" onClick={deleteComment} ml={3}>
                           Delete
                         </Button>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialogOverlay>
                 </AlertDialog>
-                <LikeDislikeButtons
-                  itemId={comment._id}
-                  type={"forums/" + ID + "/comments"}
-                />
+                <LikeDislikeButtons itemId={comment._id} type={"forums/" + id + "/comments"} />
               </Flex>
             </GridItem>
           );
