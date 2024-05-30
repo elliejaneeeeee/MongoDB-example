@@ -33,6 +33,7 @@ const CommentsSection: FC<CommentsSectionProps> = ({ comments, id }) => {
   const [deletedID, setDeletedID] = useState("");
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
+  //const [timeSincePost, setTimeSincePost] = useState('')
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef();
@@ -101,9 +102,9 @@ const CommentsSection: FC<CommentsSectionProps> = ({ comments, id }) => {
                   <Text fontStyle="italic" fontWeight="bold">
                     {comment.author}
                   </Text>
-                  <Text>{daysSincePost}d</Text>
+                  <Text>{timeSincePost}</Text>
                 </Stack>
-                {comment.author === session?.user?.name && (
+                {comment.author === session?.user?.username && (
                   <Box>
                     <Button
                       size="xs"

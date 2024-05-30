@@ -31,8 +31,8 @@ const ForumPost = ({ id, showComments = true }: { id: string; showComments: bool
   }, [showBadge]);
 
   if (!postData) return null;
-
   return (
+    
     <>
       <Flex bg="#dbe2e9" flexDirection="column" gap="4" p="6">
         <Stack direction="row" mt="3">

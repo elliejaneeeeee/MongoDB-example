@@ -22,12 +22,13 @@ const RegisterForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false)
 
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+        setIsLoading(true)
         if (!name || !username || !email || !password) {
             setError("All fields are required.");
             return;
@@ -66,6 +67,7 @@ const RegisterForm = () => {
                 router.push("/login");
             } else {
                 console.log("User registration failed");
+                setIsLoading(false)
             }
         } catch (error) {
             console.log("Error during registration");
@@ -137,8 +139,10 @@ const RegisterForm = () => {
                             colorScheme="green"
                             width="full"
                             mb={4}
+                            isLoading={isLoading}
+                            loadingText='Registering'
                         >
-                            Login
+                            Register
                         </Button>
                         {error && (
                             <Alert status="error" mb={4}>

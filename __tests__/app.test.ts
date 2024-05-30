@@ -461,7 +461,7 @@ describe("DELETE /api/forums/:id/comments/:id", () => {
     
     expect(updateForumData.post.comments.length).toBe(1)
     expect(updateForumData.post.comments[0]).toMatchObject({ 
-        "author": "dadoftwins",
+        "author": "earlyeducator",
         "body": "Simple toys like stacking blocks and shape sorters are great for motor skills.",
         "date": "2024-05-05T11:00:00.000Z",
         "votes": 14,
