@@ -34,7 +34,7 @@ const ForumCard: React.FC<ForumCardProps> = ({ forum }) => {
           </GridItem>
           <GridItem area={"author"} fontSize={'x-small'}>{forum.author}</GridItem>
           <GridItem area={"votes"}><LikeDislikeButtons itemId={forum._id} type={'forums'}/></GridItem>
-          <GridItem area={"bookmark"} justifySelf={"start"}><SaveButton itemId={forum._id}/></GridItem>
+          <GridItem area={"bookmark"} justifySelf={"start"}><SaveButton itemId={forum._id} type={"forums"}/></GridItem>
         </Grid>
       </Center>
     </>

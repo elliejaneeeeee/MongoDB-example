@@ -69,7 +69,7 @@ export default function Navbar() {
                         bg={
                             navLink.path === path ||
                             (navLink.name === "Lessons" &&
-                                path.startsWith("/flashcards"))
+                                path.startsWith("/flashcards")) || (navLink.name === "Feed" && path.startsWith("/forum"))
                                 ? navLink.activeColor
                                 : "transparent"
                         }

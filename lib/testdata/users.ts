@@ -15,7 +15,6 @@ const userid_5: ObjectId = new ObjectId("664db5b1509cc0afb30cc386");
 export const usersData: users[] = [
     {
         _id: userid_1,
-        avatar_url: "https://ui-avatars.com/api/?background=random&name=Alex+Johnson",
         username: "parentpro",
         full_name: "Alex Johnson",
         email: "alex.johnson@example.com",
@@ -30,7 +29,6 @@ export const usersData: users[] = [
     },
     {
         _id: userid_2,
-        avatar_url: "https://ui-avatars.com/api/?background=random&name=Maria+Rodriguez",
         username: "sleepguru",
         full_name: "Maria Rodriguez",
         email: "maria.rodriguez@example.com",
@@ -46,7 +44,6 @@ export const usersData: users[] = [
     },
     {
         _id: userid_3,
-        avatar_url: "https://ui-avatars.com/api/?background=random&name=David+Lee",
         username: "dadoftwins",
         full_name: "David Lee",
         email: "david.lee@example.com",
@@ -61,7 +58,6 @@ export const usersData: users[] = [
     },
     {
         _id: userid_4,
-        avatar_url: "https://ui-avatars.com/api/?background=random&name=Sophie+Brown",
         username: "nutritionistmom",
         full_name: "Sophie Brown",
         email: "sophie.brown@example.com",
@@ -76,7 +72,6 @@ export const usersData: users[] = [
     },
     {
         _id: userid_5,
-        avatar_url: "https://ui-avatars.com/api/?background=random&name=Liam+Smith",
         username: "newdad123",
         full_name: "Liam Smith",
         email: "liam.smith@example.com",

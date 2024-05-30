@@ -8,10 +8,9 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  FormHelperText,
   Input,
   Button,
-  Divider,
+  Box
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
@@ -19,8 +18,9 @@ import { useState } from "react";
 const PostForum: React.FC<PostForumProps> = ({ allForums, setAllForums }) => {
   const { data: session } = useSession();
   const [titleInput, setTitleInput] = useState("");
-  const [isSubmit, setIsSubmit] = useState(false)
+  const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [bodyInput, setBodyInput] = useState("");
 
   function handleTitleInput(e: any) {
@@ -32,8 +32,12 @@ const PostForum: React.FC<PostForumProps> = ({ allForums, setAllForums }) => {
 
   async function handlePostForum(e: any) {
     e.preventDefault();
-    setIsLoading(true)
-    setIsSubmit(true)
+    if (titleInput === "" || bodyInput === "") {
+      setIsError(true);
+      return;
+    }
+    setIsError(false);
+    setIsLoading(true);
     const response = await fetch(`/api/forums`, {
       method: "POST",
       body: JSON.stringify({
@@ -42,12 +46,13 @@ const PostForum: React.FC<PostForumProps> = ({ allForums, setAllForums }) => {
         body: bodyInput,
       }),
     });
+    setIsSubmit(true);
 
-    const {postData}: any = await response.json()
-    setAllForums([postData, ...allForums])
-    setBodyInput('')
-    setTitleInput('')
-    setIsLoading(false)
+    const { postData }: any = await response.json();
+    setAllForums([postData, ...allForums]);
+    setBodyInput("");
+    setTitleInput("");
+    setIsLoading(false);
   }
 
   return (
@@ -58,11 +63,12 @@ const PostForum: React.FC<PostForumProps> = ({ allForums, setAllForums }) => {
           p={5}
           bg={"white"}
           borderRadius={"5px"}
-          top={"15%"}
+          top={"7%"}
           w={"95%"}
           mb={"3rem"}
+          boxShadow={"3px 3px 0 #2e2027"}
         >
-          <FormControl>
+          <FormControl isInvalid={isError} isRequired>
             <Heading fontSize={"md"}>Post a question...</Heading>
             <FormLabel fontSize={"small"}>Title: </FormLabel>
             <Input
@@ -78,19 +84,29 @@ const PostForum: React.FC<PostForumProps> = ({ allForums, setAllForums }) => {
               size={"xs"}
               value={bodyInput}
             />
+            {isError && (
+              <FormErrorMessage>Both fields are required.</FormErrorMessage>
+            )}
           </FormControl>
-          <Button
-            onClick={handlePostForum}
-            size={"sm"}
-            variant={"solid"}
-            colorScheme={"blue"}
-            mt={2}
-            isLoading={isLoading}
-            loadingText="Posting Comment"
-          >
-            Submit
-            {isSubmit ?? <Text>Question Posted!</Text>}
-          </Button>
+          <Box mt={2} display={"flex"} alignItems={"center"}>
+            <Button
+              onClick={handlePostForum}
+              size={"sm"}
+              variant={"solid"}
+              bg={"pink.300"}
+              colorScheme={"pink"}
+              mt={2}
+              isLoading={isLoading}
+              loadingText="Posting Comment"
+            >
+              Submit
+            </Button>
+            {isSubmit && !isError && (
+              <Text ml={'1rem'} color="pink.300">
+                Question Posted!
+              </Text>
+            )}
+          </Box>
         </Container>
       </Flex>
     </>

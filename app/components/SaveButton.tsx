@@ -69,7 +69,8 @@ const SaveButton = ({itemId, type}) => {
       leftIcon={isSaved ?  <CheckIcon/> : <AddIcon/>}
       isLoading={isLoading}
       loadingText='Saving'
-      colorScheme='teal'
+      colorScheme='pink'
+      color={"pink.300"}
       variant={isSaved ? 'solid' : 'outline'}
       onClick={handleClick}
     >
