@@ -21,13 +21,15 @@ const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false)
 
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+        setIsLoading(true)
         try {
+            setIsLoading(true)
             const res = await signIn("credentials", {
                 email,
                 password,
@@ -35,11 +37,13 @@ const LoginForm = () => {
             });
 
             if (!res) {
+                setIsLoading(false)
                 setError("Unexpected error");
                 return;
             }
 
             if (res.error) {
+                setIsLoading(false)
                 setError("Invalid Credentials");
                 return;
             }
@@ -96,6 +100,8 @@ const LoginForm = () => {
                             colorScheme="green"
                             width="full"
                             mb={4}
+                            isLoading={isLoading}
+                        loadingText='Logging in'
                         >
                             Login
                         </Button>

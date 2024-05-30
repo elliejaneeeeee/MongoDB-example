@@ -4,9 +4,11 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { Flex, Box, Text, Button, Heading, Divider } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
+import { useState } from "react";
 
 const ProfileDetails = () => {
     const { data: session } = useSession();
+    const [isLoading, setIsLoading] = useState(false)
 
     return (
         <Flex justifyContent="center" alignItems="center" height="100vh">
@@ -48,9 +50,11 @@ const ProfileDetails = () => {
                 </Box>
                 <Flex justifyContent="center" alignItems="center">
                     <Button
-                        onClick={() => signOut({ callbackUrl: "/login" })}
+                        onClick={() => {setIsLoading(true), signOut({ callbackUrl: "/login" })}}
                         leftIcon={<FiLogOut />}
                         variant="solid"
+                        isLoading={isLoading}
+                        loadingText='Logging out'
                         backgroundColor="red.500"
                         color="white"
                         position="absolute"

@@ -28,6 +28,7 @@ const CommentsSection = ({ comments, ID }) => {
   const [deletedID, setDeletedID] = useState("");
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
+  //const [timeSincePost, setTimeSincePost] = useState('')
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef();
@@ -92,9 +93,19 @@ const CommentsSection = ({ comments, ID }) => {
         {commentsList.map((comment: any) => {
           const currentDate = new Date();
           const commentDate = new Date(comment.date);
-          const daysSincePost = Math.floor(
-            (currentDate.getTime() - commentDate.getTime()) / 8.64e7
-          );
+          let timeSincePost
+
+          if(currentDate.getTime() - commentDate.getTime() < 86400000){
+           timeSincePost = (Math.round(((currentDate.getTime() - commentDate.getTime())) / 36000000).toString() + 'h')
+          
+          }
+          else{
+          timeSincePost = (Math.round(((currentDate.getTime() - commentDate.getTime())) / 8.64e7).toString() + 'd')
+         
+          }
+          
+            
+          ;
 
           return (
             <GridItem bg="none">
@@ -110,9 +121,9 @@ const CommentsSection = ({ comments, ID }) => {
                   <Text fontStyle="italic" fontWeight="bold">
                     {comment.author}
                   </Text>
-                  <Text>{daysSincePost}d</Text>
+                  <Text>{timeSincePost}</Text>
                 </Stack>
-                {comment.author === session?.user?.name && (
+                {comment.author === session?.user?.username && (
                   <Box>
                     <Button
                       size="xs"

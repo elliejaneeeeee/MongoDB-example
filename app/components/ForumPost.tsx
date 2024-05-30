@@ -5,6 +5,7 @@ import React from 'react'
 import {forums as forumPostType} from '../.../../../types'
 import { FaRegCircleUser } from "react-icons/fa6";
 import { FaRegCommentAlt } from "react-icons/fa";
+import Link from 'next/navigation'
 import {
     Heading,
     Text,
@@ -16,16 +17,22 @@ import {
 import LikeDislikeButtons from './LikeDislikeButtons';
 import SaveButton from './SaveButton';
 import CommentsSection from './CommentsSection';
-import NavBar from './NavBar';
 
 const ForumPost = ({ id }: { id: string }) => {
     const [postData, setPostData] = useState<forumPostType | {}>({})
     const [showBadge, setShowBadge] = useState(false)
     const [daysAgo, setDaysAgo]= useState(0)
-    
+    const [isError, setIsError] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
+   
     useEffect(() => {
+      setIsLoading(true)
         const getPost = async () => {
+          
             const response = await fetch(`/api/forums/${id}`)
+            if(!response.ok){
+              setIsError(true)
+            }
             const {post} = await response.json()
             setPostData(post)
             const currentDate = new Date()
@@ -34,11 +41,20 @@ const ForumPost = ({ id }: { id: string }) => {
             if(currentDate.getTime() - postDate.getTime() < 2.506e+9){
                 setShowBadge(true)
             }
+            setIsLoading(false)
+         
         }
         getPost()
-    },[showBadge])
-   
+        
+    },[id])
+    if(isLoading){
+    return <p>Loading...</p>
+    }
+   if(isError){
+    return <Heading fontSize='2xl'>Error: 404 could not find requested resource</Heading>
+   }
   return (
+    
     <>
          <Flex bg='#dbe2e9' flexDirection='column' gap='4' p='6' >
          <Stack direction='row' mt='3' >
@@ -73,7 +89,7 @@ const ForumPost = ({ id }: { id: string }) => {
             
         {postData.comments &&  <CommentsSection comments={postData.comments} ID={id}/>}
         </Flex>
-     <NavBar/>
+     
 </>
     
   )
