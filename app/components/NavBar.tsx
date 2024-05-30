@@ -53,6 +53,7 @@ export default function Navbar() {
             key={navLink.name}
             as="a"
             display="flex"
+            flexDirection="column"
             alignItems="center"
             justifyContent="center"
             bg={navLink.path === path ? navLink.activeColor : "transparent"}
@@ -69,6 +70,9 @@ export default function Navbar() {
               bg="transparent"
               color="black"
             />
+            <Box fontSize="xs" mt={0.1}>
+              {navLink.name}
+            </Box>
           </Box>
         ))}
       </Grid>

@@ -10,7 +10,7 @@ import SaveButton from "./SaveButton";
 import CommentsSection from "./CommentsSection";
 import NavBar from "./NavBar";
 
-const ForumPost = ({ id }: { id: string }) => {
+const ForumPost = ({ id, showComments = true }: { id: string; showComments: boolean }) => {
   const [postData, setPostData] = useState<forumPostType | undefined>(undefined);
   const [showBadge, setShowBadge] = useState(false);
   const [daysAgo, setDaysAgo] = useState(0);
@@ -76,9 +76,11 @@ const ForumPost = ({ id }: { id: string }) => {
           <SaveButton itemId={id} />
         </Flex>
       </Flex>
-      <Flex flexDirection="column" gap="4" bg="white" width="100%" p="4" marginBottom="3">
-        {postData.comments && <CommentsSection comments={postData.comments} id={id} />}
-      </Flex>
+      {showComments && (
+        <Flex flexDirection="column" gap="4" bg="white" width="100%" p="4" marginBottom="3">
+          {postData.comments && <CommentsSection comments={postData.comments} id={id} />}
+        </Flex>
+      )}
       <NavBar />
     </>
   );
