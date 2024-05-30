@@ -77,7 +77,8 @@ const BookmarksList = () => {
     </>
   }
   return (
-    <Flex flexDirection="column" gap="4" m='4' maxWidth={['100%','40%']}>
+  
+    <Flex flexDirection="column" gap="4" m='4' maxWidth={['100%','40%']} >
       <Flex flexDirection='row' alignItems='center' justifyContent='space-between'>
       <Heading >My Bookmarks</Heading>
       <FiBookmark fontSize='60px'/>

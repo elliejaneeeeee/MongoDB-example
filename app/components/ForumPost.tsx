@@ -82,7 +82,7 @@ const ForumPost = ({ id, showComments = true }: { id: string; showComments: bool
           {postData.comments && <CommentsSection comments={postData.comments} id={id} />}
         </Flex>
       )}
-      <NavBar />
+      
     </>
   );
 };
