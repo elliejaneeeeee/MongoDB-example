@@ -14,15 +14,16 @@ import {
     Link,
 } from "@chakra-ui/react";
 import { FiBookOpen, FiLogOut } from "react-icons/fi";
+import { Lesson } from "../../types";
 
 const ProfileDetails = () => {
     const { data: session, status } = useSession();
     const avatarUrl = `https://i.pravatar.cc/150?u=${session?.user?.email}`;
     const router = useRouter();
 
-    const findFirstIncompleteLesson = (progress) => {
+    const findFirstIncompleteLesson = (progress: Lesson[]) => {
         for (let i = 0; i < progress.length; i++) {
-            const lessonKey = Object.keys(progress[i])[0];
+            const lessonKey = Object.keys(progress[i])[0] as keyof Lesson;
             if (!progress[i][lessonKey]) {
                 return { lessonKey, lessonNumber: i + 1 };
             }
