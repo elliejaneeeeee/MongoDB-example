@@ -85,6 +85,7 @@ const BookmarksList = () => {
      
       <Text>{session?.user?.name}'s saved posts</Text>
       {bookmarksList.map((bookmark) => {
+        if (!bookmark) return null;
         if (bookmark.link) {
           return (
             <Box>

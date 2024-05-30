@@ -1,21 +1,53 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
-import { Flex, Box, Text, Button, Heading, Divider } from "@chakra-ui/react";
-import { FiLogOut } from "react-icons/fi";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+    Flex,
+    Box,
+    Text,
+    Button,
+    Heading,
+    Divider,
+    Image,
+    Link,
+} from "@chakra-ui/react";
+import { FiBookOpen, FiLogOut } from "react-icons/fi";
+import { Lesson } from "../../types";
 
 const ProfileDetails = () => {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
     const [isLoading, setIsLoading] = useState(false)
+    const avatarUrl = `https://i.pravatar.cc/150?u=${session?.user?.email}`;
+    const router = useRouter();
+
+    const findFirstIncompleteLesson = (progress: Lesson[]) => {
+        for (let i = 0; i < progress.length; i++) {
+            const lessonKey = Object.keys(progress[i])[0] as keyof Lesson;
+            if (!progress[i][lessonKey]) {
+                return { lessonKey, lessonNumber: i + 1 };
+            }
+        }
+        return null;
+    };
+
+    const firstIncompleteLesson =
+        session?.user?.progress &&
+        findFirstIncompleteLesson(session.user.progress);
+
+    const handleGoToNextLesson = () => {
+        if (firstIncompleteLesson) {
+            router.push(`/flashcards/${firstIncompleteLesson.lessonNumber}`);
+        }
+    };
 
     return (
         <Flex justifyContent="center" alignItems="center" height="100vh">
             <Box
                 borderWidth="1px"
                 width="360px"
-                minHeight="300px"
+                minHeight="360px"
                 position="relative"
                 rounded="md"
                 mx={[0, 5]}
@@ -24,14 +56,22 @@ const ProfileDetails = () => {
                 borderColor="black"
                 boxShadow={"6px 6px 0 black"}
             >
-                <Box p={4}>
+                <Box p={4} textAlign={"center"}>
                     <Heading color={"black"} fontSize={"2xl"}>
                         {status === "loading"
                             ? "Loading profile..."
                             : "Profile"}
                     </Heading>
                 </Box>
-                <Divider borderColor="black" mt={2} mb={4} />
+                {/* <Divider borderColor="black" mb={4} /> */}
+                <Image
+                    borderRadius="full"
+                    boxSize="100px"
+                    src={avatarUrl}
+                    alt="Profile Image"
+                    mb={4}
+                    mx="auto"
+                />
                 <Box p={4}>
                     <Text mb={4}>
                         Name:
@@ -39,7 +79,7 @@ const ProfileDetails = () => {
                             {status === "loading" ? "..." : session?.user?.name}
                         </span>
                     </Text>
-                    <Text>
+                    <Text mb={4}>
                         Email:
                         <span className="font-bold ml-3">
                             {status === "loading"
@@ -48,7 +88,33 @@ const ProfileDetails = () => {
                         </span>
                     </Text>
                 </Box>
-                <Flex justifyContent="center" alignItems="center">
+                <Divider borderColor="black" mt={4} mb={4} />
+                {firstIncompleteLesson && (
+                    <Heading
+                        color={"black"}
+                        fontSize={"lg"}
+                        textAlign={"center"}
+                        mb={4}
+                    >
+                        Up next: Lesson {firstIncompleteLesson.lessonNumber}
+                    </Heading>
+                )}
+                <Flex justifyContent="right">
+                    <Button
+                        onClick={handleGoToNextLesson}
+                        leftIcon={<FiBookOpen />}
+                        variant="solid"
+                        backgroundColor="blue.500"
+                        color="white"
+                        position="relative"
+                        bottom="0"
+                        right="0"
+                        mb={4}
+                        mr={4}
+                        isDisabled={!session}
+                    >
+                        Go to next lesson
+                    </Button>
                     <Button
                         onClick={() => {setIsLoading(true), signOut({ callbackUrl: "/login" })}}
                         leftIcon={<FiLogOut />}
@@ -57,7 +123,7 @@ const ProfileDetails = () => {
                         loadingText='Logging out'
                         backgroundColor="red.500"
                         color="white"
-                        position="absolute"
+                        position="relative"
                         bottom="0"
                         right="0"
                         mb={4}
