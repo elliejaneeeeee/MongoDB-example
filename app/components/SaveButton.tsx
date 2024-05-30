@@ -1,20 +1,15 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Flex,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-  Link,
-} from "@chakra-ui/react";
-import { AddIcon, CheckIcon } from "@chakra-ui/icons";
+'use client'
+import React, { useEffect, useState } from 'react'
+import { Button, Flex,  Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton, useDisclosure, Link} from '@chakra-ui/react'
+import {AddIcon, CheckIcon} from '@chakra-ui/icons'
 import { useSession } from "next-auth/react";
+
 
 const SaveButton = ({itemId, type}) => {
     const { onClose } = useDisclosure()
@@ -48,30 +43,15 @@ const SaveButton = ({itemId, type}) => {
             }
          })
     }
-  }, [session]);
-
-  const handleClick = () => {
-    setIsLoading(true);
-
-    fetch(`/api/users/${session?.user?.id}`, { method: "PATCH", body: JSON.stringify({ _id: itemId }) }).then(
-      (response) => {
-        if (response.ok) {
-          setIsSaved(!isSaved);
-          setIsLoading(false);
-        } else {
-          setIsLoading(false);
-          setOpenOverlay(true);
-        }
-      }
-    );
-  };
   return (
     <>
-      <Modal isOpen={openOverlay} onClose={onClose}>
+      <Modal
+        isOpen={openOverlay}
+        onClose={onClose}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Create an account</ModalHeader>
-
           <ModalCloseButton onClick={() =>{setOpenOverlay(false)}}/>
           <ModalBody pb={6}>
             Please sign up to bookmark, rate or comment
@@ -99,5 +79,6 @@ const SaveButton = ({itemId, type}) => {
   </Flex>
   </>
   )
+}
 
-export default SaveButton;
+export default SaveButton

@@ -45,7 +45,6 @@ export default function Navbar() {
         router.push(newPath);
     };
 
-
     return (
         <Box
             boxShadow="lg"
@@ -92,5 +91,4 @@ export default function Navbar() {
             </Grid>
         </Box>
     );
-
 }
