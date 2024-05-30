@@ -65,6 +65,7 @@ export default function Navbar() {
                         key={navLink.name}
                         as="a"
                         display="flex"
+                        flexDirection="column"
                         alignItems="center"
                         justifyContent="center"
                         bg={
@@ -89,6 +90,7 @@ export default function Navbar() {
                             bg="transparent"
                             color="black"
                         />
+                    <Box fontSize="sm" mt={0.1} lineHeight="normal">{navLink.name}</Box>
                     </Box>
                 ))}
             </Grid>
