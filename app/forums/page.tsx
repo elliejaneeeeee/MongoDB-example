@@ -75,6 +75,7 @@ export default function ForumsPage() {
           </Container>
         </Flex>
       </Box>
+      <Flex m='20'></Flex>
       <Navbar />
     </>
   );
