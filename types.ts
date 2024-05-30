@@ -41,6 +41,7 @@ export interface userResponse {
     acknowledged: boolean;
     insertedId: ObjectId;
     _id: ObjectId;
+    avatar_url: string;
     username: string;
     full_name: string;
     email: string;
@@ -121,4 +122,9 @@ export interface Saves {
 export interface ForumCardProps {
   forum: forums,
   key: string
+}
+
+export interface PostForumProps {
+    allForums: forums[];
+    setAllForums: React.Dispatch<React.SetStateAction<forums[]>>
 }

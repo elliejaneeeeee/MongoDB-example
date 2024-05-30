@@ -1,10 +1,28 @@
+'use client'
 import { forums } from "@/types";
 import ForumCard from "../components/ForumCard";
-import { Center, Container, Flex, Heading } from "@chakra-ui/react";
+import { Container, Flex, Heading } from "@chakra-ui/react";
+import PostForum from "../components/PostForum";
+import { useState, useEffect } from "react";
 
-export default async function ForumsPage() {
-  const data = await fetch("http://localhost:3001/api/forums");
-  const { forums } = await data.json();
+export default function ForumsPage() {
+  const [allForums, setAllForums] = useState<forums[]>([])
+  const [isError, setIsError] = useState(false)
+
+
+  useEffect(() => {
+    const fetchForums = async () => {
+      try {
+        const res = await fetch('http://localhost:3000/api/forums')
+        const {forums} =  await res.json()
+        setAllForums(forums)
+      } catch (error) {
+        setIsError(true)
+      }
+    }
+
+    fetchForums()
+  }, [])
 
   return (
     <>
@@ -18,6 +36,7 @@ export default async function ForumsPage() {
       >
         Parentify Forums
       </Heading>
+      <PostForum allForums={allForums} setAllForums={setAllForums}/>
       <Flex alignItems={"center"} justifyContent={"center"}>
         <Container p={0} zIndex={-1}>
           <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
@@ -35,8 +54,8 @@ export default async function ForumsPage() {
             />
           </svg>
         </Container>
-        <Container position={"absolute"} overflow={"scroll"} mt={"40%"} p={"3"}>
-          {forums.map((forum: forums) => {
+        <Container position={"absolute"} overflow={"scroll"} mt={"50rem"} p={"3"}>
+          {allForums.map((forum: forums) => {
             const key = forum._id.toString();
             return <ForumCard forum={forum} key={key} />;
           })}
