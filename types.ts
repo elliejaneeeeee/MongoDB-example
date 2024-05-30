@@ -49,13 +49,24 @@ export interface userResponse {
     progress: Lesson[] | [];
 }
 
-export interface comments {
-    _id: ObjectId;
-    author: string;
-    body: string;
-    votes: number;
-    date: Date;
-}
+export type comments = {
+  _id: ObjectId;
+  author: string;
+  body: string;
+  votes: number;
+  date: Date;
+};
+
+
+export type forums = {
+  _id: ObjectId;
+  title: string;
+  body: string;
+  author: string;
+  votes: number;
+  date: Date;
+  comments: comments[];
+};
 
 export interface forums {
     _id: ObjectId;
@@ -117,3 +128,18 @@ export interface Saves {
     type: string;
     _id: string;
 }
+
+export interface ForumCardProps {
+  forum: forums,
+  key: string
+}
+
+export interface PostForumProps {
+    allForums: forums[];
+    setAllForums: React.Dispatch<React.SetStateAction<forums[]>>
+}
+
+export type Saves = {
+  type: string;
+  _id: string;
+};
