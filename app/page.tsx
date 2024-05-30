@@ -21,7 +21,7 @@ import Blob from "../public/blob.svg";
 export default function Home() {
   return (
     <>
-      <Container bg="purple.700" maxWidth="100%">
+      <Container bg="purple.700" maxWidth="100%" minHeight='100vh'>
         <Heading color="white" my="1rem" fontSize="2rem">
           Welcome to Parentify
         </Heading>
