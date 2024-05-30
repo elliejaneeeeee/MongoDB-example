@@ -12,6 +12,8 @@ import {
     Button,
     Alert,
     AlertIcon,
+    Heading,
+    Divider,
 } from "@chakra-ui/react";
 
 const RegisterForm = () => {
@@ -78,68 +80,77 @@ const RegisterForm = () => {
             bg="gray.100"
         >
             <Box
-                p={5}
-                shadow="md"
                 borderWidth="1px"
-                borderRadius="lg"
-                bg="white"
                 width="360px"
+                minHeight="300px"
+                position="relative"
+                rounded="md"
+                mx={[0, 5]}
+                bg="white"
+                border={"1px"}
+                borderColor="black"
+                boxShadow={"6px 6px 0 black"}
             >
-                <Text fontSize="2xl" fontWeight="bold" mb={4}>
-                    Register:
-                </Text>
-                <form onSubmit={handleSubmit}>
-                    <FormControl id="name" mb={4}>
-                        <FormLabel>Name</FormLabel>
-                        <Input
-                            type="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Full name"
-                        />
-                    </FormControl>
-                    <FormControl id="username" mb={4}>
-                        <FormLabel>Username</FormLabel>
-                        <Input
-                            type="username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Username"
-                        />
-                    </FormControl>
-                    <FormControl id="email" mb={4}>
-                        <FormLabel>Email</FormLabel>
-                        <Input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
-                        />
-                    </FormControl>
-                    <FormControl id="password" mb={4}>
-                        <FormLabel>Password</FormLabel>
-                        <Input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Password"
-                        />
-                    </FormControl>
-                    <Button
-                        type="submit"
-                        colorScheme="green"
-                        width="full"
-                        mb={4}
-                    >
-                        Login
-                    </Button>
-                    {error && (
-                        <Alert status="error" mb={4}>
-                            <AlertIcon />
-                            {error}
-                        </Alert>
-                    )}
-                    <Text mt={8} textAlign="right">
+                <Box p={4}>
+                    <Heading color={"black"} fontSize={"2xl"} mb={2}>
+                        Register:
+                    </Heading>
+                    <form onSubmit={handleSubmit}>
+                        <FormControl id="name" mb={4}>
+                            <FormLabel>Name</FormLabel>
+                            <Input
+                                type="name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Full name"
+                            />
+                        </FormControl>
+                        <FormControl id="username" mb={4}>
+                            <FormLabel>Username</FormLabel>
+                            <Input
+                                type="username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder="Username"
+                            />
+                        </FormControl>
+                        <FormControl id="email" mb={4}>
+                            <FormLabel>Email</FormLabel>
+                            <Input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Email"
+                            />
+                        </FormControl>
+                        <FormControl id="password" mb={4}>
+                            <FormLabel>Password</FormLabel>
+                            <Input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Password"
+                            />
+                        </FormControl>
+                        <Button
+                            type="submit"
+                            colorScheme="green"
+                            width="full"
+                            mb={4}
+                        >
+                            Login
+                        </Button>
+                        {error && (
+                            <Alert status="error" mb={4}>
+                                <AlertIcon />
+                                {error}
+                            </Alert>
+                        )}
+                    </form>
+                </Box>
+                <Divider borderColor="black" />
+                <Box p={4}>
+                    <Text textAlign="right">
                         Already registered?{" "}
                         <Link href="/login" color="teal.500">
                             <Button variant="outline" color="teal.500">
@@ -147,7 +158,7 @@ const RegisterForm = () => {
                             </Button>
                         </Link>
                     </Text>
-                </form>
+                </Box>
             </Box>
         </Flex>
 

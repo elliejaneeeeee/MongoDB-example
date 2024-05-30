@@ -16,23 +16,37 @@ import {
 import { AddIcon, CheckIcon } from "@chakra-ui/icons";
 import { useSession } from "next-auth/react";
 
-const SaveButton = ({ itemId }) => {
-  const { onClose } = useDisclosure();
-  const { data: session } = useSession();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
-  const [openOverlay, setOpenOverlay] = useState(false);
-
-  useEffect(() => {
-    {
-      if (session?.user?.id) {
-        const checkBookmark = async () => {
-          const response = await fetch(`/api/users/${session?.user?.id}`);
-          const { user } = await response.json();
-          setIsSaved(user.bookmarks.find((bookmark: string) => bookmark === itemId));
-        };
-        checkBookmark();
-      }
+const SaveButton = ({itemId, type}) => {
+    const { onClose } = useDisclosure()
+    const { data: session } = useSession();
+    const [isLoading, setIsLoading] = useState(false)
+    const [isSaved, setIsSaved] = useState(false)
+    const [openOverlay, setOpenOverlay] = useState(false)
+  
+    useEffect(() => {{
+        if(session?.user?.id){
+            const checkBookmark = async () => {
+                const response = await fetch(`/api/users/${session?.user?.id}`)
+                const {user} = await response.json()
+                 setIsSaved(user.bookmarks.find((bookmark: {}) => bookmark._id === itemId)) //check to see original bookmarked state on first render
+            }
+                checkBookmark()   
+        }
+    }
+    },[session])
+    
+    const handleClick = () => {
+       setIsLoading(true)
+         fetch(`/api/users/${session?.user?.id}`, {method: 'PATCH', body: JSON.stringify({_id: itemId, type: type})}).then((response) => {
+            if(response.ok){
+                setIsSaved(!isSaved)
+                setIsLoading(false)
+            }
+            else{
+                setIsLoading(false)
+                setOpenOverlay(true)
+            }
+         })
     }
   }, [session]);
 
@@ -57,20 +71,16 @@ const SaveButton = ({ itemId }) => {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Create an account</ModalHeader>
-          <ModalCloseButton
-            onClick={() => {
-              setOpenOverlay(false);
-            }}
-          />
-          <ModalBody pb={6}>Please sign up to bookmark, rate or comment</ModalBody>
 
-          <ModalFooter>
-            <Link key="login" href="/login">
-              <Button variant="link" size="lg" aria-label="login">
-                {" "}
-                Sign In
-              </Button>
-            </Link>
+          <ModalCloseButton onClick={() =>{setOpenOverlay(false)}}/>
+          <ModalBody pb={6}>
+            Please sign up to bookmark, rate or comment
+          </ModalBody>
+          <ModalFooter >
+          <Link key='login' href='/login'>
+                <Button variant="link" size='lg'
+              aria-label='login'  > Sign In</Button>
+                </Link>
           </ModalFooter>
         </ModalContent>
       </Modal>

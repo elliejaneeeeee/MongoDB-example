@@ -1,16 +1,30 @@
 import { ObjectId } from "mongodb";
-import { DefaultSession, DefaultUser } from "next-auth";
+
+import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
+
+export interface bookmarks {
+  _id: string,
+  type: string
+}
+
 
 declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-    } & DefaultSession["user"];
-  }
+    interface Session {
+        user: {
+            id: string;
+            username: string;
+            bookmarks: any[];
+            progress: Lesson[];
+        } & DefaultSession["user"];
+    }
 
-  interface User extends DefaultUser {
-    id: string;
-  }
+    interface User extends DefaultUser {
+        id: string;
+        username: string;
+        bookmarks: any[];
+        progress: Lesson[];
+    }
+
 }
 export class CustomError extends Error {
   status: errorMsg;
@@ -55,19 +69,23 @@ export type forums = {
   comments: comments[];
 };
 
-type Lesson = {
-  [key: `lesson${number}`]: boolean;
-};
 
-export type users = {
+export interface Lesson {
+    [key: `lesson${number}`]: boolean;
+}
+
+export interface users {
+
   _id: ObjectId;
   username: string;
   full_name: string;
   email: string;
   password: string;
-  bookmarks: string[];
+
+  bookmarks: bookmarks[];
   progress: Lesson[];
-};
+}
+
 
 export type flashcards = {
   _id: ObjectId;
@@ -92,13 +110,15 @@ export type articles = {
   votes: number;
 };
 
-export type updateFields = {
-  username?: string;
-  password?: string;
-  full_name?: string;
-  email?: string;
-  bookmarks?: string;
-};
+
+export interface updateFields {
+    username?: string;
+    password?: string;
+    full_name?: string;
+    email?: string;
+    bookmarks?: string;
+}
+
 
 export type Saves = {
   type: string;

@@ -71,9 +71,10 @@ const ForumPost = ({ id, showComments = true }: { id: string; showComments: bool
 
           <Text mt="4">{postData.body}</Text>
         </Flex>
-        <Flex flexDirection="row" mt="4" justifyContent="space-between">
-          <LikeDislikeButtons itemId={id} type="forums" />
-          <SaveButton itemId={id} />
+
+        <Flex flexDirection='row' mt='4' justifyContent="space-between">
+        <LikeDislikeButtons itemId={id} type='forums'/>
+         <SaveButton itemId={id} type='forums'/>
         </Flex>
       </Flex>
       {showComments && (
