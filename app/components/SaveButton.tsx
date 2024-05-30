@@ -29,16 +29,16 @@ const SaveButton = ({ itemId }) => {
         const checkBookmark = async () => {
           const response = await fetch(`/api/users/${session?.user?.id}`);
           const { user } = await response.json();
-          setIsSaved(user.bookmarks.find((bookmark: string) => bookmark === itemId)); //check to see original bookmarked state on first render
+          setIsSaved(user.bookmarks.find((bookmark: string) => bookmark === itemId));
         };
         checkBookmark();
       }
     }
   }, [session]);
 
-  const handleClick = (event) => {
+  const handleClick = () => {
     setIsLoading(true);
-    event.stopPropagation();
+
     fetch(`/api/users/${session?.user?.id}`, { method: "PATCH", body: JSON.stringify({ _id: itemId }) }).then(
       (response) => {
         if (response.ok) {
