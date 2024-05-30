@@ -2,7 +2,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { comments as commentsType } from "../.../../../types";
-import { FaRegCircleUser } from "react-icons/fa6";
 import {
   Heading,
   Text,

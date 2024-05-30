@@ -1,6 +1,12 @@
 import { ObjectId } from "mongodb";
 import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
 
+export interface bookmarks {
+  _id: string,
+  type: string
+}
+
+
 declare module "next-auth" {
     interface Session {
         user: {
@@ -66,13 +72,14 @@ export interface Lesson {
 }
 
 export interface users {
-    _id: ObjectId;
-    username: string;
-    full_name: string;
-    email: string;
-    password: string;
-    bookmarks: string[];
-    progress: Lesson[];
+
+  _id: ObjectId;
+  username: string;
+  full_name: string;
+  email: string;
+  password: string;
+  bookmarks: bookmarks[];
+  progress: Lesson[];
 }
 
 export interface flashcards {
