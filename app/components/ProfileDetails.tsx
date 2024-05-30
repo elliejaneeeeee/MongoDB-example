@@ -96,13 +96,6 @@ const ProfileDetails = () => {
                         mb={4}
                     >
                         Up next: Lesson {firstIncompleteLesson.lessonNumber}
-                        <Link
-                            href={`/flashcards/${firstIncompleteLesson.lessonNumber}`}
-                            color="blue.500"
-                            ml={2}
-                        >
-                            Go to flashcards
-                        </Link>
                     </Heading>
                 )}
                 <Flex justifyContent="right">
