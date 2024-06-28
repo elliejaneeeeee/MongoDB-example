@@ -7,7 +7,7 @@ import { articles as ArticlesType, forums as ForumsType } from "../../types";
 import NotFound from "../not-found";
 import { Box, Flex, Heading, Icon, Text, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import handIcon from "../components/handIcon";
+import { handIcon } from "../components/handIcon";
 import ForumPostsDisplay from "../components/ForumPostsDisplay";
 
 const Feed = () => {
