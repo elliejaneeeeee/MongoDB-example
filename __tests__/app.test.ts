@@ -31,7 +31,7 @@ let db: mongoDB.Db;
 
 beforeAll(async () => {
   client = await connect();
-  db = client.db("test");
+  db = client.db("Parentify");
   console.log("connected");
 });
 

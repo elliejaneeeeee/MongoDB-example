@@ -6,7 +6,7 @@ export async function postComment(id: string, reqBody: string) {
   const commentObj = JSON.parse(reqBody);
  
   const client = await connect();
-  const db = client.db("test");
+  const db = client.db("Parentify");
   const postID = new ObjectId(id);
 
   try {
@@ -40,7 +40,7 @@ export async function postComment(id: string, reqBody: string) {
 //refactor so can check forum post id && comment id
 export async function getCommentById(id: string, commId: string) {
   const client = await connect();
-  const db = client.db("test");
+  const db = client.db("Parentify");
 
   if(!ObjectId.isValid(commId) || !ObjectId.isValid(id)){
     return Promise.reject({ status: 400, msg: "Bad Request" });
@@ -77,7 +77,7 @@ export async function getCommentById(id: string, commId: string) {
 export async function deleteComment(id: string, commId: string, commentObj: any) {
   
   const client = await connect();
-  const db = client.db("test");
+  const db = client.db("Parentify");
   const postID = new ObjectId(id);
   //const commentID = new ObjectId(commId);
       const {acknowledged, modifiedCount}: {acknowledged: boolean, modifiedCount: number } = await db.collection('forums').updateOne({_id: postID},{ $pull: {comments: commentObj}})// refactor server error
@@ -89,7 +89,7 @@ export async function patchComment(
   votesToAdd: number
 ) {
   const client = await connect();
-  const db = client.db("test");
+  const db = client.db("Parentify");
   const post = new ObjectId(id);
   const commentID = new ObjectId(commId);
 

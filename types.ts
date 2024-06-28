@@ -7,6 +7,10 @@ export interface bookmarks {
   type: string
 }
 
+export interface SaveButtonProps {
+  itemId: string;
+  type: string;
+}
 
 declare module "next-auth" {
     interface Session {
@@ -21,7 +25,7 @@ declare module "next-auth" {
     interface User extends DefaultUser {
         id: string;
         username: string;
-        bookmarks: any[];
+        bookmarks: bookmarks[];
         progress: Lesson[];
     }
 
@@ -59,14 +63,6 @@ export type comments = {
   date: Date;
 };
 
-
-export type comments = {
-  _id: ObjectId;
-  author: string;
-  body: string;
-  votes: number;
-  date: Date;
-};
 
 export type forums = {
   _id: ObjectId;
@@ -114,6 +110,7 @@ export type articles = {
   title: string;
   link: string;
   img_url: string;
+  img_alt: string;
   body: string;
   source: string;
   votes: number;
@@ -126,11 +123,6 @@ export interface updateFields {
     full_name?: string;
     email?: string;
     bookmarks?: string;
-}
-
-export interface Saves {
-    type: string;
-    _id: string;
 }
 
 export interface ForumCardProps {

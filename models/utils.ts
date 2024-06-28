@@ -3,14 +3,14 @@ import { ObjectId } from "mongodb";
 
 export async function fetchAll({ coll }: { coll: string }) {
   const client = await connect();
-  const db = client.db("test");
+  const db = client.db("Parentify");
   const allItems = await db.collection(coll).find({}).toArray();
   return allItems;
 }
 
 export async function deleteItem(id: string, { coll }: { coll: string }) {
   const client = await connect();
-  const db = client.db("test");
+  const db = client.db("Parentify");
   const postID = new ObjectId(id);
   const {
     acknowledged,
@@ -29,7 +29,7 @@ export async function fetchById(id: string, { coll }: { coll: string }) {
   }
   const itemId = new ObjectId(id);
   const client = await connect();
-  const db = client.db("test");
+  const db = client.db("Parentify");
 
   const item = await db.collection(coll).findOne({ _id: itemId });
   
@@ -45,7 +45,7 @@ export async function patchItem(
 ) {
   const itemId = new ObjectId(id);
   const client = await connect();
-  const db = client.db("test");
+  const db = client.db("Parentify");
   try {
     const result: any = await db
       .collection(coll)

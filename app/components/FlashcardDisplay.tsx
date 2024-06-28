@@ -45,7 +45,7 @@ const FlashcardDisplay = ({ id }: { id: string }) => {
         };
         fetchFlashcardData();
         console.log(flashcard);
-    }, [id]);
+    });
 
     const handleNext = () => {
         if (flashcard && currentIndex <= flashcard.body.length) {

@@ -78,7 +78,7 @@ export const usersSchema = {
 };
 export const articlesSchema = {
   bsonType: "object",
-  required: ["title", "link", "img_url", "body", "source", "votes"],
+  required: ["title", "link", "img_url", "img_alt", "body", "source", "votes"],
   properties: {
     title: {
       bsonType: "string",
@@ -89,6 +89,9 @@ export const articlesSchema = {
     img_url: {
       bsonType: "string",
     },
+    img_alt: {
+      bsonType: "string",
+    },
     body: {
       bsonType: "string",
     },
@@ -97,7 +100,7 @@ export const articlesSchema = {
     },
     votes: {
       bsonType: "number",
-    }
+    },
   },
 };
 
@@ -108,7 +111,7 @@ export async function seed(
   articlesData: articles[]
 ) {
   const client = await connect();
-  const db = client.db("test");
+  const db = client.db("Parentify");
 
   await db.command({
     collMod: "flashcards",

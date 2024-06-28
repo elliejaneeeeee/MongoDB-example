@@ -11,7 +11,7 @@ export async function postToForum(post: string) {
     newForumPost.comments = [];
     newForumPost.date = new Date();
 
-    const db = client.db("test");
+    const db = client.db("Parentify");
 
     const dataFromInsert = await db
       .collection("forums")
@@ -27,7 +27,7 @@ export async function postToForum(post: string) {
 export async function deleteForumPost(id: string) {
   try {
     const client = await connect();
-    const db = client.db("test");
+    const db = client.db("Parentify");
     const postID = new ObjectId(id);
     const {acknowledged, deletedCount}: {acknowledged: boolean, deletedCount: number } = await db
     .collection("forums")

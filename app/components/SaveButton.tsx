@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Button, Flex,  Modal,
     ModalOverlay,
     ModalContent,
@@ -9,9 +9,10 @@ import { Button, Flex,  Modal,
     ModalCloseButton, useDisclosure, Link} from '@chakra-ui/react'
 import {AddIcon, CheckIcon} from '@chakra-ui/icons'
 import { useSession } from "next-auth/react";
+import { SaveButtonProps, bookmarks } from '@/types';
 
 
-const SaveButton = ({itemId, type}) => {
+const SaveButton: FC<SaveButtonProps> = ({ itemId, type }) => {
     const { onClose } = useDisclosure()
     const { data: session } = useSession();
     const [isLoading, setIsLoading] = useState(false)
@@ -23,12 +24,12 @@ const SaveButton = ({itemId, type}) => {
             const checkBookmark = async () => {
                 const response = await fetch(`/api/users/${session?.user?.id}`)
                 const {user} = await response.json()
-                 setIsSaved(user.bookmarks.find((bookmark: {}) => bookmark._id === itemId)) //check to see original bookmarked state on first render
+                 setIsSaved(user.bookmarks.find((bookmark: bookmarks) => bookmark._id === itemId)) //check to see original bookmarked state on first render
             }
                 checkBookmark()   
         }
     }
-    },[session])
+    },[session, itemId])
     
     const handleClick = () => {
        setIsLoading(true)

@@ -7,7 +7,7 @@ import { CustomError, updateFields } from "../types";
 export async function patchUserBookmarks(id: string, reqBody: any) {
   const parsedObj = reqBody
   const client = await connect();
-  const db = client.db("test");
+  const db = client.db("Parentify");
   const userID = new ObjectId(id);
   try {
   
@@ -46,7 +46,7 @@ export async function fetchUserById(id: string) {
     try {
         const userId = new ObjectId(id);
         const client = await connect();
-        const db = client.db("test");
+        const db = client.db("Parentify");
 
         const user = await db.collection("users").findOne({ _id: userId });
 
@@ -64,7 +64,7 @@ export async function fetchUserById(id: string) {
 export async function updateUser(id: string, reqBody: updateFields) {
 
   const client = await connect();
-  const db = client.db("test");
+  const db = client.db("Parentify");
   try {
     
     const userId = new ObjectId(id);
@@ -94,7 +94,7 @@ export async function insertUser(
 ) {
     try {
         const client = await connect();
-        const db = client.db("test");
+        const db = client.db("Parentify");
 
         const isAlreadyExisting = await db
             .collection("users")

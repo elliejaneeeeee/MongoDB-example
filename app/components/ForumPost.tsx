@@ -8,7 +8,6 @@ import { Heading, Text, Badge, Stack, Flex } from "@chakra-ui/react";
 import LikeDislikeButtons from "./LikeDislikeButtons";
 import SaveButton from "./SaveButton";
 import CommentsSection from "./CommentsSection";
-import NavBar from "./NavBar";
 
 const ForumPost = ({ id, showComments = true }: { id: string; showComments: boolean }) => {
   const [postData, setPostData] = useState<forumPostType | undefined>(undefined);
@@ -28,7 +27,7 @@ const ForumPost = ({ id, showComments = true }: { id: string; showComments: bool
       }
     };
     getPost();
-  }, [showBadge]);
+  }, [showBadge, id]);
 
   if (!postData) return null;
   return (

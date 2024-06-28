@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
     try {
         const client = await connect();
-        const db = client.db("test");
+        const db = client.db("Parentify");
         const { email } = await req.json();
         const user = await db.collection("users").findOne({ email: email });
         console.log(user);

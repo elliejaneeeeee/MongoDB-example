@@ -22,7 +22,7 @@ export const authOptions: NextAuthOptions = {
         const { email, password } = credentials as Credentials;
         try {
           const client = await connect();
-          const db = client.db("test");
+          const db = client.db("Parentify");
 
           const user = await db.collection("users").findOne({ email: email });
           if (!user) {

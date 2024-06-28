@@ -23,7 +23,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           boxShadow={"6px 6px 0 black"}
         >
           <Box borderWidth="1px" borderColor="black" h="200px">
-            <Image src={article.img_url} roundedTop={"sm"} objectFit="cover" w="100%" h="100%" />
+            <Image src={article.img_url} alt={article.img_alt} roundedTop={"sm"} objectFit="cover" w="100%" h="100%" />
           </Box>
           <Box p={4}>
             <Box bg="#F08080" display={"inline-block"} px={2} py={1} color="white" mb={2} rounded="md">

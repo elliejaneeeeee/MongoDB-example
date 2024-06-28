@@ -22,7 +22,7 @@ const ForumPostsDisplay = ({ forums }: ForumPostsDisplayProps) => {
       </Flex>
       </Link>
       {forums?.map((forum, index) => (
-        <Link href={`/forums/${forum._id}`} name={forum._id} passHref>
+        <Link key={forum._id.toString()} href={`/forums/${forum._id}`} passHref>
         <Box key={index} borderRadius="10px" boxShadow="md" width="100%" cursor="pointer">
           <ForumPost showComments={false} key={index} id={forum._id.toString()} />
         </Box>
