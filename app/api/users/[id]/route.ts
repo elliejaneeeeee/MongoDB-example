@@ -48,8 +48,6 @@ try {
 
       await updateUser(id, reqBody)
 
-
-
     }
     
     return NextResponse.json({ status: 200 });

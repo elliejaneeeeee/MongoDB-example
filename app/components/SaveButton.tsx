@@ -72,6 +72,7 @@ const SaveButton: FC<SaveButtonProps> = ({ itemId, type }) => {
       loadingText='Saving'
       colorScheme='pink'
       color={"pink.300"}
+      size='sm'
       variant={isSaved ? 'solid' : 'outline'}
       onClick={handleClick}
     >
